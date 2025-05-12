@@ -111,6 +111,46 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Menu */}
+                {isMenuOpen && (
+                    <div className="md:hidden bg-white border-t border-neutral-100 py-4 animate-fade-in">
+                        <div className="container mx-auto px-4 flex flex-col space-y-3">
+                            <Link to="/projects" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-59 rounded-lg transition-colors">
+                                Browse Projects
+                            </Link>
+                            <Link to="/resources" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors">
+                                Resources
+                            </Link>
+
+                            <hr className="border-neutral-200" />
+
+                            {isLoggedIn ? (
+                                <>
+                                    <Link to="/profile" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors flex items-center">
+                                        <User className="h-5 w-5 mr-2" />
+                                            Your Profile
+                                    </Link>
+                                    <Link to="/dashboard" className="px-4 py-2 text-neutral-700 hover:txt-primary-600 hover:bg-neutral-50 rounded-lg transition-colors">
+                                        Dashboard
+                                    </Link>
+                                    <button className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
+                                        Sign Out
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="flex flex-col space-y-2 pt-2">
+                                    <Button variant="outline" fullWidth>
+                                        Log in
+                                    </Button>
+                                    <Button variant="primary" fullWidth>
+                                        Sign Up
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
         </header>
-    )
-}
+    );
+};
+
+export default Navbar;
