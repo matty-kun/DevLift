@@ -53,6 +53,41 @@ const Navbar: React.FC = () => {
                 </nav>
 
                 {/* Right Side Menu */}
+                <div className="hidden md:flex items-center space-x-4">
+                    {isLoggedIn ? (
+                        <>
+                            <button className="text-neutral-600 hover:text-primary-600 p-2 rounded-full hover:bg-neutral-100 transition-colors">
+                                <Search className="h-5 w-5" />
+                            </button>
+                            <button className="text-neutral-600 hover:text-primary-600 p-2 rounded-full hover:bg-neutral-100 transition-colors">
+                                <MessageSquare className="h-5 w-5" />
+                            </button>
+                            <button className="text-neutral-600 hover:text-primary-600 p-2 rounded-full hover:bg-neutral-100 transition-colors">
+                                <Bell className="h-5 w-5" />
+                            </button>
+                            <div className="relative group">
+                                <button className="flex items-center focus:outline-none">
+                                    <Avatar size="sm" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg" status="online" />
+                                </button>
+                                <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-medium bg-white invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 transform origin-top right">
+                                    <div className="py-1">
+                                        <Link to="/profile" className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover-text-primary-600">
+                                            Your Profile
+                                        </Link>
+                                        <Link to="/dashboard" className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600">
+                                            Dashboard
+                                        </Link>
+                                        <Link>
+                                        </Link>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </>
+                    )}
+
+                </div>
             </div>
         </header>
     )
