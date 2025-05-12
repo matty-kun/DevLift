@@ -40,4 +40,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             paddingRight,
             className,
         ].join(' ');
+
+        return (
+            <div className={fullWidth ? 'w-full' : ''}>
+                {label && (
+                    <label htmlFor={inputId} className="block mb-1.5 text-sm font-medium text-neutral-800">
+                        {label}
+                    </label>
+                )}
+
+            </div>
+        )
     })
