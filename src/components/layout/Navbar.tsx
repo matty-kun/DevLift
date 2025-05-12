@@ -77,18 +77,40 @@ const Navbar: React.FC = () => {
                                         <Link to="/dashboard" className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600">
                                             Dashboard
                                         </Link>
-                                        <Link>
+                                        <Link to="/settings" className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600">
+                                            Settings
                                         </Link>
+                                        <hr className="my-1 border-neutral-200" />
+                                        <button className="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600">
+                                            Sign Out
+                                        </button>
                                     </div>
-
                                 </div>
-
                             </div>
                         </>
+                    ) : (
+                        <>
+                            <Button variant="outline" size="sm">
+                                Log In
+                            </Button>
+                            <Button variant="primary" size="sm">
+                                Sign Up
+                            </Button>
+                        </>
                     )}
+                </div>
 
+                {/* Mobile Menu Button */}
+                <div className="md:hidden">
+                    <button
+                        onClick={toggleMenu} className="p-2 rounded-lg text-neutral-600 hover:text-primary-600 hover:bg-neutral-100 transition-colors"
+                    >
+                        {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                    </button>
                 </div>
             </div>
+
+            {/* Mobile Menu */}
         </header>
     )
 }
