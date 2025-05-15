@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
 
                 <hr className="my-8 border-neutral-800"/>
 
-                <div className="flex flex-col md:glex-row justify-between items-center">
+                <div className="flex flex-col md:flex-row justify-between items-center">
                     <p className="text-neutral-500 text-sm">
                         &copy; {new Date().getFullYear()} DevLift. All rights reserved.
                     </p>
