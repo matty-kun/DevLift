@@ -7,6 +7,7 @@ const Footer: React.FC = () => {
         <footer className="bg-neutral-900 text-neutral-300">
             <div className="container mx-auto px-4 py-12">
                 <div className="grid grid-cols01 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                    
                     {/* Logo and Description */}
                     <div className="lg:col-span-2">
                         <Link to="/" className="flex items-center">
@@ -36,6 +37,7 @@ const Footer: React.FC = () => {
 
                     {/* Navigation Links */}
                     <div>
+                    {/* Students */}
                         <h3 className="text-white font-medium text-lg mb-4">For Students</h3>
                         <ul className="space-y-2">
                             <li>
@@ -61,6 +63,7 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
 
+                    {/* Founders */}
                     <div>
                         <h3 className="text-white font-medium text-lg mb-4">For Founders</h3>
                         <ul className="space-y-2">
@@ -87,6 +90,7 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
 
+                    {/* Company */}
                     <div>
                         <h3 className="text-white font-medium text-lg mg-4">Company</h3>
                         <ul className="space-y-2">
