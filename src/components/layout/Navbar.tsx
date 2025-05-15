@@ -114,7 +114,7 @@ const Navbar: React.FC = () => {
                 {isMenuOpen && (
                     <div className="md:hidden bg-white border-t border-neutral-100 py-4 animate-fade-in">
                         <div className="container mx-auto px-4 flex flex-col space-y-3">
-                            <Link to="/projects" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-59 rounded-lg transition-colors">
+                            <Link to="/projects" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors">
                                 Browse Projects
                             </Link>
                             <Link to="/resources" className="px-4 py-2 text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors">
