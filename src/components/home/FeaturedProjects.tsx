@@ -61,10 +61,23 @@ const FeaturedProjects: React.FC = () => {
                         Real-world projects posted by industry professionals looking for talented students.
                     </p>
                 </div>
+                <Button 
+                    variant="outline"
+                    rightIcon={<ArrowRight className="h-4 w-4"/>}
+                    className="mt-4 md:mt-0"
+                >
+                    View All Projects
+                </Button>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredProjects.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                ))}
             </div>
         </div>
-
     </section>
-  )
-}
+  );
+};
+
+export default FeaturedProjects;
