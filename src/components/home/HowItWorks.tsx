@@ -52,7 +52,9 @@ const HowItWorks: React.FC = () => {
                                     <h3 className="text-xl font-semibold text-neutral-900 mb-2">{step.title}</h3>
                                     <p className="text-neutral-600">{step.description}</p>
                                 </div>
-                                <div></div>
+                                <div className="hidden lg:flex absolute top-6 -left-3 h-8 w-8 rounded-full bg-primary-600 text-white font-medium items-center justify-center border-4 border-white">
+                                    {index + 1}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -60,5 +62,7 @@ const HowItWorks: React.FC = () => {
             </div>
 
         </section>
-    )
-}
+    );
+};
+
+export default HowItWorks;
