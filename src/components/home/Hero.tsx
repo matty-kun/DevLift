@@ -39,15 +39,15 @@ const Hero: React.FC = () => {
 
             <div className="mt-10 grid grid-cols-3 gap-x-6 animate-fade-in" style={{animationDelay: '300ms'}}>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary-600">50+</p>
+                <p className="text-3xl font-bold text-primary-600">0+</p>
                 <p className="mt-1 text-sm text-neutral-600">Active Startups</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary-600">200+</p>
+                <p className="text-3xl font-bold text-primary-600">0+</p>
                 <p className="mt-1 text-sm text-neutral-600">Projects Completed</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary-600">1K+</p>
+                <p className="text-3xl font-bold text-primary-600">0+</p>
                 <p className="mt-1 text-sm text-neutral-600">Student Builders</p>
               </div>
             </div>
