@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
 import ProjectCard from '../projects/ProjectCard';
@@ -61,13 +62,15 @@ const FeaturedProjects: React.FC = () => {
                         Real-world projects posted by industry professionals looking for talented students.
                     </p>
                 </div>
-                <Button 
-                    variant="outline"
-                    rightIcon={<ArrowRight className="h-4 w-4"/>}
-                    className="mt-4 md:mt-0"
-                >
-                    View All Projects
-                </Button>
+                <Link to="/projects">
+                  <Button 
+                      variant="outline"
+                      rightIcon={<ArrowRight className="h-4 w-4"/>}
+                      className="mt-4 md:mt-0"
+                  >
+                      View All Projects
+                  </Button>
+                </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
