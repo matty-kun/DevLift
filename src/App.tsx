@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import Projects from './pages/Projects';
 import Home from './pages/Home';
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />}/>
-            {/* Add mre routes as needed */}
+            <Route path="/projects" element={<Projects />} />
           </Routes>
         </main>
         <Footer />
