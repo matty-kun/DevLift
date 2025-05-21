@@ -1,6 +1,7 @@
 import React from 'react';
 import ProjectCard from '../components/projects/ProjectCard';
 import { Project } from '../types';
+import { Link } from 'react-router-dom';
 
 const projects: Project[] = [
   {
@@ -52,7 +53,7 @@ const Projects: React.FC = () => (
     <h1 className="text-2xl font-bold mb-6 text-center">Projects</h1>
     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
       {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} />
+          <ProjectCard key={project.id} project={project} />
       ))}
     </div>
   </div>
