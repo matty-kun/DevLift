@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, Users, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
@@ -102,13 +103,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                         </div>
                     </div>
 
-                    <Button 
-                        variant="primary"
-                        size="sm"
-                        rightIcon={<ExternalLink className="h-4 w-4" />}
-                    >
-                        View
-                    </Button>
+                    <Link to={`/projects/${project.id}`}>
+                        <Button 
+                            variant="primary"
+                            size="sm"
+                            rightIcon={<ExternalLink className="h-4 w-4" />}
+                        >
+                            View
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </Card>
