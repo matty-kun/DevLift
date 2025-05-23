@@ -209,7 +209,7 @@ const Projects: React.FC = () => {
                     {durations.map((duration) => (
                       <label key={duration} className="flex items-center">
                         <input 
-                          type="text" 
+                          type="checkbox" 
                           className="form-checkbox rounded text-primary-600 focus:ring-primary-500"
                           checked={selectedDuration.includes(duration)}
                           onChange={(e) => {
@@ -257,15 +257,37 @@ const Projects: React.FC = () => {
                     </Badge>
                   )}
                   {selectedDifficulty.length > 0 && (
-                    
+                    <Badge variant="warning">
+                      {selectedDifficulty.length} {selectedDifficulty.length === 1 ? 'Difficulty' : 'Difficulties'}
+                    </Badge>
+                  )}
+                  {selectedDuration.length > 0 && (
+                    <Badge variant="success">
+                      {selectedDuration.length} {selectedDuration.length === 1 ? 'Duration' : 'Durations'}
+                    </Badge>
                   )}
                 </div>
               </div>
-            </div>
 
+              {filteredProjects.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {filteredProjects.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="text-center py-12">
+                  <h3 className="text-xl font-semibold text-neutral-900 mb-2">No Projects Found</h3>
+                  <p className="text-neutral-600">
+                    Try adjusting your filter or search criteria to find more projects.
+                  </p>
+                </Card>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    )
-
+    );
 };
+
+export default Projects;
