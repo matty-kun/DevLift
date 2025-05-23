@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Briefcase, Clock, User, Code  } from 'lucide-react';
+import { Search, Filter, Briefcase, Clock, Users, Code  } from 'lucide-react';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -122,6 +122,149 @@ const Projects: React.FC = () => {
 
     return (
       <div className="min-h-screen bg-neutral-50 py-12">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-neutral-900 mb-4">Browse Projects</h1>
+            <p className="text-xl text-neutral-600">
+              Find real-world projects to work on and gain valuable experience.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Filters Sidebar */}
+            <Card className="lg:col-span-1 h-fit">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mg-4 flex items-center">
+                    <Filter className="h-5 w-5 mr-2" />
+                    Filters
+                  </h3>
+                  <Input 
+                    placeholder="Search projects..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    leftIcon={<Search className="h-5 w-5" />}
+                    className="mb-4"
+                  />
+                </div>
+
+                {/* Skills Filter */}
+                <div>
+                  <h4 className="font-medium mb-2 flex items-center">
+                    <Code className="h-4 w-4 mr-2" />
+                      Skills
+                  </h4>
+                  <div className="space-y-2">
+                    {skills.map((skill) => (
+                      <label key={skill} className="flex items-center">
+                        <input type="checkbox" className="form-checkbox rounded text-primary-600 focus:ring-primary-500" checked={selectedSkills.includes(skill)} onChange={((e) => {
+                          if (e.target.checked) {
+                            setSelectedSkills([...selectedSkills, skill]);
+                          } else {
+                            setSelectedSkills(selectedSkills.filter(s => s !== skill));
+                          }
+                        })} 
+                        />
+                        <span className="ml-2 text-neutral-700">{skill}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Difficulty Filter */}
+                <div>
+                  <h4 className="font-medium mb-2 flex items-center">
+                    <Briefcase className="h-4 w-4 mr-2"/>
+                    Difficulty
+                  </h4>
+                  <div className="space-y-2">
+                    {difficulties.map((difficulty) => (
+                      <label key={difficulty} className="flex items-center">
+                        <input 
+                          type="checkbox"
+                          className="form-checkbox rounded text-primary-600 focus:ring-primary-500"
+                          checked={selectedDifficulty.includes(difficulty)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedDifficulty([...selectedDifficulty, difficulty]);
+                            } else {
+                              setSelectedDifficulty(selectedDifficulty.filter(d => d !== difficulty));
+                            }
+                          }}
+                        />
+                        <span className="ml-2 text-neutral-700 capitalize">{difficulty}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Duration Filter */}
+                <div>
+                  <h4 className="font-medium mb-2 flex items-center">
+                    <Clock className="h-4 w-4 mr-2" />
+                    Duration
+                  </h4>
+                  <div className="space-y-2">
+                    {durations.map((duration) => (
+                      <label key={duration} className="flex items-center">
+                        <input 
+                          type="text" 
+                          className="form-checkbox rounded text-primary-600 focus:ring-primary-500"
+                          checked={selectedDuration.includes(duration)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedDuration([...selectedDuration, duration]);
+                            } else {
+                              setSelectedDuration(selectedDuration.filter(d => d !== duration));
+                            }
+                          }}
+                      />
+                      <span className="ml-2 text-neutral0700">{duration}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <Button 
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setSelectedSkills([]);
+                    setSelectedDifficulty([]);
+                    setSelectedDuration([]);
+                    setSearchQuery('');
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </Card>
+            
+            {/* Projects Grid */}
+            <div className="lg:col-span-3">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center">
+                  <Users className="h-5 w-5 text-neutral-600 mr-2" />
+                  <span className="text-neutral-600">
+                    {filteredProjects.length} {filteredProjects.length === 1 ? 'Project' : 'Projects'} Available
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  {selectedSkills.length > 0 && (
+                    <Badge variant="primary">
+                      {selectedSkills.length} {selectedSkills.length === 1 ? 'Skill' : 'Skills'}
+                    </Badge>
+                  )}
+                  {selectedDifficulty.length > 0 && (
+                    
+                  )}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     )
 
