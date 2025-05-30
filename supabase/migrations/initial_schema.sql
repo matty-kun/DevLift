@@ -174,3 +174,76 @@ CREATE POLICY "Users can read relevant applications"
             AND projects.mentor_id = auth.uid()
         )
      );
+
+-- Skills policies
+CREATE POLICY "Anyone can read skills"
+    ON skills FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- Project skills policies
+CREATE POLICY "Anyone can read project skills"
+    ON project_skills FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- User skills policies
+CREATE POLICY "Anyone can read user skills"
+    ON user_skills FOR SELECT
+    TO authenticated
+    USING (true);
+
+CREATE POLICY "Users can manage own skills"
+    ON user_skills FOR ALL 
+    TO authenticated
+    USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+
+-- Messages policies
+CREATE POLICY "Users can read own messages"
+    ON messages FOR SELECT
+    TO authenticated
+    USING (
+        sender_id = auth.uid() OR
+        receiver_id = auth.uid()
+    );
+
+CREATE POLICY "Users can send messages"
+    ON messages FOR INSERT
+    TO authenticated
+    WITH CHECK (sender_id = auth.uid());
+
+-- Create functions
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN 
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create triggers
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER update_projects_updated_at
+    BEFORE UPDATE ON projects
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER update_applications_updated_at
+    BEFORE UPDATE ON applications
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at();
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_mentor_id ON projects(mentor_id);
+CREATE INDEX IF NOT EXISTS idx_applications_project_id ON applications(project_id);
+CREATE INDEX IF NOT EXISTS idx_applications_student_id ON applications(student_id);
+CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_user_skills_user_id ON user_skills(user_id);
+CREATE INDEX IF NOT EXISTS idx_project_skills_project_id ON project_skills(project_id);
