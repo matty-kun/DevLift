@@ -6,21 +6,34 @@ import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
+// import Profile from './pages/Profile';
+// import SignUp from './pages/SignUp';
+// import SignIn from './pages/SignIn';
+// import Dashboard from './pages/Dashboard';
+// import Messages from './pages/Messages';
+// import Settings from './ pages/Settings';
+
 
 function App() {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
+    <AuthProvider>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:id" element={<ProjectDetails />} />
+
           </Routes>
         </main>
         <Footer />
       </div>
     </Router>
+
+    </AuthProvider>
+
   );
 }
 
