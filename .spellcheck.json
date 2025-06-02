@@ -4,5 +4,6 @@
     "vite",
     "devlift",
     "plpgsql"
-  ]
+  ],
+  "cSpell.reportUnknownWords": "false"
 } 
