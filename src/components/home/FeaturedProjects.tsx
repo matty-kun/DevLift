@@ -53,12 +53,12 @@ const FeaturedProjects: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-black">
         <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
                 <div>
-                    <h2 className="text=3xl md:text-4xl font-bold text-neutral-900">Featured Projects</h2>
-                    <p className="mt-3 text-xl text-neutral-600 max-w-2xl">
+                    <h2 className="text-3xl md:text-4xl font-bold text-custom-cyan">Featured Projects</h2>
+                    <p className="mt-3 text-xl text-custom-orange max-w-2xl">
                         Real-world projects posted by industry professionals looking for talented students.
                     </p>
                 </div>

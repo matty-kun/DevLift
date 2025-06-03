@@ -121,12 +121,12 @@ const Projects: React.FC = () => {
   });
 
     return (
-      <div className="min-h-screen bg-neutral-50 py-12">
+      <div className="min-h-screen black py-12">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-neutral-900 mb-4">Browse Projects</h1>
-            <p className="text-xl text-neutral-600">
+            <h1 className="text-4xl font-bold text-neutral-50 mb-4">Browse Projects</h1>
+            <p className="text-xl text-neutral-50">
               Find real-world projects to work on and gain valuable experience.
             </p>
           </div>
@@ -145,7 +145,6 @@ const Projects: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     leftIcon={<Search className="h-5 w-5" />}
-                    className="mb-4"
                   />
                 </div>
 
@@ -166,7 +165,7 @@ const Projects: React.FC = () => {
                           }
                         })} 
                         />
-                        <span className="ml-2 text-neutral-700">{skill}</span>
+                        <span className="ml-2 text-neutral-50">{skill}</span>
                       </label>
                     ))}
                   </div>
@@ -193,7 +192,7 @@ const Projects: React.FC = () => {
                             }
                           }}
                         />
-                        <span className="ml-2 text-neutral-700 capitalize">{difficulty}</span>
+                        <span className="ml-2 text-neutral-50 capitalize">{difficulty}</span>
                       </label>
                     ))}
                   </div>
@@ -220,7 +219,7 @@ const Projects: React.FC = () => {
                             }
                           }}
                       />
-                      <span className="ml-2 text-neutral0700">{duration}</span>
+                      <span className="ml-2 text-neutral-50">{duration}</span>
                       </label>
                     ))}
                   </div>

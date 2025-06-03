@@ -3,7 +3,7 @@ import Button from '../common/Button';
 
 const CallToAction: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white">
+    <section className="py-20 bg-black text-white">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-100">Ready to Build Something Real?</h2>

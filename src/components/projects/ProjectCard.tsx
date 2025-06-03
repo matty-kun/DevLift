@@ -57,11 +57,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                 </div>
             </div>
 
-            <h3 className="text-xl font-semibold mg-2 text-neutral-900 line-clamp-2">
+            <h3 className="text-xl font-semibold mg-2 text-neutral-50 line-clamp-2">
                 {project.title}
             </h3>
 
-            <p className="text-neutral-600 mb-4 line-clamp-3">
+            <p className="text-neutral-50 mb-4 line-clamp-3">
                 {project.description}
             </p>
 
@@ -80,12 +80,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
 
             <div className="mt-auto">
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="flex items-center text-sm text-neutral-600">
-                        <Clock className="h-4 w-4 mr-1" />
+                    <div className="flex items-center text-sm text-neutral-50">
+                        <Clock className="h-4 w-4 mr-1 text-custom-orange" />
                         <span>{project.duration}</span>
                     </div>
-                    <div className="flex items-center text-sm text-neutral-600">
-                        <Users className="h-4 w-4 mr-1" />
+                    <div className="flex items-center text-sm text-neutral-50">
+                        <Users className="h-4 w-4 mr-1 text-custom-purple" />
                         <span>{project.assignedStudents.length}/{project.maxStudents} Students</span>
                     </div>
                 </div>

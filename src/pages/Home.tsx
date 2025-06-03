@@ -7,7 +7,7 @@ import CallToAction from '../components/home/CallToAction';
 
 const Home: React.FC = () => {
     return (
-        <div>
+        <div className="bg-black">
             <Hero />
             <HowItWorks />
             <FeaturedProjects />

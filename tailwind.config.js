@@ -88,6 +88,10 @@ export default {
                     800: '#1E293B',
                     900: '#0F172A',
                 },
+                'custom-cyan': '#19c3f7',
+                'custom-purple': '#7b2ff2',
+                'custom-orange': '#f74a19',
+                'custom-black': '#222222',
             },
             fontFamily: {
                 sans: [
@@ -122,6 +126,9 @@ export default {
                     '0%': { transform: 'translateY(20px)', opacity: '0' },
                     '100%': { transform: 'translateY(0)', opacity: '1' },
                 },
+            },
+            backgroundImage: {
+                'hero-gradient': 'linear-gradient(135deg, #19c3f7 0%, #7b2ff2 100%)',
             },
         },
     },

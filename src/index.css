@@ -8,11 +8,11 @@
   }
   
   body {
-    @apply font-sans antialiased text-neutral-800 bg-neutral-50 min-h-screen;
+    @apply font-sans antialiased bg-black text-white min-h-screen;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-medium leading-tight text-neutral-900;
+    @apply font-sans font-medium leading-tight text-white;
   }
   
   h1 {
@@ -40,11 +40,11 @@
   }
   
   p {
-    @apply leading-relaxed;
+    @apply leading-relaxed text-white;
   }
   
   a {
-    @apply text-primary-600 hover:text-primary-800 transition-colors;
+    @apply text-custom-orange hover:text-custom-cyan transition-colors;
   }
 }
 
@@ -54,35 +54,35 @@
   }
   
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply btn bg-custom-orange text-white hover:bg-orange-600 focus:ring-custom-orange;
   }
   
   .btn-secondary {
-    @apply btn bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-400;
+    @apply btn bg-custom-cyan text-white hover:bg-custom-purple focus:ring-custom-cyan;
   }
   
   .btn-accent {
-    @apply btn bg-accent-500 text-white hover:bg-accent-600 focus:ring-accent-400;
+    @apply btn bg-custom-purple text-white hover:bg-custom-cyan focus:ring-custom-purple;
   }
   
   .btn-outline {
-    @apply btn border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 focus:ring-neutral-300;
+    @apply btn border border-white bg-transparent text-white hover:bg-white hover:text-custom-black focus:ring-white;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-soft p-6 transition-shadow hover:shadow-medium;
+    @apply bg-custom-black/80 rounded-xl shadow-soft p-6 transition-shadow hover:shadow-medium text-white;
   }
   
   .form-input {
-    @apply w-full rounded-lg border border-neutral-300 px-4 py-2 text-neutral-800 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200;
+    @apply w-full rounded-lg border border-custom-cyan px-4 py-2 text-custom-black focus:border-custom-orange focus:outline-none focus:ring-2 focus:ring-custom-orange;
   }
   
   .glass-card {
-    @apply bg-white/70 backdrop-blur-md rounded-xl shadow-soft;
+    @apply bg-white/10 backdrop-blur-md rounded-xl shadow-soft text-white;
   }
   
   .avatar {
-    @apply rounded-full object-cover;
+    @apply rounded-full object-cover border border-custom-cyan;
   }
   
   .badge {
@@ -90,14 +90,14 @@
   }
   
   .badge-primary {
-    @apply badge bg-primary-100 text-primary-800;
+    @apply badge bg-custom-cyan text-white;
   }
   
   .badge-secondary {
-    @apply badge bg-secondary-100 text-secondary-800;
+    @apply badge bg-custom-purple text-white;
   }
   
   .badge-accent {
-    @apply badge bg-accent-100 text-accent-800;
+    @apply badge bg-custom-orange text-white;
   }
 }

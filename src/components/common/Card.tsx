@@ -16,10 +16,10 @@ const Card: React.FC<CardProps> = ({
     const baseClasses = 'rounded-xl';
 
     const variantClasses = {
-        default: 'bg-white shadow-soft',
-        glass: 'bg-white/70                                       backdrop-blur-md shadow-soft',
-        border: 'bg-white border border-neutral-200',
-        hover: 'bg-white shadow-soft hover:shadow-medium transition-shadow',
+        default: 'bg-gray-900 shadow-lg',
+        glass: 'bg-gray-900/70 backdrop-blur-md shadow-lg',
+        border: 'bg-gray-900 border border-gray-800',
+        hover: 'bg-gray-900 shadow-lg hover:shadow-xl hover:border-gray-700 transition-all',
     };
 
     const paddingClasses = {

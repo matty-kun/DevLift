@@ -23,10 +23,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     }, ref) => {
         const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
 
-        const baseInputClasses = 'rounded-lg border px-4 py-2 text-neutral-800 focus:outline-none focus:ring-2';
+        const baseInputClasses = 'rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 bg-gray-900 text-white';
 
-        const stateClasses = error ? 'border-error-300 focus:border-error-300 focus:ring-error-100'
-        : 'border-neutral-300 focus:border-primary-300 focus:ring-primary-100';
+        const stateClasses = error 
+            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+            : 'border-gray-700 focus:border-custom-cyan focus:ring-custom-cyan/20';
 
         const widthClass = fullWidth ? 'w-full' : '';
         const paddingLeft = leftIcon ? 'pl-10' : '';
@@ -44,14 +45,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         return (
             <div className={fullWidth ? 'w-full' : ''}>
                 {label && (
-                    <label htmlFor={inputId} className="block mb-1.5 text-sm font-medium text-neutral-800">
+                    <label htmlFor={inputId} className="block mb-1.5 text-sm font-medium text-white">
                         {label}
                     </label>
                 )}
 
                 <div className="relative">
                     {leftIcon && (
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             {leftIcon}
                         </div>
                     )}
@@ -64,14 +65,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     />
 
                     {rightIcon && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                             {rightIcon}
                         </div>
                     )}
                 </div>
 
                 {(helperText || error) && (
-                    <p className={`mt-1.5 text-sm ${error ? 'text-error-500' : 'text-neutral-500'}`}>
+                    <p className={`mt-1.5 text-sm ${error ? 'text-red-500' : 'text-gray-400'}`}>
                         {error || helperText}
                     </p>
                 )}
