@@ -3,7 +3,9 @@
     "supabase",
     "vite",
     "devlift",
-    "plpgsql"
-  ],
-  "cSpell.reportUnknownWords": "false"
+    "lucide",
+    "react-hook-form",
+    "react-router-dom",
+    "zod"
+  ]
 } 
