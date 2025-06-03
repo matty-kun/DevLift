@@ -6,7 +6,6 @@ import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { useAuth } from '../contexts/AuthContext';
-import { it } from 'date-fns/locale';
 
 interface SignInFormData {
     email: string;
@@ -16,7 +15,7 @@ interface SignInFormData {
 const SignIn: React.FC = () => {
     const { signIn } = useAuth();
     const navigate = useNavigate();
-    const { register, handlesSubmit, formState: { errors, isSubmitting }} = useForm<SignInFormData>();
+    const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignInFormData>();
 
     const onSubmit = async (data: SignInFormData) => {
         try {
@@ -37,7 +36,7 @@ const SignIn: React.FC = () => {
                 </div>
 
                 <Card>
-                    <form onSumbit={handlesSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                       <div>
                         <Input 
                           label="Email"
@@ -53,12 +52,56 @@ const SignIn: React.FC = () => {
                           })}
                         />
                       </div>
-
                       
+                      <div>
+                        <Input 
+                          label="Password"
+                          type="password"
+                          leftIcon={<Lock className="h-5 w-5" />}
+                          error={errors.password?.message}
+                          {...register('password', {
+                            required: 'Password is required',
+                            minLength: {
+                              value: 7,
+                              message: 'password must be at least 7 characters'
+                            }
+                          })}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="form-checkbox rounded text-primary-600 focus:ring-primary-500" />
+                          <span className="ml-2 text-sm text-neutral-600">Remember me</span>
+                        </label>
+                        <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-800">
+                        Forgot password?
+                        </Link>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        className="w-full"
+                        isLoading={isSubmitting}
+                      >
+                        Sign In
+                      </Button>
                     </form>
+
+                    <div className="mt-6 text-center">
+                      <p className="text-sm text-neutral-600">
+                        Don't have an account?{' '}
+                        <Link to="/sign-up" className="font-medium text-primary-600 hover:text-primary-800">
+                          Sign up
+                        </Link>
+                      </p>
+                    </div>
                 </Card>
             </div>
           </div>
         </div>
-    )
-}
+    );
+};
+
+export default SignIn;
