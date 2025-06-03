@@ -26,16 +26,16 @@ const Profile: React.FC = () => {
         education: "BS Computer Science, Stanford University",
         skills: ["React", "TypeScript", "Node.js", "Python", "AWS"],
         projects: [
-            {
-                title: "E-Commerce Platform",
-                status: "Completed",
-                role: "Frontend Developer",
-            },
-            {
-                title: "AI Chatbot Integration",
-                status: "In Progress",
-                role: "Full Stack Developer",
-            }
+        {
+            title: "E-Commerce Platform",
+            status: "Completed",
+            role: "Frontend Developer",
+        },
+        {
+            title: "AI Chatbot Integration",
+            status: "In Progress",
+            role: "Full Stack Developer",
+        }
         ],
         links: [
             { name: "GitHub", url: "https://github.com" },
@@ -51,8 +51,8 @@ const Profile: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-black py-12">
-            <div className="container mx-auto px-4">
-                <div className="max-w-4xl mx-auto">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
                     {/* Profile Header */}
                     <Card className="mb-8 border border-gray-800">
                         <div className="flex flex-col md:flex-row md:items-center">
@@ -170,13 +170,13 @@ const Profile: React.FC = () => {
                                         )}
                                     </div>
                                 )}
-                            </Card>
-                        </div>
-                    </div>
-                </div>
+            </Card>
+          </div>
+        </div>
+      </div>
             </div>
         </div>
     );
-};
+};   
 
 export default Profile;   

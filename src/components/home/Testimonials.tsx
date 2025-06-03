@@ -54,8 +54,8 @@ const Testimonials: React.FC = () => {
     <section className="py-20 bg-black text-white overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-custom-purple">What Our Community Says</h2>
-          <p className="mt-4 text-xl text-custom-cyan">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-50">What Our Community Says</h2>
+          <p className="mt-4 text-xl text-primary-200">
             Real stories from students and mentors who've experienced the power of project-based learning.
           </p>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../common/Button';
+import { Link } from 'react-router-dom';
 
 const CallToAction: React.FC = () => {
   return (
@@ -12,22 +13,25 @@ const CallToAction: React.FC = () => {
           </p>
           
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              variant="accent"
-              className="shadow-lg hover:shadow-xl transition-shadow px-8"
-            >
-              Apply as Student
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 shadow-lg hover:shadow-xl transition-shadow px-8"
-            >
-              Join as Founder
-            </Button>
+            <Link to="/sign-up" className="from-custom-orange">
+              <Button 
+                size="lg" 
+                variant="accent"
+                className="shadow-lg hover:shadow-xl transition-shadow px-8"
+              >
+                Apply as Student
+              </Button>
+            </Link>
+            <Link to="/sign-up">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 shadow-lg hover:shadow-xl transition-shadow px-8"
+              >
+                Join as Founder
+              </Button>
+            </Link>
           </div>
-          
           <p className="mt-6 text-primary-200">
             No long-term commitment. Start with a single project and grow from there.
           </p>

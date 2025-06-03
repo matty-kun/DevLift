@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
+        <nav className="hidden md:flex space-between space-x-1">
           <Link to="/projects" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
             Browse Projects
           </Link>

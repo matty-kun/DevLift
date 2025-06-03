@@ -57,16 +57,16 @@ const FeaturedProjects: React.FC = () => {
         <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
                 <div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-custom-cyan">Featured Projects</h2>
-                    <p className="mt-3 text-xl text-custom-orange max-w-2xl">
+                    <h2 className="text-3xl md:text-4xl font-bold text-neutral-50">Featured Projects</h2>
+                    <p className="mt-3 text-xl text-neutral-400 max-w-2xl">
                         Real-world projects posted by industry professionals looking for talented students.
                     </p>
                 </div>
                 <Link to="/projects">
-                  <Button 
+                  <Button
                       variant="outline"
                       rightIcon={<ArrowRight className="h-4 w-4"/>}
-                      className="mt-4 md:mt-0"
+                      className="mt-4 md:mt-0 hover:border-custom-cyan/70 hover:text-custom-cyan"
                   >
                       View All Projects
                   </Button>

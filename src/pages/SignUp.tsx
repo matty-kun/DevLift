@@ -38,8 +38,8 @@ const SignUp: React.FC = () => {
             <div className="container mx-auto px-4">
                 <div className="max-w-md mx-auto">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-white">Join DevLift</h1>
-                        <p className="mt-2 text-custom-cyan">Create your account to get started</p>
+                        <h1 className="text-3xl font-bold text-white">Join <span className="text-custom-cyan">Dev</span><span className="text-custom-orange">Lift</span></h1>
+                        <p className="mt-2 text-white">Create your account to get started</p>
                     </div>
 
                     <Card>

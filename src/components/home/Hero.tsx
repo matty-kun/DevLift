@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
@@ -21,21 +22,26 @@ const Hero: React.FC = () => {
             Connect with innovative startup founders, work on real products, and gain invaluable experience while making a real impact in the startup ecosystem.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{animationDelay: '200ms'}}>
-            <Button 
-              size="lg" 
-              variant="primary"
-              className="border-2 border-custom-cyan"
-              rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-            >
-              Join as Student
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-2 button-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white"
-            >
-              I'm a Founder
-            </Button>
+            <Link to="/sign-up">
+              <Button 
+                size="lg" 
+                variant="primary"
+                className="border-2 border-custom-cyan"
+                rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
+              >
+                Join as Student
+              </Button>
+            </Link>
+
+            <Link to="/sign-up">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white"
+              >
+                I'm a Founder
+              </Button>
+            </Link>
           </div>
 
           <div className="mt-10 grid grid-cols-3 gap-x-6 animate-fade-in" style={{animationDelay: '300ms'}}>

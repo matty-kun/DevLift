@@ -84,7 +84,7 @@ const SignIn: React.FC = () => {
                           <span className="ml-2 text-sm text-white">Remember me</span>
                         </label>
                         <Link to="/forgot-password" className="text-sm text-custom-cyan hover:text-custom-purple">
-                          Forgot password?
+                        Forgot password?
                         </Link>
                       </div>
 

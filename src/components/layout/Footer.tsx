@@ -10,9 +10,9 @@ const Footer: React.FC = () => {
           {/* Logo and Description */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center">
-              <span className="text-custom-cyan text-2xl font-bold">DEV<span className="text-custom-orange">LIFT</span></span>
+              <span className="text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
             </Link>
-            <p className="mt-4 text-custom-cyan max-w-md">
+            <p className="mt-4 text-neutral-50 max-w-md">
               Connecting students with real-world startup projects and innovative founders to build skills, experience, and professional networks.
             </p>
             <div className="mt-6 flex space-x-4">
