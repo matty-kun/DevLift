@@ -6,22 +6,22 @@ const HowItWorks: React.FC = () => {
     {
       icon: <Rocket className="h-10 w-10 text-custom-orange" />,
       title: 'Match with Startups',
-      description: 'Get matched with innovative startups based on your skills, interests, and availability.',
+      description: 'Get matched with innovative startups based on your skills, interests, and availability as a student, or post opportunities as a founder.',
     },
     {
       icon: <Users className="h-10 w-10 text-custom-orange" />,
       title: 'Direct Collaboration',
-      description: 'Work directly with founders on specific features, improvements, or research tasks.',
+      description: 'Work directly with founders on specific features, or manage student contributions as a founder.',
     },
     {
       icon: <Code className="h-10 w-10 text-custom-orange" />,
       title: 'Build Real Products',
-      description: 'Contribute to actual products being used by real customers in the market.',
+      description: 'Contribute to actual products being used by real customers, providing value for both students and startups.',
     },
     {
       icon: <Award className="h-10 w-10 text-custom-orange" />,
       title: 'Grow Your Portfolio',
-      description: 'Gain verified startup experience and build a portfolio of real-world achievements.',
+      description: 'Gain verified startup experience to build your portfolio as a student, or discover talent to accelerate your projects as a founder.',
     },
   ];
 
@@ -31,7 +31,7 @@ const HowItWorks: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white">How It Works</h2>
           <p className="mt-4 text-xl text-neutral-400">
-            A simple process to connect students with real startup opportunities and hands-on experience.
+            A simple process to connect students with real startup opportunities and hands-on experience for all users.
           </p>
         </div>
 

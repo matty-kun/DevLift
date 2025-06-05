@@ -42,6 +42,7 @@ function App() {
             />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route 
               path="/profile" 
               element={
@@ -49,15 +50,7 @@ function App() {
                   <Profile />
                 </PrivateRoute>
               } 
-            />
-            <Route 
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }            
-            />
+            />           
           </Routes>
         </main>
         <Footer />
