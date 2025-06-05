@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Mail, Lock, User, Briefcase } from 'lucide-react';
+import { Mail, Lock, User, Briefcase, Globe, School } from 'lucide-react';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -11,6 +11,9 @@ interface SignUpFormData {
     email: string;
     password: string;
     confirmPassword: string;
+    school?: string;  // For students
+    companyName?: string;  // For founders
+    website?: string;  // For founders
 }
 
 const SignUp: React.FC = () => {
@@ -25,7 +28,8 @@ const SignUp: React.FC = () => {
     const onSubmit = async (data: SignUpFormData) => {
         try {
             setError(null);
-            await signUp(data.email, data.password, userType);
+            await signUp(data.email, data.password, userType);  // Reverted to original arguments
+            // Additional data (e.g., school, companyName, website) can be saved post-signup if needed
             navigate('/dashboard');
         } catch (err: any) {
             console.error('Sign up failed:', err);
@@ -88,6 +92,45 @@ const SignUp: React.FC = () => {
                                     })}
                                 />
                             </div>
+
+                            {userType === 'student' && (
+                                <div>
+                                    <Input
+                                        label="School Name"
+                                        type="text"
+                                        leftIcon={<School className="h-5 w-5" />}
+                                        error={errors.school?.message}
+                                        {...register('school', {
+                                            required: 'School name is required for students'
+                                        })}
+                                    />
+                                </div>
+                            )}
+
+                            {userType === 'founder' && (
+                                <>
+                                    <div>
+                                        <Input
+                                            label="Company Name"
+                                            type="text"
+                                            leftIcon={<Briefcase className="h-5 w-5" />}
+                                            error={errors.companyName?.message}
+                                            {...register('companyName', {
+                                                required: 'Company name is required for founders'
+                                            })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Input
+                                            label="Website (optional)"
+                                            type="url"
+                                            leftIcon={<Globe className="h-5 w-5" />}
+                                            error={errors.website?.message}
+                                            {...register('website')}
+                                        />
+                                    </div>
+                                </>
+                            )}
 
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-white">I am joining as</label>

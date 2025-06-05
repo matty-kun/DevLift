@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock } from 'lucide-react';
@@ -6,6 +6,7 @@ import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { useAuth } from '../contexts/AuthContext';
+import { testAuth } from '../lib/supabase';
 
 interface SignInFormData {
     email: string;
@@ -28,6 +29,10 @@ const SignIn: React.FC = () => {
             setError(err.message || 'Failed to sign in. Please check your credentials.');
         }
     };
+
+    useEffect(() => {
+        testAuth().then(result => console.log(result));
+    }, []);
 
     return (
         <div className="min-h-screen bg-black py-12">

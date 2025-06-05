@@ -9,11 +9,11 @@ const Dashboard: React.FC = () => {
     const { user, userType, loading } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!loading && !user) {
-            navigate('/sign-in');
-        }
-    }, [loading, user, navigate]);
+    // useEffect(() => {
+    //     if (!loading && !user) {
+    //         navigate('/sign-in');
+    //     }
+    // }, [loading, user, navigate]);
 
     if (loading) {
         return (
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
         );
     }
 
-    if (!user) return null;
+    // if (!user) return null;
 
     return (
         <div className="min-h-screen bg-black py-12">

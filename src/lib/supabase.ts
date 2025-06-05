@@ -9,3 +9,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+export async function testAuth() {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email: 'testing@example.com', password: 'testpassword' });
+    console.log('Auth Test Result:', { data, error });
+    return { data, error };
+  } catch (err) {
+    console.error('Auth Test Error:', err);
+    return { error: err };
+  }
+}

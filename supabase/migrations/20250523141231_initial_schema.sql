@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS project_skills (
     project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
     skill_id uuid REFERENCES skills(id) ON DELETE CASCADE,
     created_at timestamptz DEFAULT now(),
-    PRIMARY KEY (project_id, skills_id)
+    PRIMARY KEY (project_id, skill_id)
 );
 
 -- Create users_skills junction table
