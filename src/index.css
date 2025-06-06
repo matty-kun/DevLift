@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: black;  /* This ensures the dark background is still applied */
+}
+
 @layer base {
   html {
     @apply scroll-smooth;
@@ -101,3 +105,19 @@
     @apply badge bg-custom-orange text-white;
   }
 }
+
+/* Global scrollbar styles for the entire app */
+body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #19c3f7;  /* custom-cyan */
+  border-radius: 4px;
+}
+body::-webkit-scrollbar-track {
+  background-color: #000000;  /* black */
+}
+
+
+/* Add any other custom styles here if needed */

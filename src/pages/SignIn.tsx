@@ -5,7 +5,7 @@ import { Mail, Lock } from 'lucide-react';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 
 interface SignInFormData {
     email: string;
@@ -13,7 +13,7 @@ interface SignInFormData {
 }
 
 const SignIn: React.FC = () => {
-    const { signIn } = useAuth();
+    // const { signIn } = useAuth();
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignInFormData>();
     const [error, setError] = useState<string | null>(null);
@@ -21,11 +21,12 @@ const SignIn: React.FC = () => {
     const onSubmit = async (data: SignInFormData) => {
         try {
             setError(null);
-            await signIn(data.email, data.password);
-            navigate('/dashboard');
+            // Removed: await signIn(data.email, data.password);
+            // Placeholder for frontend-only: console.log('Sign-in functionality is currently disabled');
+            // Removed: navigate('/dashboard');
         } catch (err: any) {
-            console.error('Sign in failed:', err);
-            setError(err.message || 'Failed to sign in. Please check your credentials.');
+            // Removed backend error handling
+            console.log('Form submitted, but no action taken');
         }
     };
 

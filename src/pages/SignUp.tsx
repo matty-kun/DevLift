@@ -5,7 +5,6 @@ import { Mail, Lock, User, Briefcase, Globe, School } from 'lucide-react';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { useAuth, UserType } from '../contexts/AuthContext';
 
 interface SignUpFormData {
     email: string;
@@ -17,23 +16,17 @@ interface SignUpFormData {
 }
 
 const SignUp: React.FC = () => {
-    const { signUp } = useAuth();
     const navigate = useNavigate();
-    const [userType, setUserType] = useState<UserType>('student');
     const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
     const [error, setError] = useState<string | null>(null);
-
     const password = watch('password');
 
     const onSubmit = async (data: SignUpFormData) => {
         try {
             setError(null);
-            await signUp(data.email, data.password, userType);  // Reverted to original arguments
-            // Additional data (e.g., school, companyName, website) can be saved post-signup if needed
-            navigate('/dashboard');
+            console.log('Form submitted, but no action taken');
         } catch (err: any) {
-            console.error('Sign up failed:', err);
-            setError(err.message || 'Failed to sign up. Please try again.');
+            console.log('Form submitted, but no action taken');
         }
     };
 
@@ -93,56 +86,12 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
 
-                            {userType === 'student' && (
-                                <div>
-                                    <Input
-                                        label="School Name"
-                                        type="text"
-                                        leftIcon={<School className="h-5 w-5" />}
-                                        error={errors.school?.message}
-                                        {...register('school', {
-                                            required: 'School name is required for students'
-                                        })}
-                                    />
-                                </div>
-                            )}
-
-                            {userType === 'founder' && (
-                                <>
-                                    <div>
-                                        <Input
-                                            label="Company Name"
-                                            type="text"
-                                            leftIcon={<Briefcase className="h-5 w-5" />}
-                                            error={errors.companyName?.message}
-                                            {...register('companyName', {
-                                                required: 'Company name is required for founders'
-                                            })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Input
-                                            label="Website (optional)"
-                                            type="url"
-                                            leftIcon={<Globe className="h-5 w-5" />}
-                                            error={errors.website?.message}
-                                            {...register('website')}
-                                        />
-                                    </div>
-                                </>
-                            )}
-
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-white">I am joining as</label>
                                 <div className="grid grid-cols-2 gap-4">
                                     <button
                                         type="button"
-                                        onClick={() => setUserType('student')}
-                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all ${
-                                            userType === 'student'
-                                                ? 'border-custom-cyan bg-custom-cyan/10 text-white'
-                                                : 'border-gray-600 text-gray-400 hover:border-gray-400'
-                                        }`}
+                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all border-gray-600 text-gray-400 hover:border-gray-400`}
                                     >
                                         <div className="flex flex-col items-center">
                                             <User className="h-6 w-6 mb-2" />
@@ -151,12 +100,7 @@ const SignUp: React.FC = () => {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setUserType('founder')}
-                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all ${
-                                            userType === 'founder'
-                                                ? 'border-custom-orange bg-custom-orange/10 text-white'
-                                                : 'border-gray-600 text-gray-400 hover:border-gray-400'
-                                        }`}
+                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all border-gray-600 text-gray-400 hover:border-gray-400`}
                                     >
                                         <div className="flex flex-col items-center">
                                             <Briefcase className="h-6 w-6 mb-2" />
