@@ -28,6 +28,8 @@ We are currently implementing the core features and enhancing the user experienc
 - Successfully started the local Supabase environment, but encountered errors with authentication tests due to invalid login credentials.
 - Updated tsconfig.json and package.json to handle TypeScript issues, and added a testAuth function in src/lib/supabase.ts for in-app testing.
 - Paused backend testing to update the Memory Bank.
+- Attempted multiple tests for Supabase authentication, including creating and running test scripts, but faced persistent errors with TypeScript file extensions and invalid credentials.
+- Edited package.json and other files to resolve issues, and provided guidance on creating a test user in Supabase Studio.
 
 ## Active Decisions
 
@@ -79,6 +81,7 @@ For the MVP, we're focusing on external communication rather than building a mes
 4. **Data Modeling**: Finalizing the database schema for projects and applications
 5. **Authentication Edge Cases**: Handling account verification, password reset, etc.
 6. Authentication tests are failing with 'Invalid login credentials'; likely due to user creation or configuration issues.
+7. Ongoing TypeScript configuration errors in the terminal, such as 'Unknown file extension .ts', despite updates to tsconfig.json.
 
 ## Technical Considerations
 1. Using React Context API effectively for state management
@@ -88,4 +91,5 @@ For the MVP, we're focusing on external communication rather than building a mes
 5. Managing form state and validation with React Hook Form 
 
 ## Next Steps
-- Verify and recreate the test user in Supabase Studio, then retry authentication testing in the app. 
+- Verify and recreate the test user in Supabase Studio, then retry authentication testing in the app.
+- Integrate and test the testAuth function directly in the app to avoid terminal issues. 

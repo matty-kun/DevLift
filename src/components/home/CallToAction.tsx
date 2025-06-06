@@ -13,7 +13,7 @@ const CallToAction: React.FC = () => {
           </p>
           
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/sign-up" className="from-custom-orange">
+            <Link to="/sign-up">
               <Button 
                 size="lg" 
                 variant="accent"
