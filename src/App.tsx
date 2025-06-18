@@ -8,6 +8,7 @@ import ProjectDetails from './pages/ProjectDetails';
 // import Profile from './pages/Profile';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
+import Startups from './pages/Startups';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 // import Settings from './ pages/Settings';
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/startups" element={<Startups />} />
             {/* <Route 
               path="/projects" 
               element={
