@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Card from '../components/common/Card';
-import ProjectCard from '../components/projects/ProjectCard';
 import { Project } from '../types';
+import Avatar  from '../components/common/Avatar';
 
 // Define a Startup type (for now, reuse Project type for demo purposes)
 type Startup = Omit<Project, 'mentorId' | 'difficulty' | 'maxStudents' | 'assignedStudents' | 'applicants' | 'deadline'> & {
   founder: string;
   website: string;
   industry: string;
+  avatar?: string;
 };
 
 const sampleStartups: Startup[] = [
@@ -22,6 +23,7 @@ const sampleStartups: Startup[] = [
     duration: '12 months',
     status: 'open',
     createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
   },
   {
     id: 's2',
@@ -34,6 +36,7 @@ const sampleStartups: Startup[] = [
     duration: '6 months',
     status: 'open',
     createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
   },
   {
     id: 's3',
@@ -46,6 +49,46 @@ const sampleStartups: Startup[] = [
     duration: '9 months',
     status: 'open',
     createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
+  },
+  {
+    id: 's4',
+    title: 'GreenTech Solutions',
+    description: 'Developing IoT-powered solutions for sustainable agriculture and smart farming.',
+    founder: 'Lucas Green',
+    website: 'https://greentech.com',
+    industry: 'AgriTech',
+    skills: ['IoT', 'Python', 'Cloud'],
+    duration: '8 months',
+    status: 'open',
+    createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
+  },
+  {
+    id: 's5',
+    title: 'SafeNet',
+    description: 'Cybersecurity platform protecting small businesses from online threats.',
+    founder: 'Maya Lin',
+    website: 'https://safenet.io',
+    industry: 'Cybersecurity',
+    skills: ['Security', 'Node.js', 'React'],
+    duration: '10 months',
+    status: 'open',
+    createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
+  },
+  {
+    id: 's6',
+    title: 'TravelNest',
+    description: 'Personalized travel planning using AI and real-time data.',
+    founder: 'Carlos Rivera',
+    website: 'https://travelnest.ai',
+    industry: 'TravelTech',
+    skills: ['AI', 'Data Science', 'UX'],
+    duration: '7 months',
+    status: 'open',
+    createdAt: new Date(),
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
   },
 ];
 
@@ -61,8 +104,13 @@ const Startups: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {startups.map((startup) => (
-            <Card key={startup.id} className="h-full">
-              <h3 className="text-xl font-semibold text-neutral-50 mb-2">{startup.title}</h3>
+            <Card key={startup.id} className="h-full text-white">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-semibold text-neutral-50">{startup.title}</h3>
+                {startup.avatar && (
+                    <Avatar src={startup.avatar} alt={startup.title} size="xl" />
+                )}
+              </div>
               <p className="text-neutral-400 mb-2">{startup.description}</p>
               <div className="mb-2">
                 <span className="text-custom-cyan font-medium">Founder:</span> {startup.founder}
@@ -71,7 +119,7 @@ const Startups: React.FC = () => {
                 <span className="text-custom-orange font-medium">Industry:</span> {startup.industry}
               </div>
               <div className="mb-2">
-                <span className="text-custom-purple font-medium">Website:</span> <a href={startup.website} target="_blank" rel="noopener noreferrer" className="underline text-custom-cyan hover:text-custom-purple">{startup.website}</a>
+                <span className="text-custom-purple font-medium">Website:</span> <a href={startup.website} target="_blank" rel="noopener noreferrer" className=" text-custom-cyan hover:text-custom-purple">{startup.website}</a>
               </div>
               <div className="flex flex-wrap gap-2 mb-2">
                 {startup.skills.map((skill, idx) => (
