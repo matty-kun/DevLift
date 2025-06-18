@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Card from '../components/common/Card';
 import { Project } from '../types';
 import Avatar  from '../components/common/Avatar';
+import { useParams, Link } from 'react-router-dom';
 
 // Define a Startup type (for now, reuse Project type for demo purposes)
 type Startup = Omit<Project, 'mentorId' | 'difficulty' | 'maxStudents' | 'assignedStudents' | 'applicants' | 'deadline'> & {
@@ -23,7 +24,7 @@ const sampleStartups: Startup[] = [
     duration: '12 months',
     status: 'open',
     createdAt: new Date(),
-    avatar: 'https://via.placeholder.com/64x64.png?text=Logo'
+    avatar: 'https://via.placeholder.com/64x64.png?text=Logo',
   },
   {
     id: 's2',
@@ -104,30 +105,32 @@ const Startups: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {startups.map((startup) => (
-            <Card key={startup.id} className="h-full text-white">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold text-neutral-50">{startup.title}</h3>
-                {startup.avatar && (
-                    <Avatar src={startup.avatar} alt={startup.title} size="xl" />
-                )}
-              </div>
-              <p className="text-neutral-400 mb-2">{startup.description}</p>
-              <div className="mb-2">
-                <span className="text-custom-cyan font-medium">Founder:</span> {startup.founder}
-              </div>
-              <div className="mb-2">
-                <span className="text-custom-orange font-medium">Industry:</span> {startup.industry}
-              </div>
-              <div className="mb-2">
-                <span className="text-custom-purple font-medium">Website:</span> <a href={startup.website} target="_blank" rel="noopener noreferrer" className=" text-custom-cyan hover:text-custom-purple">{startup.website}</a>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {startup.skills.map((skill, idx) => (
-                  <span key={idx} className="bg-custom-cyan/10 text-custom-cyan px-2 py-1 rounded text-xs font-medium">{skill}</span>
-                ))}
-              </div>
-              <div className="text-neutral-300 text-sm">Duration: {startup.duration}</div>
-            </Card>
+            <Link to={`/startups/${startup.id}`} key={startup.id} className="hover:scale-105 transition-all duration-300">
+                <Card key={startup.id} className="h-full text-white">
+                <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xl font-semibold text-neutral-50">{startup.title}</h3>
+                    {startup.avatar && (
+                        <Avatar src={startup.avatar} alt={startup.title} size="xl" />
+                    )}
+                </div>
+                <p className="text-neutral-400 mb-2">{startup.description}</p>
+                <div className="mb-2">
+                    <span className="text-custom-cyan font-medium">Founder:</span> {startup.founder}
+                </div>
+                <div className="mb-2">
+                    <span className="text-custom-orange font-medium">Industry:</span> {startup.industry}
+                </div>
+                <div className="mb-2">
+                    <span className="text-custom-purple font-medium">Website:</span> <a href={startup.website} target="_blank" rel="noopener noreferrer" className=" text-custom-cyan hover:text-custom-purple">{startup.website}</a>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {startup.skills.map((skill, idx) => (
+                    <span key={idx} className="bg-custom-cyan/10 text-custom-cyan px-2 py-1 rounded text-xs font-medium">{skill}</span>
+                    ))}
+                </div>
+                <div className="text-neutral-300 text-sm">Duration: {startup.duration}</div>
+                </Card>
+            </Link>
           ))}
         </div>
       </div>
