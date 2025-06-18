@@ -10,6 +10,8 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Startups from './pages/Startups';
 import StartupDetails from './pages/StartupDetails';
+import Resources from './pages/Resources';
+import About from './pages/About';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 // import Settings from './ pages/Settings';
@@ -23,10 +25,14 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/startups" element={<Startups />} />
             <Route path="/startups/:id" element={<StartupDetails />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/about" element={<About />} />
             {/* <Route 
               path="/projects" 
               element={
@@ -43,8 +49,7 @@ function App() {
                 </PrivateRoute>
               } 
             /> */}
-            <Route path="/sign-in" element={<SignIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
+
             {/* <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} /> */}
             {/* <Route 
