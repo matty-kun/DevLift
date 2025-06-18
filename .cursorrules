@@ -1,0 +1,69 @@
+# DevLift Project Intelligence
+
+## Color System
+- **Black**: Main background color for all pages and components (`bg-black`)
+- **Custom Cyan** (`#19c3f7`): Primary accent color for interactive elements, highlights, and important text
+- **Custom Purple** (`#7b2ff2`): Secondary accent color for gradients and special elements
+- **Custom Orange** (`#f74a19`): Tertiary accent color for calls-to-action and alerts
+- **White**: For main text content against the dark background
+
+## Enhanced UI Guidelines
+- Use subtle transitions between states (hover, active, focus) with a duration of 200-300ms
+- Apply consistent spacing using Tailwind's spacing system
+- Implement subtle animations for interactive elements (buttons, cards)
+- Ensure high contrast between text and backgrounds (minimum 4.5:1 ratio)
+- Use gradients sparingly and purposefully for visual hierarchy
+- Add subtle shadows to elevate important elements (cards, modals)
+
+## Component Patterns
+- All components use functional component syntax with TypeScript interfaces for props
+- Common components are in `src/components/common/`
+- Layout components are in `src/components/layout/`
+- Page-specific components are organized by feature area
+
+## File Naming and Structure
+- Component files use PascalCase (e.g., `Button.tsx`)
+- Utility files use camelCase (e.g., `formatDate.ts`)
+- Each component has its own file
+- Related components may be grouped in feature-specific folders
+
+## Form Handling
+- Forms use React Hook Form for state management and validation
+- Validation rules are defined inline with the `register` function
+- Form submission is handled by the `handleSubmit` function
+- All forms should have proper error handling and loading states
+
+## Styling Conventions
+- Use Tailwind utility classes directly in components
+- Avoid custom CSS files when possible
+- For complex components, use composition of smaller components
+- Follow mobile-first responsive design approach
+
+## State Management
+- Use React Context API for global state
+- Keep context providers focused on specific domains (auth, projects, etc.)
+- Use local component state for UI-specific state
+- Prefer custom hooks for reusable stateful logic
+
+## Code Style Preferences
+- Use explicit return types for functions
+- Prefer destructuring for props and state
+- Use optional chaining and nullish coalescing for safer access
+- Include JSDoc comments for complex functions
+
+## Project-Specific Patterns
+- Authentication uses JWT stored in localStorage
+- Protected routes are wrapped in auth check components
+- User types (student/founder) determine available features and interfaces
+- Project cards follow a consistent design pattern
+- Form validation messages should be consistent across the app
+- All user-facing text should have high contrast against the black background
+- External communication links instead of built-in messaging (for initial phase)
+- User type selection during signup process
+
+## User Preferences
+- Dark mode is the only theme (no light mode toggle needed)
+- Focus on mobile-friendly UI as many users will browse projects on mobile
+- Keep forms simple and easy to complete
+- Provide clear visual feedback for all user actions
+- Emphasize project visuals and clear skill requirements 
