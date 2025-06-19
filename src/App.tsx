@@ -10,8 +10,12 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Startups from './pages/Startups';
 import StartupDetails from './pages/StartupDetails';
+<<<<<<< HEAD
 import Resources from './pages/Resources';
 import About from './pages/About';
+=======
+import FounderDashboard from './pages/FounderDashboard';
+>>>>>>> origin/dashboard-pages
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 // import Settings from './ pages/Settings';
@@ -31,8 +35,12 @@ function App() {
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/startups" element={<Startups />} />
             <Route path="/startups/:id" element={<StartupDetails />} />
+<<<<<<< HEAD
             <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
+=======
+            <Route path="/founder-dashboard" element={<FounderDashboard />} />
+>>>>>>> origin/dashboard-pages
             {/* <Route 
               path="/projects" 
               element={
