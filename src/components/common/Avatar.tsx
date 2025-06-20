@@ -3,7 +3,7 @@ import React from "react";
 interface AvatarProps {
     src?: string;
     alt?: string;
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
     status?: 'online' | 'offline' | 'away' | 'busy';
     className?: string;
 }
@@ -21,6 +21,7 @@ const Avatar: React.FC<AvatarProps> = ({
         md: 'w-10 h-10',
         lg: 'w-12 h-12',
         xl: 'w-16 h-16',
+        xxl: 'w-20 h-20',
     };
 
     const statusColors = {
@@ -36,6 +37,7 @@ const Avatar: React.FC<AvatarProps> = ({
         md: 'h-2.5 w-2.5',
         lg: 'h-3 w-3',
         xl: 'h-4 w-4',
+        xxl: 'h-5 w-5',
     };
 
     const getInitials = () => {
