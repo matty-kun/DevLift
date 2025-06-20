@@ -13,6 +13,7 @@ import StartupDetails from './pages/StartupDetails';
 import Resources from './pages/Resources';
 import About from './pages/About';
 import FounderDashboard from './pages/FounderDashboard';
+import StudentDashboard from './pages/StudentDashboard';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 // import Settings from './ pages/Settings';
@@ -36,7 +37,11 @@ function App() {
             <Route path="/about" element={<About />} />
 
             <Route path="/founder-dashboard" element={<FounderDashboard />} />
+<<<<<<< HEAD
 
+=======
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
+>>>>>>> dashboard-pages
             {/* <Route 
               path="/projects" 
               element={
