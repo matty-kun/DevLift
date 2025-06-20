@@ -11,6 +11,7 @@ import SignIn from './pages/SignIn';
 import Startups from './pages/Startups';
 import StartupDetails from './pages/StartupDetails';
 import FounderDashboard from './pages/FounderDashboard';
+import StudentDashboard from './pages/StudentDashboard';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 // import Settings from './ pages/Settings';
@@ -29,6 +30,7 @@ function App() {
             <Route path="/startups" element={<Startups />} />
             <Route path="/startups/:id" element={<StartupDetails />} />
             <Route path="/founder-dashboard" element={<FounderDashboard />} />
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
             {/* <Route 
               path="/projects" 
               element={

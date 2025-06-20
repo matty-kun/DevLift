@@ -1,7 +1,6 @@
 import React from 'react';
 import { Bell, User, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
@@ -78,7 +77,6 @@ const resources = [
 const StudentDashboard: React.FC = () => {
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <Navbar />
       <main className="flex-1 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
