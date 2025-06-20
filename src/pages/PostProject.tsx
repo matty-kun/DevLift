@@ -26,7 +26,6 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <Navbar />
       <main className="flex-1 px-4 py-8">
         <div className="max-w-xl mx-auto">
           <Card className="bg-neutral-900 border border-custom-cyan text-white">
