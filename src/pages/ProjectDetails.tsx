@@ -5,8 +5,8 @@ import Badge from '../components/common/Badge';
 import Avatar from '../components/common/Avatar';
 import { Project } from '../types';
 
-// Sample data with founderName and startupLogo for demo
-const sampleProjects: (Project & { founderName: string; startupLogo?: string })[] = [
+// Sample data with founderName, startupLogo, and bannerUrl for demo
+const sampleProjects: (Project & { founderName: string; startupLogo?: string; bannerUrl?: string })[] = [
   {
     id: '1',
     title: 'E-Commerce Mobile App Development',
@@ -14,6 +14,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor1',
     founderName: 'Alice Johnson',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
     skills: ['React Native', 'JavaScript', 'Firebase', 'Redux'],
     duration: '8 weeks',
     status: 'open',
@@ -30,6 +31,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor2',
     founderName: 'Priya Patel',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
     skills: ['React', 'D3.js', 'TypeScript', 'Tailwind CSS'],
     duration: '6 weeks',
     status: 'open',
@@ -46,6 +48,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor3',
     founderName: 'Mark Lee',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
     skills: ['Python', 'NLP', 'Machine Learning', 'API Integration'],
     duration: '10 weeks',
     status: 'in-progress',
@@ -62,6 +65,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor4',
     founderName: 'Lucas Green',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
     skills: ['React', 'Python', 'Data Analysis', 'Machine Learning'],
     duration: '12 weeks',
     status: 'open',
@@ -78,6 +82,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor5',
     founderName: 'Satoshi Nakamoto',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
     skills: ['Web3.js', 'Solidity', 'React', 'TypeScript'],
     duration: '8 weeks',
     status: 'open',
@@ -94,6 +99,7 @@ const sampleProjects: (Project & { founderName: string; startupLogo?: string })[
     mentorId: 'mentor6',
     founderName: 'Jane Doe',
     startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
+    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
     skills: ['Unity', 'C#', 'Game Design', 'UI/UX'],
     duration: '10 weeks',
     status: 'open',
@@ -122,6 +128,17 @@ const ProjectDetails: React.FC = () => {
       <div className="container mx-auto px-4 max-w-2xl">
         <Link to="/projects" className="text-custom-cyan hover:text-custom-purple mb-4 inline-block">&larr; Back to Projects</Link>
         <Card className="mb-8 text-white">
+          {/* Banner at the top of the card */}
+          {project.bannerUrl && (
+            <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
+              <img
+                src={project.bannerUrl}
+                alt="Project Banner"
+                className="w-full h-40 object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            </div>
+          )}
           <div className="flex items-center gap-4 mb-4">
             <Avatar size="xxl" src={project.startupLogo || 'https://via.placeholder.com/64x64.png?text=Logo'} alt="Startup Logo" />
             <div>
