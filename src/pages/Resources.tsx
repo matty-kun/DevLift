@@ -77,7 +77,10 @@ const Resources: React.FC = () => (
             <h2 className="text-2xl font-semibold text-custom-orange mb-4">{section.category}</h2>
             <div className="space-y-4">
               {section.items.map((item) => (
-                <Card key={item.name} className="bg-black border border-custom-cyan text-white hover:shadow-lg transition-shadow hover:-translate-y-2 transition-transform duration-200">
+                <Card
+                  key={item.name}
+                  className="bg-black border border-custom-cyan text-white hover:shadow-lg hover:-translate-y-2 transition-all duration-200"
+                >
                   <a
                     href={item.url}
                     target="_blank"
