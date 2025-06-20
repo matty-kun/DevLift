@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown } from 'lucide-react';
+import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, ChevronDown, ChevronUp } from 'lucide-react';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -18,6 +18,8 @@ const Projects: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showFilters, setShowFilters] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(true);
   const projectsPerPage = 6;
 
   // Sample project data (will be replaced with Supabase data)
@@ -193,149 +195,166 @@ const Projects: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <Card className="lg:col-span-1 h-fit">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center">
-                    <Filter className="h-5 w-5 mr-2 text-custom-cyan" />
-                    Filters
-                  </h3>
-                  <Input 
-                    placeholder="Search projects..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    leftIcon={<Search className="h-5 w-5 text-custom-cyan" />}
-                  />
-                </div>
-
-                {/* Sort Options */}
-                <div>
-                  <h4 className="font-medium mb-2 flex items-center">
-                    <ArrowUpDown className="h-4 w-4 mr-2 text-custom-cyan" />
-                    Sort By
-                  </h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input 
-                        type="radio" 
-                        name="sort" 
-                        value="newest"
-                        checked={sortBy === 'newest'}
-                        onChange={() => setSortBy('newest')}
-                        className="form-radio text-custom-cyan focus:ring-custom-cyan"
-                      />
-                      <span className="ml-2 text-neutral-50">Newest First</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input 
-                        type="radio" 
-                        name="sort" 
-                        value="oldest"
-                        checked={sortBy === 'oldest'}
-                        onChange={() => setSortBy('oldest')}
-                        className="form-radio text-custom-cyan focus:ring-custom-cyan"
-                      />
-                      <span className="ml-2 text-neutral-50">Oldest First</span>
-                    </label>
+            {/* Toggle button for filters (mobile/tablet only) */}
+            <button
+              className="flex items-center gap-2 mb-4 lg:hidden text-custom-cyan font-semibold focus:outline-none"
+              onClick={() => setFiltersOpen((open) => !open)}
+              aria-expanded={filtersOpen}
+              aria-controls="filters-panel"
+            >
+              <Filter className="h-5 w-5" />
+              Filters
+              {filtersOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            </button>
+            {/* Collapsible filter sidebar */}
+            <div
+              id="filters-panel"
+              className={`lg:col-span-1 h-fit transition-all duration-300 overflow-hidden ${filtersOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'} lg:max-h-full lg:opacity-100 lg:pointer-events-auto`}
+            >
+              <Card className="h-fit">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 flex items-center">
+                      <Filter className="h-5 w-5 mr-2 text-custom-cyan" />
+                      Filters
+                    </h3>
+                    <Input 
+                      placeholder="Search projects..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      leftIcon={<Search className="h-5 w-5 text-custom-cyan" />}
+                    />
                   </div>
-                </div>
 
-                {/* Skills Filter */}
-                <div>
-                  <h4 className="font-medium mb-2 flex items-center">
-                    <Code className="h-4 w-4 mr-2 text-custom-cyan" />
-                    Skills
-                  </h4>
-                  <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
-                    {skills.map((skill) => (
-                      <label key={skill} className="flex items-center">
+                  {/* Sort Options */}
+                  <div>
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <ArrowUpDown className="h-4 w-4 mr-2 text-custom-cyan" />
+                      Sort By
+                    </h4>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
                         <input 
-                          type="checkbox" 
-                          className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan" 
-                          checked={selectedSkills.includes(skill)} 
-                          onChange={((e) => {
-                            if (e.target.checked) {
-                              setSelectedSkills([...selectedSkills, skill]);
-                            } else {
-                              setSelectedSkills(selectedSkills.filter(s => s !== skill));
-                            }
-                          })} 
+                          type="radio" 
+                          name="sort" 
+                          value="newest"
+                          checked={sortBy === 'newest'}
+                          onChange={() => setSortBy('newest')}
+                          className="form-radio text-custom-cyan focus:ring-custom-cyan"
                         />
-                        <span className="ml-2 text-neutral-50">{skill}</span>
+                        <span className="ml-2 text-neutral-50">Newest First</span>
                       </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Difficulty Filter */}
-                <div>
-                  <h4 className="font-medium mb-2 flex items-center">
-                    <Briefcase className="h-4 w-4 mr-2 text-custom-cyan"/>
-                    Difficulty
-                  </h4>
-                  <div className="space-y-2">
-                    {difficulties.map((difficulty) => (
-                      <label key={difficulty} className="flex items-center">
+                      <label className="flex items-center">
                         <input 
-                          type="checkbox"
-                          className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
-                          checked={selectedDifficulty.includes(difficulty)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedDifficulty([...selectedDifficulty, difficulty]);
-                            } else {
-                              setSelectedDifficulty(selectedDifficulty.filter(d => d !== difficulty));
-                            }
-                          }}
+                          type="radio" 
+                          name="sort" 
+                          value="oldest"
+                          checked={sortBy === 'oldest'}
+                          onChange={() => setSortBy('oldest')}
+                          className="form-radio text-custom-cyan focus:ring-custom-cyan"
                         />
-                        <span className="ml-2 text-neutral-50 capitalize">{difficulty}</span>
+                        <span className="ml-2 text-neutral-50">Oldest First</span>
                       </label>
-                    ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Duration Filter */}
-                <div>
-                  <h4 className="font-medium mb-2 flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-custom-cyan" />
-                    Duration
-                  </h4>
-                  <div className="space-y-2">
-                    {durations.map((duration) => (
-                      <label key={duration} className="flex items-center">
-                        <input 
-                          type="checkbox" 
-                          className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
-                          checked={selectedDuration.includes(duration)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedDuration([...selectedDuration, duration]);
-                            } else {
-                              setSelectedDuration(selectedDuration.filter(d => d !== duration));
-                            }
-                          }}
-                        />
-                        <span className="ml-2 text-neutral-50">{duration}</span>
-                      </label>
-                    ))}
+                  {/* Skills Filter */}
+                  <div>
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <Code className="h-4 w-4 mr-2 text-custom-cyan" />
+                      Skills
+                    </h4>
+                    <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+                      {skills.map((skill) => (
+                        <label key={skill} className="flex items-center">
+                          <input 
+                            type="checkbox" 
+                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan" 
+                            checked={selectedSkills.includes(skill)} 
+                            onChange={((e) => {
+                              if (e.target.checked) {
+                                setSelectedSkills([...selectedSkills, skill]);
+                              } else {
+                                setSelectedSkills(selectedSkills.filter(s => s !== skill));
+                              }
+                            })} 
+                          />
+                          <span className="ml-2 text-neutral-50">{skill}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <Button 
-                  variant="outline"
-                  className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-white transition-colors duration-200"
-                  onClick={() => {
-                    setSelectedSkills([]);
-                    setSelectedDifficulty([]);
-                    setSelectedDuration([]);
-                    setSearchQuery('');
-                    setSortBy('newest');
-                  }}
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            </Card>
+                  {/* Difficulty Filter */}
+                  <div>
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <Briefcase className="h-4 w-4 mr-2 text-custom-cyan"/>
+                      Difficulty
+                    </h4>
+                    <div className="space-y-2">
+                      {difficulties.map((difficulty) => (
+                        <label key={difficulty} className="flex items-center">
+                          <input 
+                            type="checkbox"
+                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
+                            checked={selectedDifficulty.includes(difficulty)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedDifficulty([...selectedDifficulty, difficulty]);
+                              } else {
+                                setSelectedDifficulty(selectedDifficulty.filter(d => d !== difficulty));
+                              }
+                            }}
+                          />
+                          <span className="ml-2 text-neutral-50 capitalize">{difficulty}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Duration Filter */}
+                  <div>
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <Clock className="h-4 w-4 mr-2 text-custom-cyan" />
+                      Duration
+                    </h4>
+                    <div className="space-y-2">
+                      {durations.map((duration) => (
+                        <label key={duration} className="flex items-center">
+                          <input 
+                            type="checkbox" 
+                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
+                            checked={selectedDuration.includes(duration)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedDuration([...selectedDuration, duration]);
+                              } else {
+                                setSelectedDuration(selectedDuration.filter(d => d !== duration));
+                              }
+                            }}
+                          />
+                          <span className="ml-2 text-neutral-50">{duration}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button 
+                    variant="outline"
+                    className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-white transition-colors duration-200"
+                    onClick={() => {
+                      setSelectedSkills([]);
+                      setSelectedDifficulty([]);
+                      setSelectedDuration([]);
+                      setSearchQuery('');
+                      setSortBy('newest');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </Card>
+            </div>
             
             <div className="lg:col-span-3">
               <div className="flex items-center justify-between mb-6">
