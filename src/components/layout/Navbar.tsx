@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Button from '../common/Button';
+import sign from '../../assets/DevLift Sign.svg';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,7 +18,8 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <div className="flex justify-start">
           <Link to="/" className="flex items-center">
-            <span className="text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
+            <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
+            <span className="text-custom-cyan text-2xl font-bold hidden sm:inline">Dev<span className="text-custom-orange">Lift</span></span>
           </Link>
         </div>
 
