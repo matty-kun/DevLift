@@ -17,16 +17,16 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-black/90 backdrop-blur-md border-b border-black">
-      <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-center md:justify-between space-y-4 md:space-y-0 md:space-x-4">
+      <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center space-y-4 md:space-y-0">
         {/* Logo */}
-        <div className="flex justify-start">
+        <div className="flex-1 flex justify-start">
           <Link to="/" className="flex items-center">
             <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
             <span className="text-custom-cyan text-2xl font-bold hidden sm:inline">Dev<span className="text-custom-orange">Lift</span></span>
           </Link>
         </div>
 
-        <nav className="flex justify-center flex-grow md:flex-none">
+        <nav className="flex-1 flex justify-center">
           <Link to="/projects" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
             Projects
           </Link>
@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
         </nav>
 
         {/* Right Side Menu - Show Dashboard links on /projects, otherwise Get Started */}
-        <div className="hidden md:flex justify-end items-center space-x-4 relative">
+        <div className="flex-1 hidden md:flex justify-end items-center space-x-4 relative">
           {location.pathname === '/projects' ? (
             <>
               <Link to="/student-dashboard">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const About: React.FC = () => (
   <div className="min-h-screen bg-black py-12">
@@ -35,7 +36,7 @@ const About: React.FC = () => (
           </li>
         </ul>
       </div>
-      <div className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-purple">
+      <div className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-purple mb-8">
         <h2 className="text-2xl font-semibold text-custom-cyan mb-4">Meet the Team</h2>
         <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
           <div className="flex flex-col items-center">
@@ -52,6 +53,23 @@ const About: React.FC = () => (
             <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="Community Lead" className="w-20 h-20 rounded-full object-cover border-2 border-custom-purple mb-2" />
             <span className="text-white font-bold">Kaye Camagos</span>
             <span className="text-custom-purple text-sm">Chief Business Officer</span>
+          </div>
+        </div>
+      </div>
+      <div className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-orange">
+        <h2 className="text-2xl font-semibold text-custom-purple mb-4">Contact Us</h2>
+        <div className="space-y-4 text-white">
+          <div className="flex items-center">
+            <Mail className="w-5 h-5 mr-3 text-custom-cyan" />
+            <a href="mailto:contact@devlift.com" className="hover:text-custom-cyan transition-colors">contact@devlift.com</a>
+          </div>
+          <div className="flex items-center">
+            <Phone className="w-5 h-5 mr-3 text-custom-orange" />
+            <span>+1 (555) 123-4567</span>
+          </div>
+          <div className="flex items-center">
+            <MapPin className="w-5 h-5 mr-3 text-custom-purple" />
+            <span>123 Innovation Drive, Tech City, 12345</span>
           </div>
         </div>
       </div>
