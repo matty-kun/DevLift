@@ -12,6 +12,7 @@ import Startups from './pages/Startups';
 import StartupDetails from './pages/StartupDetails';
 import Resources from './pages/Resources';
 import About from './pages/About';
+import CommunityPage from './pages/Community';
 import FounderDashboard from './pages/FounderDashboard';
 import PostProject from './pages/PostProject';
 import StudentDashboard from './pages/StudentDashboard';
@@ -36,6 +37,7 @@ function App() {
             <Route path="/startups/:id" element={<StartupDetails />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
+            <Route path="/community" element={<CommunityPage />} />
 
             <Route path="/founder-dashboard" element={<FounderDashboard />} />
             <Route path="/post-project" element={<PostProject />} />
