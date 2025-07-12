@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import Card from '../components/common/Card';
 import { Project } from '../types';
-import Avatar  from '../components/common/Avatar';
 import { Link } from 'react-router-dom';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-
+import sign from '../assets/DevLift Sign.svg';
 
 // Define a Startup type (for now, reuse Project type for demo purposes)
 type Startup = Omit<Project, 'mentorId' | 'difficulty' | 'maxStudents' | 'assignedStudents' | 'applicants' | 'deadline'> & {
@@ -27,7 +26,7 @@ const sampleStartups: Startup[] = [
         duration: '12 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/1D3557/FFFFFF/?text=FI',
+        avatar: sign,
       },
       {
         id: 's2',
@@ -40,7 +39,7 @@ const sampleStartups: Startup[] = [
         duration: '6 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/2A9D8F/FFFFFF/?text=HS',
+        avatar: sign,
       },
       {
         id: 's3',
@@ -53,7 +52,7 @@ const sampleStartups: Startup[] = [
         duration: '9 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/E76F51/FFFFFF/?text=EL',
+        avatar: sign,
       },
       {
         id: 's4',
@@ -66,7 +65,7 @@ const sampleStartups: Startup[] = [
         duration: '8 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/228B22/FFFFFF/?text=GS',
+        avatar: sign,
       },
       {
         id: 's5',
@@ -79,7 +78,7 @@ const sampleStartups: Startup[] = [
         duration: '10 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/FFB300/FFFFFF/?text=SN',
+        avatar: sign,
       },
       {
         id: 's6',
@@ -92,7 +91,7 @@ const sampleStartups: Startup[] = [
         duration: '7 months',
         status: 'open',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/7b2ff2/FFFFFF/?text=TN',
+        avatar: sign,
       },
 ];
 
@@ -154,11 +153,12 @@ const Startups: React.FC = () => {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <Avatar src={startup.avatar} alt={startup.title} size="xl" className="border-2 border-neutral-700 group-hover:border-custom-cyan transition-all duration-300" />
-                        <div>
-                            <h3 className="text-2xl font-bold text-neutral-50 group-hover:text-custom-cyan transition-colors duration-300">{startup.title}</h3>
-                            <p className="text-sm text-custom-purple font-medium">{startup.industry}</p>
-                        </div>
+                      {/* Use the logo as a seamless image, not as an Avatar with border or circle */}
+                      <img src={startup.avatar} alt={startup.title} className="h-16 w-16 object-contain bg-transparent p-0 m-0" />
+                      <div>
+                        <h3 className="text-2xl font-bold text-neutral-50 group-hover:text-custom-cyan transition-colors duration-300">{startup.title}</h3>
+                        <p className="text-sm text-custom-purple font-medium">{startup.industry}</p>
+                      </div>
                     </div>
                   </div>
                   <p className="text-neutral-300 mb-4 h-20 overflow-hidden">{startup.description}</p>
