@@ -1,10 +1,9 @@
 import React from 'react';
-import { Bell, User, BookOpen, ClipboardList, Star } from 'lucide-react';
+import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
-import Button from '../components/common/Button';
 import Avatar from '../components/common/Avatar';
 import ProjectCard from '../components/projects/ProjectCard';
 import { Project } from '../types';

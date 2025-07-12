@@ -63,6 +63,7 @@ export interface Project {
     applicants: string[];
     createdAt: Date;
     deadline?: Date;
+    imageUrl?: string;
 }
 
 export interface Application {
