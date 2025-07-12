@@ -153,7 +153,6 @@ const Startups: React.FC = () => {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                      {/* Use the logo as a seamless image, not as an Avatar with border or circle */}
                       <img src={startup.avatar} alt={startup.title} className="h-16 w-16 object-contain bg-transparent p-0 m-0" />
                       <div>
                         <h3 className="text-2xl font-bold text-neutral-50 group-hover:text-custom-cyan transition-colors duration-300">{startup.title}</h3>
