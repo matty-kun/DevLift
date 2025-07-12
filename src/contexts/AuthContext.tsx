@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { createContext, useState, useEffect } from 'react';
+=======
+import React, { useState, useEffect } from 'react';
+import { AuthContext } from '../hooks/useAuth';
+>>>>>>> project-details
 
 interface UserProfile {
     name?: string;
@@ -10,8 +15,11 @@ interface UserProfile {
     projects?: { title: string; status: string; role: string }[];  // Array of objects for projects
 }
 
+<<<<<<< HEAD
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+=======
+>>>>>>> project-details
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [loading] = useState(true);
     const [userProfile, setUserProfileState] = useState<UserProfile>(() => {

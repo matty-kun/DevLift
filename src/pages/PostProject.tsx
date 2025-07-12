@@ -1,5 +1,9 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
+<<<<<<< HEAD
+=======
+import Navbar from '../components/layout/Navbar';
+>>>>>>> project-details
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -13,11 +17,23 @@ interface PostProjectFormData {
   duration: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   maxStudents: number;
+<<<<<<< HEAD
   projectImage?: File | null;
 }
 
 const PostProject: React.FC = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, control } = useForm<PostProjectFormData>();
+=======
+  projectImage: File | null;
+}
+
+const PostProject: React.FC = () => {
+  const { control, register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<PostProjectFormData>({
+    defaultValues: {
+      projectImage: null,
+    },
+  });
+>>>>>>> project-details
 
   const onSubmit = async (data: PostProjectFormData) => {
     // For now, just log the data
@@ -28,6 +44,10 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
+<<<<<<< HEAD
+=======
+      <Navbar />
+>>>>>>> project-details
       <main className="flex-1 px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <Card className="bg-neutral-900 border border-custom-cyan shadow-lg shadow-custom-cyan/10">
@@ -36,6 +56,7 @@ const PostProject: React.FC = () => {
               <h1 className="text-4xl font-bold text-custom-cyan mt-4">Post a New Project</h1>
               <p className="text-neutral-400 mt-2">Fill in the details below to get your project in front of talented students.</p>
             </div>
+<<<<<<< HEAD
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Controller
                 name="projectImage"
@@ -44,6 +65,16 @@ const PostProject: React.FC = () => {
                   <ImageUpload
                     label="Project Image (optional)"
                     onFileChange={onChange}
+=======
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              <Controller
+                name="projectImage"
+                control={control}
+                render={({ field }) => (
+                  <ImageUpload
+                    label="Project Header Image"
+                    onFileChange={(file: File | null) => field.onChange(file)}
+>>>>>>> project-details
                   />
                 )}
               />

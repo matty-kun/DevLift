@@ -6,6 +6,100 @@ import Card from '../components/common/Card';
 import ProjectCard from '../components/projects/ProjectCard';
 import { Project } from '../types';
 
+// Sample project data (will be replaced with Supabase data)
+const sampleProjects: Project[] = [
+  {
+    id: '1',
+    title: 'E-Commerce Mobile App Development',
+    description: 'Build a fully functional e-commerce app using React Native with payment integration, product catalog, and user authentication.',
+    mentorId: 'mentor1',
+    skills: ['React Native', 'JavaScript', 'Firebase', 'Redux'],
+    duration: '8 weeks',
+    status: 'open',
+    difficulty: 'intermediate',
+    maxStudents: 3,
+    assignedStudents: [],
+    applicants: [],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/007bff/ffffff?text=E-Commerce',
+  },
+  {
+    id: '2',
+    title: 'Data Visualization Dashboard',
+    description: 'Design and develop an interactive dashboard to visualize complex datasets for a healthcare organization using modern web technologies.',
+    mentorId: 'mentor2',
+    skills: ['React', 'D3.js', 'TypeScript', 'Tailwind CSS'],
+    duration: '6 weeks',
+    status: 'open',
+    difficulty: 'advanced',
+    maxStudents: 2,
+    assignedStudents: ['student1'],
+    applicants: ['student1', 'student2', 'student3'],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/28a745/ffffff?text=Dashboard',
+  },
+  {
+    id: '3',
+    title: 'AI Chatbot Integration',
+    description: 'Implement a conversational AI chatbot into an existing platform to improve customer service and automate repetitive tasks.',
+    mentorId: 'mentor3',
+    skills: ['Python', 'NLP', 'Machine Learning', 'API Integration'],
+    duration: '10 weeks',
+    status: 'in-progress',
+    difficulty: 'advanced',
+    maxStudents: 4,
+    assignedStudents: ['student4', 'student5'],
+    applicants: ['student4', 'student5', 'student6', 'student7'],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/ffc107/000000?text=AI+Chatbot',
+  },
+  {
+    id: '4',
+    title: 'Social Media Analytics Tool',
+    description: 'Create a web application that analyzes social media data and provides insights using data visualization and machine learning.',
+    mentorId: 'mentor4',
+    skills: ['React', 'Python', 'Data Analysis', 'Machine Learning'],
+    duration: '12 weeks',
+    status: 'open',
+    difficulty: 'intermediate',
+    maxStudents: 3,
+    assignedStudents: [],
+    applicants: [],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/dc3545/ffffff?text=Social+Media',
+  },
+  {
+    id: '5',
+    title: 'Blockchain Wallet Integration',
+    description: 'Integrate cryptocurrency wallet functionality into an existing web application using Web3 technologies.',
+    mentorId: 'mentor5',
+    skills: ['Web3.js', 'Solidity', 'React', 'TypeScript'],
+    duration: '8 weeks',
+    status: 'open',
+    difficulty: 'advanced',
+    maxStudents: 2,
+    assignedStudents: [],
+    applicants: [],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/6f42c1/ffffff?text=Blockchain',
+  },
+  {
+    id: '6',
+    title: 'Mobile Game Development',
+    description: 'Build a casual mobile game using Unity and implement core gameplay mechanics, UI, and monetization features.',
+    mentorId: 'mentor6',
+    skills: ['Unity', 'C#', 'Game Design', 'UI/UX'],
+    duration: '10 weeks',
+    status: 'open',
+    difficulty: 'intermediate',
+    maxStudents: 4,
+    assignedStudents: [],
+    applicants: [],
+    createdAt: new Date(),
+    imageUrl: 'https://via.placeholder.com/400x200/20c997/ffffff?text=Mobile+Game',
+  },
+];
+
 const Projects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -17,7 +111,11 @@ const Projects: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+<<<<<<< HEAD
   const [filtersOpen, setFiltersOpen] = useState(true);
+=======
+  const [filtersOpen, setFiltersOpen] = useState(true); // State for filter sidebar visibility
+>>>>>>> project-details
   const projectsPerPage = 6;
 
   // Fetch projects from Supabase
@@ -181,19 +279,23 @@ const Projects: React.FC = () => {
           }
         `}
       </style>
-      <div className="min-w-screen bg-black py-12">
+      <div className="min-h-screen bg-black py-12">
         <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-neutral-50 mb-4">Browse Projects</h1>
-            <p className="text-xl text-neutral-50">
-              Find real-world projects to work on and gain valuable experience.
+          <div className="mb-10 text-center">
+            <h1 className="text-5xl font-extrabold text-white mb-4 leading-tight">Discover Impactful <span className="text-custom-cyan">Projects</span></h1>
+            <p className="text-xl text-neutral-300 max-w-2xl mx-auto">
+              Find real-world projects to work on, gain valuable experience, and collaborate with innovative startups.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Toggle button for filters (mobile/tablet only) */}
             <button
+<<<<<<< HEAD
               className="flex items-center gap-2 mb-4 lg:hidden text-custom-cyan font-semibold focus:outline-none"
+=======
+              className="flex items-center justify-center gap-2 p-3 mb-4 lg:hidden bg-neutral-800 rounded-lg text-custom-cyan font-semibold focus:outline-none focus:ring-2 focus:ring-custom-cyan/50 transition-all duration-200"
+>>>>>>> project-details
               onClick={() => setFiltersOpen((open) => !open)}
               aria-expanded={filtersOpen}
               aria-controls="filters-panel"
@@ -207,22 +309,37 @@ const Projects: React.FC = () => {
               id="filters-panel"
               className={`lg:col-span-1 h-fit transition-all duration-300 overflow-hidden ${filtersOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'} lg:max-h-full lg:opacity-100 lg:pointer-events-auto`}
             >
+<<<<<<< HEAD
               <Card className="h-fit">
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold mb-4 flex items-center">
                       <Filter className="h-5 w-5 mr-2 text-custom-cyan" />
                       Filters
+=======
+              <Card className="h-fit bg-neutral-900 border border-neutral-800 shadow-lg">
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-xl font-bold mb-5 flex items-center text-white">
+                      <Filter className="h-6 w-6 mr-3 text-custom-cyan" />
+                      Project Filters
+>>>>>>> project-details
                     </h3>
                     <Input 
                       placeholder="Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+<<<<<<< HEAD
                       leftIcon={<Search className="h-5 w-5 text-custom-cyan" />}
+=======
+                      leftIcon={<Search className="h-5 w-5 text-neutral-400" />}
+                      className="bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-custom-cyan focus:ring-custom-cyan/30"
+>>>>>>> project-details
                     />
                   </div>
 
                   {/* Sort Options */}
+<<<<<<< HEAD
                   <div>
                     <h4 className="font-medium mb-2 flex items-center">
                       <ArrowUpDown className="h-4 w-4 mr-2 text-custom-cyan" />
@@ -230,31 +347,55 @@ const Projects: React.FC = () => {
                     </h4>
                     <div className="space-y-2">
                       <label className="flex items-center">
+=======
+                  <div className="pt-4 border-t border-neutral-800">
+                    <h4 className="font-semibold mb-4 flex items-center text-white">
+                      <ArrowUpDown className="h-5 w-5 mr-3 text-custom-cyan" />
+                      Sort By
+                    </h4>
+                    <div className="space-y-3">
+                      <label className="flex items-center cursor-pointer group">
+>>>>>>> project-details
                         <input 
                           type="radio" 
                           name="sort" 
                           value="newest"
                           checked={sortBy === 'newest'}
                           onChange={() => setSortBy('newest')}
+<<<<<<< HEAD
                           className="form-radio text-custom-cyan focus:ring-custom-cyan"
                         />
                         <span className="ml-2 text-neutral-50">Newest First</span>
                       </label>
                       <label className="flex items-center">
+=======
+                          className="form-radio h-4 w-4 text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
+                        />
+                        <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">Newest First</span>
+                      </label>
+                      <label className="flex items-center cursor-pointer group">
+>>>>>>> project-details
                         <input 
                           type="radio" 
                           name="sort" 
                           value="oldest"
                           checked={sortBy === 'oldest'}
                           onChange={() => setSortBy('oldest')}
+<<<<<<< HEAD
                           className="form-radio text-custom-cyan focus:ring-custom-cyan"
                         />
                         <span className="ml-2 text-neutral-50">Oldest First</span>
+=======
+                          className="form-radio h-4 w-4 text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
+                        />
+                        <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">Oldest First</span>
+>>>>>>> project-details
                       </label>
                     </div>
                   </div>
 
                   {/* Skills Filter */}
+<<<<<<< HEAD
                   <div>
                     <h4 className="font-medium mb-2 flex items-center">
                       <Code className="h-4 w-4 mr-2 text-custom-cyan" />
@@ -266,6 +407,19 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox" 
                             className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan" 
+=======
+                  <div className="pt-4 border-t border-neutral-800">
+                    <h4 className="font-semibold mb-4 flex items-center text-white">
+                      <Code className="h-5 w-5 mr-3 text-custom-cyan" />
+                      Skills
+                    </h4>
+                    <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                      {skills.map((skill) => (
+                        <label key={skill} className="flex items-center cursor-pointer group">
+                          <input 
+                            type="checkbox" 
+                            className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200" 
+>>>>>>> project-details
                             checked={selectedSkills.includes(skill)} 
                             onChange={((e) => {
                               if (e.target.checked) {
@@ -275,13 +429,18 @@ const Projects: React.FC = () => {
                               }
                             })} 
                           />
+<<<<<<< HEAD
                           <span className="ml-2 text-neutral-50">{skill}</span>
+=======
+                          <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">{skill}</span>
+>>>>>>> project-details
                         </label>
                       ))}
                     </div>
                   </div>
 
                   {/* Difficulty Filter */}
+<<<<<<< HEAD
                   <div>
                     <h4 className="font-medium mb-2 flex items-center">
                       <Briefcase className="h-4 w-4 mr-2 text-custom-cyan"/>
@@ -293,6 +452,19 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox"
                             className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
+=======
+                  <div className="pt-4 border-t border-neutral-800">
+                    <h4 className="font-semibold mb-4 flex items-center text-white">
+                      <Briefcase className="h-5 w-5 mr-3 text-custom-cyan"/>
+                      Difficulty
+                    </h4>
+                    <div className="space-y-3">
+                      {difficulties.map((difficulty) => (
+                        <label key={difficulty} className="flex items-center cursor-pointer group">
+                          <input 
+                            type="checkbox"
+                            className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
+>>>>>>> project-details
                             checked={selectedDifficulty.includes(difficulty)}
                             onChange={(e) => {
                               if (e.target.checked) {
@@ -302,13 +474,18 @@ const Projects: React.FC = () => {
                               }
                             }}
                           />
+<<<<<<< HEAD
                           <span className="ml-2 text-neutral-50 capitalize">{difficulty}</span>
+=======
+                          <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200 capitalize">{difficulty}</span>
+>>>>>>> project-details
                         </label>
                       ))}
                     </div>
                   </div>
 
                   {/* Duration Filter */}
+<<<<<<< HEAD
                   <div>
                     <h4 className="font-medium mb-2 flex items-center">
                       <Clock className="h-4 w-4 mr-2 text-custom-cyan" />
@@ -320,6 +497,19 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox" 
                             className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
+=======
+                  <div className="pt-4 border-t border-neutral-800">
+                    <h4 className="font-semibold mb-4 flex items-center text-white">
+                      <Clock className="h-5 w-5 mr-3 text-custom-cyan" />
+                      Duration
+                    </h4>
+                    <div className="space-y-3">
+                      {durations.map((duration) => (
+                        <label key={duration} className="flex items-center cursor-pointer group">
+                          <input 
+                            type="checkbox" 
+                            className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
+>>>>>>> project-details
                             checked={selectedDuration.includes(duration)}
                             onChange={(e) => {
                               if (e.target.checked) {
@@ -329,7 +519,11 @@ const Projects: React.FC = () => {
                               }
                             }}
                           />
+<<<<<<< HEAD
                           <span className="ml-2 text-neutral-50">{duration}</span>
+=======
+                          <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">{duration}</span>
+>>>>>>> project-details
                         </label>
                       ))}
                     </div>
@@ -337,7 +531,11 @@ const Projects: React.FC = () => {
 
                   <Button 
                     variant="outline"
+<<<<<<< HEAD
                     className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-white transition-colors duration-200"
+=======
+                    className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-black transition-colors duration-200 py-2.5"
+>>>>>>> project-details
                     onClick={() => {
                       setSelectedSkills([]);
                       setSelectedDifficulty([]);
@@ -346,7 +544,11 @@ const Projects: React.FC = () => {
                       setSortBy('newest');
                     }}
                   >
+<<<<<<< HEAD
                     Clear Filters
+=======
+                    Clear All Filters
+>>>>>>> project-details
                   </Button>
                 </div>
               </Card>
@@ -355,8 +557,8 @@ const Projects: React.FC = () => {
             <div className="lg:col-span-3">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center">
-                  <Users className="h-5 w-5 text-custom-cyan mr-2" />
-                  <span className="text-neutral-50">
+                  <Users className="h-6 w-6 text-custom-cyan mr-2" />
+                  <span className="text-xl font-semibold text-white">
                     {filteredProjects.length} {filteredProjects.length === 1 ? 'Project' : 'Projects'} Available
                   </span>
                 </div>
@@ -364,20 +566,17 @@ const Projects: React.FC = () => {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-error-100 text-error-800 p-4 rounded-lg mb-6">
+                <div className="bg-red-900/20 text-red-400 p-4 rounded-lg mb-6 border border-red-700">
                   {error}
                 </div>
               )}
 
               {/* Loading State for Initial Load */}
-              {loading && page === 1 && (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-custom-cyan"></div>
+              {loading && page === 1 ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-custom-cyan"></div>
                 </div>
-              )}
-
-              {/* Projects Grid */}
-              {!loading || page > 1 ? (
+              ) : (
                 <>
                   {filteredProjects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -386,8 +585,10 @@ const Projects: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12">
-                      <p className="text-xl text-neutral-50 mb-4">No projects match your filters</p>
+                    <div className="flex flex-col items-center justify-center py-20 text-neutral-400">
+                      <img src="/path/to/no-projects-found.svg" alt="No projects found" className="w-32 h-32 mb-6 opacity-70" /> {/* Placeholder for an SVG icon */}
+                      <p className="text-2xl font-semibold mb-3">No Projects Found</p>
+                      <p className="text-lg mb-6 text-center max-w-md">Try adjusting your filters or search query. We're always adding new opportunities!</p>
                       <Button 
                         variant="primary"
                         onClick={() => {
@@ -396,6 +597,7 @@ const Projects: React.FC = () => {
                           setSelectedDuration([]);
                           setSearchQuery('');
                         }}
+                        className="py-2.5 px-6"
                       >
                         Clear All Filters
                       </Button>
@@ -404,10 +606,10 @@ const Projects: React.FC = () => {
 
                   {/* Load More Button */}
                   {hasMore && filteredProjects.length > 0 && (
-                    <div className="flex justify-center mt-8">
+                    <div className="flex justify-center mt-10">
                       <Button 
                         variant="outline"
-                        className="border-custom-purple text-custom-purple hover:bg-custom-purple hover:text-white transition-colors duration-200"
+                        className="border-custom-purple text-custom-purple hover:bg-custom-purple hover:text-white transition-colors duration-200 py-2.5 px-6"
                         onClick={handleLoadMore}
                         disabled={loading}
                       >
@@ -423,7 +625,7 @@ const Projects: React.FC = () => {
                     </div>
                   )}
                 </>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
