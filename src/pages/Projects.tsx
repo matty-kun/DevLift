@@ -111,11 +111,7 @@ const Projects: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-<<<<<<< HEAD
-  const [filtersOpen, setFiltersOpen] = useState(true);
-=======
   const [filtersOpen, setFiltersOpen] = useState(true); // State for filter sidebar visibility
->>>>>>> project-details
   const projectsPerPage = 6;
 
   // Fetch projects from Supabase
@@ -291,11 +287,7 @@ const Projects: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Toggle button for filters (mobile/tablet only) */}
             <button
-<<<<<<< HEAD
-              className="flex items-center gap-2 mb-4 lg:hidden text-custom-cyan font-semibold focus:outline-none"
-=======
               className="flex items-center justify-center gap-2 p-3 mb-4 lg:hidden bg-neutral-800 rounded-lg text-custom-cyan font-semibold focus:outline-none focus:ring-2 focus:ring-custom-cyan/50 transition-all duration-200"
->>>>>>> project-details
               onClick={() => setFiltersOpen((open) => !open)}
               aria-expanded={filtersOpen}
               aria-controls="filters-panel"
@@ -309,45 +301,22 @@ const Projects: React.FC = () => {
               id="filters-panel"
               className={`lg:col-span-1 h-fit transition-all duration-300 overflow-hidden ${filtersOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'} lg:max-h-full lg:opacity-100 lg:pointer-events-auto`}
             >
-<<<<<<< HEAD
-              <Card className="h-fit">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <Filter className="h-5 w-5 mr-2 text-custom-cyan" />
-                      Filters
-=======
               <Card className="h-fit bg-neutral-900 border border-neutral-800 shadow-lg">
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-xl font-bold mb-5 flex items-center text-white">
                       <Filter className="h-6 w-6 mr-3 text-custom-cyan" />
                       Project Filters
->>>>>>> project-details
                     </h3>
                     <Input 
                       placeholder="Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-<<<<<<< HEAD
-                      leftIcon={<Search className="h-5 w-5 text-custom-cyan" />}
-=======
                       leftIcon={<Search className="h-5 w-5 text-neutral-400" />}
                       className="bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-custom-cyan focus:ring-custom-cyan/30"
->>>>>>> project-details
                     />
                   </div>
-
                   {/* Sort Options */}
-<<<<<<< HEAD
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center">
-                      <ArrowUpDown className="h-4 w-4 mr-2 text-custom-cyan" />
-                      Sort By
-                    </h4>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-=======
                   <div className="pt-4 border-t border-neutral-800">
                     <h4 className="font-semibold mb-4 flex items-center text-white">
                       <ArrowUpDown className="h-5 w-5 mr-3 text-custom-cyan" />
@@ -355,59 +324,30 @@ const Projects: React.FC = () => {
                     </h4>
                     <div className="space-y-3">
                       <label className="flex items-center cursor-pointer group">
->>>>>>> project-details
                         <input 
                           type="radio" 
                           name="sort" 
                           value="newest"
                           checked={sortBy === 'newest'}
                           onChange={() => setSortBy('newest')}
-<<<<<<< HEAD
-                          className="form-radio text-custom-cyan focus:ring-custom-cyan"
-                        />
-                        <span className="ml-2 text-neutral-50">Newest First</span>
-                      </label>
-                      <label className="flex items-center">
-=======
                           className="form-radio h-4 w-4 text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
                         />
                         <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">Newest First</span>
                       </label>
                       <label className="flex items-center cursor-pointer group">
->>>>>>> project-details
                         <input 
                           type="radio" 
                           name="sort" 
                           value="oldest"
                           checked={sortBy === 'oldest'}
                           onChange={() => setSortBy('oldest')}
-<<<<<<< HEAD
-                          className="form-radio text-custom-cyan focus:ring-custom-cyan"
-                        />
-                        <span className="ml-2 text-neutral-50">Oldest First</span>
-=======
                           className="form-radio h-4 w-4 text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
                         />
                         <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">Oldest First</span>
->>>>>>> project-details
                       </label>
                     </div>
                   </div>
-
                   {/* Skills Filter */}
-<<<<<<< HEAD
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center">
-                      <Code className="h-4 w-4 mr-2 text-custom-cyan" />
-                      Skills
-                    </h4>
-                    <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
-                      {skills.map((skill) => (
-                        <label key={skill} className="flex items-center">
-                          <input 
-                            type="checkbox" 
-                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan" 
-=======
                   <div className="pt-4 border-t border-neutral-800">
                     <h4 className="font-semibold mb-4 flex items-center text-white">
                       <Code className="h-5 w-5 mr-3 text-custom-cyan" />
@@ -419,7 +359,6 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox" 
                             className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200" 
->>>>>>> project-details
                             checked={selectedSkills.includes(skill)} 
                             onChange={((e) => {
                               if (e.target.checked) {
@@ -429,30 +368,12 @@ const Projects: React.FC = () => {
                               }
                             })} 
                           />
-<<<<<<< HEAD
-                          <span className="ml-2 text-neutral-50">{skill}</span>
-=======
                           <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">{skill}</span>
->>>>>>> project-details
                         </label>
                       ))}
                     </div>
                   </div>
-
                   {/* Difficulty Filter */}
-<<<<<<< HEAD
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center">
-                      <Briefcase className="h-4 w-4 mr-2 text-custom-cyan"/>
-                      Difficulty
-                    </h4>
-                    <div className="space-y-2">
-                      {difficulties.map((difficulty) => (
-                        <label key={difficulty} className="flex items-center">
-                          <input 
-                            type="checkbox"
-                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
-=======
                   <div className="pt-4 border-t border-neutral-800">
                     <h4 className="font-semibold mb-4 flex items-center text-white">
                       <Briefcase className="h-5 w-5 mr-3 text-custom-cyan"/>
@@ -464,7 +385,6 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox"
                             className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
->>>>>>> project-details
                             checked={selectedDifficulty.includes(difficulty)}
                             onChange={(e) => {
                               if (e.target.checked) {
@@ -474,30 +394,12 @@ const Projects: React.FC = () => {
                               }
                             }}
                           />
-<<<<<<< HEAD
-                          <span className="ml-2 text-neutral-50 capitalize">{difficulty}</span>
-=======
                           <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200 capitalize">{difficulty}</span>
->>>>>>> project-details
                         </label>
                       ))}
                     </div>
                   </div>
-
                   {/* Duration Filter */}
-<<<<<<< HEAD
-                  <div>
-                    <h4 className="font-medium mb-2 flex items-center">
-                      <Clock className="h-4 w-4 mr-2 text-custom-cyan" />
-                      Duration
-                    </h4>
-                    <div className="space-y-2">
-                      {durations.map((duration) => (
-                        <label key={duration} className="flex items-center">
-                          <input 
-                            type="checkbox" 
-                            className="form-checkbox rounded text-custom-cyan focus:ring-custom-cyan"
-=======
                   <div className="pt-4 border-t border-neutral-800">
                     <h4 className="font-semibold mb-4 flex items-center text-white">
                       <Clock className="h-5 w-5 mr-3 text-custom-cyan" />
@@ -509,7 +411,6 @@ const Projects: React.FC = () => {
                           <input 
                             type="checkbox" 
                             className="form-checkbox h-4 w-4 rounded text-custom-cyan border-neutral-600 bg-neutral-700 focus:ring-custom-cyan transition-colors duration-200"
->>>>>>> project-details
                             checked={selectedDuration.includes(duration)}
                             onChange={(e) => {
                               if (e.target.checked) {
@@ -519,23 +420,14 @@ const Projects: React.FC = () => {
                               }
                             }}
                           />
-<<<<<<< HEAD
-                          <span className="ml-2 text-neutral-50">{duration}</span>
-=======
                           <span className="ml-3 text-neutral-300 group-hover:text-white transition-colors duration-200">{duration}</span>
->>>>>>> project-details
                         </label>
                       ))}
                     </div>
                   </div>
-
                   <Button 
                     variant="outline"
-<<<<<<< HEAD
-                    className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-white transition-colors duration-200"
-=======
                     className="w-full border-custom-cyan text-custom-cyan hover:bg-custom-cyan hover:text-black transition-colors duration-200 py-2.5"
->>>>>>> project-details
                     onClick={() => {
                       setSelectedSkills([]);
                       setSelectedDifficulty([]);
@@ -544,16 +436,11 @@ const Projects: React.FC = () => {
                       setSortBy('newest');
                     }}
                   >
-<<<<<<< HEAD
-                    Clear Filters
-=======
                     Clear All Filters
->>>>>>> project-details
                   </Button>
                 </div>
               </Card>
             </div>
-            
             <div className="lg:col-span-3">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center">
