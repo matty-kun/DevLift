@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Mail, Lock, User, Briefcase, Globe, School } from 'lucide-react';
+import { Mail, Lock, User, Briefcase } from 'lucide-react';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -16,17 +16,16 @@ interface SignUpFormData {
 }
 
 const SignUp: React.FC = () => {
-    const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<'student' | 'founder' | null>(null);
     const password = watch('password');
 
-    const onSubmit = async (data: SignUpFormData) => {
+    const onSubmit = async () => {
         try {
             setError(null);
             console.log('Form submitted, but no action taken');
-        } catch (err: any) {
+        } catch {
             console.log('Form submitted, but no action taken');
         }
     };

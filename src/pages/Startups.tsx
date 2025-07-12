@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Card from '../components/common/Card';
 import { Project } from '../types';
 import Avatar  from '../components/common/Avatar';
-import { useParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Define a Startup type (for now, reuse Project type for demo purposes)
 type Startup = Omit<Project, 'mentorId' | 'difficulty' | 'maxStudents' | 'assignedStudents' | 'applicants' | 'deadline'> & {

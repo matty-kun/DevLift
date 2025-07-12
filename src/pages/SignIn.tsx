@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock } from 'lucide-react';
 import Card from '../components/common/Card';
@@ -14,17 +14,16 @@ interface SignInFormData {
 
 const SignIn: React.FC = () => {
     // const { signIn } = useAuth();
-    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignInFormData>();
     const [error, setError] = useState<string | null>(null);
 
-    const onSubmit = async (data: SignInFormData) => {
+    const onSubmit = async () => {
         try {
             setError(null);
             // Removed: await signIn(data.email, data.password);
             // Placeholder for frontend-only: console.log('Sign-in functionality is currently disabled');
             // Removed: navigate('/dashboard');
-        } catch (err: any) {
+        } catch {
             // Removed backend error handling
             console.log('Form submitted, but no action taken');
         }

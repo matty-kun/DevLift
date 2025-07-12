@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Users, ExternalLink } from 'lucide-react';
+import { Clock, Users, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
