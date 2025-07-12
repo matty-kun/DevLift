@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-=======
-import { Link } from 'react-router-dom';
->>>>>>> project-details
 import { Menu, X } from 'lucide-react';
 import Button from '../common/Button';
 import sign from '../../assets/DevLift Sign.svg';
@@ -11,12 +7,10 @@ import Avatar from '../common/Avatar';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-<<<<<<< HEAD
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-=======
->>>>>>> project-details
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
