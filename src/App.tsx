@@ -16,9 +16,9 @@ import CommunityPage from './pages/Community';
 import FounderDashboard from './pages/FounderDashboard';
 import PostProject from './pages/PostProject';
 import StudentDashboard from './pages/StudentDashboard';
+import Settings from './pages/Settings';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
-// import Settings from './ pages/Settings';
 
 
 function App() {
@@ -43,6 +43,7 @@ function App() {
             <Route path="/post-project" element={<PostProject />} />
 
             <Route path="/student-dashboard" element={<StudentDashboard />} />
+            <Route path="/settings" element={<Settings />} />
 
             {/* <Route 
               path="/projects" 

@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-700 rounded-lg shadow-lg z-50 animate-fade-in">
                     <ul className="py-2 text-white">
                       <li>
-                        <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Settings</button>
+                        <Link to="/settings" className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors block">Settings</Link>
                       </li>
                       <li>
                         <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Log Out</button>
@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-700 rounded-lg shadow-lg z-50 animate-fade-in">
                     <ul className="py-2 text-white">
                       <li>
-                        <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Settings</button>
+                        <Link to="/settings" className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors block">Settings</Link>
                       </li>
                       <li>
                         <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Log Out</button>

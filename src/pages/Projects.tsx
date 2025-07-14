@@ -205,7 +205,7 @@ const Projects: React.FC = () => {
                       <Filter className="h-6 w-6 mr-3 text-custom-cyan" />
                       Filters
                     </h3>
-                    <Button variant="ghost" size="icon" onClick={() => setFiltersOpen(false)}>
+                    <Button variant="ghost" size="md" onClick={() => setFiltersOpen(false)}>
                         <X className="h-5 w-5" />
                     </Button>
                 </div>
@@ -346,7 +346,7 @@ const Projects: React.FC = () => {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
                         {!filtersOpen && (
-                            <Button variant="ghost" size="icon" onClick={() => setFiltersOpen(true)} className="mr-4">
+                            <Button variant="ghost" size="md" onClick={() => setFiltersOpen(true)} className="mr-4">
                                 <Filter className="h-5 w-5" />
                             </Button>
                         )}
