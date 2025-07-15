@@ -5,23 +5,23 @@ const HowItWorks: React.FC = () => {
   const steps = [
     {
       icon: <Rocket className="h-10 w-10 text-custom-orange" />,
-      title: 'Match with Startups',
-      description: 'Get matched with innovative startups based on your skills, interests, and availability as a student, or post opportunities as a founder.',
+      title: 'Discover',
+      description: 'DevLift gives you access to early-stage ventures where your skills matter. This is where ambition meets opportunity, and every project is a chance to work on something meaningful.',
     },
     {
       icon: <Users className="h-10 w-10 text-custom-orange" />,
-      title: 'Direct Collaboration',
-      description: 'Work directly with founders on specific features, or manage student contributions as a founder.',
+      title: 'Apply',
+      description: 'Step into real roles that align with your passion. No classroom simulations. You choose how you want to contribute. Get clarity on your future by doing the work that will define it.',
     },
     {
       icon: <Code className="h-10 w-10 text-custom-orange" />,
-      title: 'Build Real Products',
-      description: 'Contribute to actual products being used by real customers, providing value for both students and startups.',
+      title: 'Build',
+      description: 'Work side-by-side with founders and mentors to build real products, not just practice ones. This is where learning becomes transformation. Gain mentorship from people actually building companies, and become one of them.',
     },
     {
       icon: <Award className="h-10 w-10 text-custom-orange" />,
-      title: 'Grow Your Portfolio',
-      description: 'Gain verified startup experience to build your portfolio as a student, or discover talent to accelerate your projects as a founder.',
+      title: 'Grow',
+      description: 'Craft a portfolio that speaks louder than any diploma, and build a network that opens real doors. Each project adds to your proof of skill. DevLift doesn’t just prepare you for your career, it propels you into it.',
     },
   ];
 
@@ -29,9 +29,9 @@ const HowItWorks: React.FC = () => {
     <section className="py-16 bg-black">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white">How It Works</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Discover. Apply. Build. Grow. Repeat.</h2>
           <p className="mt-4 text-xl text-neutral-400">
-            A simple process to connect students with real startup opportunities and hands-on experience for all users.
+            Projects over promises. Skills over slides.
           </p>
         </div>
 

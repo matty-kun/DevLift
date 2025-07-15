@@ -16,10 +16,10 @@ const Hero: React.FC = () => {
       <div className="container mx-auto px-4 py-16 md:py-24 relative z-10 flex items-center justify-center">
         <div className="max-w-2xl text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in">
-            Build Real Products with <span className="text-custom-orange">Startup Founders</span>
+            <span className="text-custom-cyan">Experience </span> &gt; <span className="text-custom-orange">Degrees</span>
           </h1>
           <p className="mt-6 text-xl text-white/80 animate-fade-in" style={{animationDelay: '100ms'}}>
-            Connect with innovative startup founders, work on real products, and gain invaluable experience while making a real impact in the startup ecosystem.
+            Because experience, not grades, helps you get the job.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{animationDelay: '200ms'}}>
             <Link to="/sign-up">
@@ -47,15 +47,15 @@ const Hero: React.FC = () => {
           <div className="mt-10 grid grid-cols-3 gap-x-6 animate-fade-in" style={{animationDelay: '300ms'}}>
             <div className="text-center">
               <p className="text-3xl font-bold text-custom-cyan">0+</p>
-              <p className="mt-1 text-sm text-white/70">Active Startups</p>
+              <p className="mt-1 text-sm text-white/70">Interested Students</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-custom-purple">0+</p>
-              <p className="mt-1 text-sm text-white/70">Projects Completed</p>
+              <p className="mt-1 text-sm text-white/70">Interested Founders</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-custom-orange">0+</p>
-              <p className="mt-1 text-sm text-white/70">Student Builders</p>
+              <p className="mt-1 text-sm text-white/70">Startups</p>
             </div>
           </div>
         </div>
