@@ -6,32 +6,34 @@ const HowItWorks: React.FC = () => {
     {
       icon: <Rocket className="h-10 w-10 text-custom-orange" />,
       title: 'Discover',
-      description: 'DevLift gives you access to early-stage ventures where your skills matter. This is where ambition meets opportunity, and every project is a chance to work on something meaningful.',
+      description: 'DevLift gives you access to startup ventures where your skills matter. This is where ambition meets opportunity, and every project is a chance to work on something meaningful.',
     },
     {
       icon: <Users className="h-10 w-10 text-custom-orange" />,
       title: 'Apply',
-      description: 'Step into real roles that align with your passion. No classroom simulations. You choose how you want to contribute. Get clarity on your future by doing the work that will define it.',
+      description: 'Step into real roles that align with your passion. No classroom simulations. Choose how you contribute and gain clarity by doing work that shapes your future.',
     },
     {
       icon: <Code className="h-10 w-10 text-custom-orange" />,
       title: 'Build',
-      description: 'Work side-by-side with founders and mentors to build real products, not just practice ones. This is where learning becomes transformation. Gain mentorship from people actually building companies, and become one of them.',
+      description: 'Work with founders and mentors to build real products—not just practice. Learn through real-world experience, guided by those actually building companies, and become one of them.',
     },
     {
       icon: <Award className="h-10 w-10 text-custom-orange" />,
       title: 'Grow',
-      description: 'Craft a portfolio that speaks louder than any diploma, and build a network that opens real doors. Each project adds to your proof of skill. DevLift doesn’t just prepare you for your career, it propels you into it.',
+      description: 'Build a portfolio that proves your skills and a network that opens real doors. Every project is career fuel—DevLift doesn’t just prepare you, it launches you.',
     },
   ];
 
   return (
-    <section className="py-16 bg-black">
+    <section className="py-20 md:py-28 bg-black">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white">Discover. Apply. Build. Grow. Repeat.</h2>
-          <p className="mt-4 text-xl text-neutral-400">
-            Projects over promises. Skills over slides.
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+            <span className="text-white">How DevLift Works</span>
+          </h2>
+          <p className="mt-4 text-xl md:text-2xl text-neutral-300 font-medium">
+            Projects over promises. Skills over slides. Your journey to real-world impact starts here.
           </p>
         </div>
 
@@ -43,7 +45,7 @@ const HowItWorks: React.FC = () => {
             {steps.map((step, index) => (
               <div 
                 key={index} 
-                className="relative bg-black rounded-xl shadow-soft p-6 z-10 transition-transform hover:-translate-y-1 border border-custom-cyan"
+                                className="relative bg-gradient-to-br from-gray-900 to-black rounded-xl shadow-lg p-8 z-10 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl border border-gray-800 hover:border-custom-cyan"
               >
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 border border-custom-purple rounded-full mb-4">

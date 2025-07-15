@@ -24,7 +24,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
 
     return (
         <Card 
-            variant="outline"
+            variant="border"
             className={`group relative flex flex-col h-full overflow-hidden rounded-xl border-neutral-800 bg-neutral-900 shadow-lg transition-all duration-300 hover:border-custom-cyan hover:shadow-custom-cyan/20 hover:-translate-y-1 ${className}`}
         >
             <div className="relative h-48 w-full overflow-hidden">
@@ -52,7 +52,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                 </p>
 
                 <div className="mb-5 flex flex-wrap gap-2">
-                    {project.skills.slice(0, 4).map((skill, index) => (
+                    {project.skills.slice(0, 4).map((skill: string, index: number) => (
                         <Badge key={index} variant="secondary" size="sm" className="font-medium">
                             {skill}
                         </Badge>
@@ -79,9 +79,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                     <div className="flex items-center">
                         <Avatar 
                             size="md"
-                            src="https://scontent.fmnl13-4.fna.fbcdn.net/v/t39.30808-6/447268717_435077399234559_87444479210717093_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEtsubfHvWHEY0cwWd2PjIPXdjsTODRxD5d2OxM4NHEPp6kG3RcMEgVtEiI8ACB-mDt4EieApUWLjkYDWNaZP8q&_nc_ohc=K8m0ci0NIQ0Q7kNvwHw2zdb&_nc_oc=AdlcWOG46IooP8nfNsKRuyQYh4qO4c1IwwWDagVtrGtWVx0KL00UOjSDyYdbDW-WQC55Nz3ectCjijSHS61c1OoV&_nc_zt=23&_nc_ht=scontent.fmnl13-4.fna&_nc_gid=7ncyBNttSV0MrSdSariVpA&oh=00_AfInGg63JVFRI9P4NeYpbg_UvujNj0tGhG-dglgo0t1vZw&oe=682B7D3C"
+                            src="https://scontent.fmnl13-2.fna.fbcdn.net/v/t1.15752-9/516161461_1274769343996911_4756708407528807557_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeG3V7FKbPOGg1_UppPr6d67M-ewHbzMA7Yz57AdvMwDtkhNaTTEp0dllYkd1A1lt3UfZL_MYqbMIfzsxwzMVoGc&_nc_ohc=oiv4YeDYYqwQ7kNvwE7mrLu&_nc_oc=AdlwWzulc9LDtp9JWDiQpgItX5xKsoPfvRjXB9vBrTMJDJFSUdmYtEUosiPx4Tun497dW4oEuuIwlyMLXYT7cHu5&_nc_zt=23&_nc_ht=scontent.fmnl13-2.fna&oh=03_Q7cD2wFGwc_Gx5gdwMkCdrmirrfpE8ZanQ5vEdjM3GDYZZofPQ&oe=689DC03B"
                             alt="Mentor Name"
-                            className="border-2 border-neutral-700"
                         />
                         <div className="ml-3">
                             <p className="font-semibold text-white">Mentor Name</p>

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
 import ProjectCard from '../projects/ProjectCard';
 import { Project } from  '../../types';
+import devliftLogo from '../../assets/DevLift Logo.svg';
 
 const FeaturedProjects: React.FC = () => {
     // These are just Sample Project Data
@@ -21,6 +22,7 @@ const FeaturedProjects: React.FC = () => {
       assignedStudents: [],
       applicants: [],
       createdAt: new Date(),
+      imageUrl: devliftLogo,
     },
     {
       id: '2',
@@ -35,6 +37,7 @@ const FeaturedProjects: React.FC = () => {
       assignedStudents: ['student1'],
       applicants: ['student1', 'student2', 'student3'],
       createdAt: new Date(),
+      imageUrl: devliftLogo,
     },
     {
       id: '3',
@@ -49,6 +52,7 @@ const FeaturedProjects: React.FC = () => {
       assignedStudents: ['student4', 'student5'],
       applicants: ['student4', 'student5', 'student6', 'student7'],
       createdAt: new Date(),
+      imageUrl: devliftLogo,
     },
   ];
 

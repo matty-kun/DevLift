@@ -10,16 +10,19 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
         <div className="absolute left-1/4 top-32 h-48 w-48 rounded-full bg-custom-purple opacity-60 blur-3xl"></div>
+        <div className="absolute left-2/10 top-32 h-48 w-48 rounded-full bg-white opacity-60 blur-3xl"></div>
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-50 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-16 md:py-24 relative z-10 flex items-center justify-center">
-        <div className="max-w-2xl text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in">
-            <span className="text-custom-cyan">Experience </span> &gt; <span className="text-custom-orange">Degrees</span>
+      <div className="container mx-auto px-4 py-16 md:py-24 relative z-10 flex flex-col items-center justify-center">
+        <div className="w-full max-w-5xl text-center mx-auto">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight animate-fade-in whitespace-nowrap">
+            <span className="text-custom-cyan">Experience </span>
+            <span className="text-white">&gt;</span>
+            <span className="text-custom-orange"> Degrees</span>
           </h1>
-          <p className="mt-6 text-xl text-white/80 animate-fade-in" style={{animationDelay: '100ms'}}>
-            Because experience, not grades, helps you get the job.
+          <p className="mt-8 text-2xl md:text-3xl text-white/80 font-medium max-w-3xl mx-auto animate-fade-in" style={{animationDelay: '100ms'}}>
+            Because skills, not grades, get you hired.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{animationDelay: '200ms'}}>
             <Link to="/sign-up">
@@ -54,7 +57,7 @@ const Hero: React.FC = () => {
               <p className="mt-1 text-sm text-white/70">Interested Founders</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-orange">0+</p>
+              <p className="text-4xl font-bold text-custom-orange">0+</p>
               <p className="mt-1 text-sm text-white/70">Startups</p>
             </div>
           </div>
