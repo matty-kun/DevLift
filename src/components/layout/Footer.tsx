@@ -5,8 +5,8 @@ import sign from '../../assets/DevLift Sign.svg';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-b from-black to-neutral-900 text-neutral-300 py-16">
-      <div className="container mx-auto px-4 py-8 border-t border-neutral-800">
+    <footer className="bg-gradient-to-b from-black to-neutral-900 text-neutral-300 py-8">
+      <div className="container mx-auto px-4 py-4 border-t border-neutral-800">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-1">
