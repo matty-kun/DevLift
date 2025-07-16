@@ -19,8 +19,8 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-black/90 backdrop-blur-md border-b border-black">
-      <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center space-y-4 md:space-y-0">
+    <header className="sticky top-0 z-50 w-full">
+      <div className="container mx-auto px-6 py-1 mt-4 rounded-full bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 shadow-xl">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link to="/" className="flex items-center">
@@ -85,6 +85,7 @@ const Navbar: React.FC = () => {
                 <Button variant="secondary" size="sm">
                   Founder Dashboard
                 </Button>
+                
               </Link>
               <div className="relative">
                 <button onClick={() => setIsAvatarMenuOpen((open) => !open)} className="focus:outline-none">
@@ -129,7 +130,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-900 border-t border-gray-800 py-4 animate-fade-in">
+        <div className="md:hidden bg-gray-900 border-t border-gray-800 py-4 animate-fade-in mt-4 rounded-xl mx-4">
           <div className="container mx-auto px-4 flex flex-col space-y-3">
             <Link 
               to="/projects" 

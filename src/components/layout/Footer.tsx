@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin, Github } from 'lucide-react';
+import sign from '../../assets/DevLift Sign.svg';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-black text-neutral-300">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+    <footer className="bg-gradient-to-b from-black to-neutral-900 text-neutral-300 py-16">
+      <div className="container mx-auto px-4 py-8 border-t border-neutral-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {/* Logo and Description */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <Link to="/" className="flex items-center">
+              <img src={sign} alt="DevLift Sign" className="h-8 w-auto mr-2" />
               <span className="text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
             </Link>
             <p className="mt-4 text-neutral-50 max-w-md">
@@ -34,56 +36,24 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <div>
-            <h3 className="text-white font-medium text-lg mb-4">For Students</h3>
+          {/* Contact Information */}
+          <div className="lg:col-span-1">
+            <h3 className="text-white font-medium text-lg mb-4">Contact</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/projects" className="text-neutral-400 hover:text-white transition-colors">
-                  Browse Projects
-                </Link>
+                <a href="mailto:info@devlift.com" className="text-neutral-400 hover:text-white transition-colors">
+                  info@devlift.com
+                </a>
               </li>
               <li>
-                <Link to="/startups" className="text-neutral-400 hover:text-white transition-colors">
-                  Find Startups
-                </Link>
+                <a href="tel:+1234567890" className="text-neutral-400 hover:text-white transition-colors">
+                  +1 (234) 567-890
+                </a>
               </li>
               <li>
-                <Link to="/resources" className="text-neutral-400 hover:text-white transition-colors">
-                  Learning Resources
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-medium text-lg mb-4">For Founders</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/post-project" className="text-neutral-400 hover:text-white transition-colors">
-                  Post a Project
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-medium text-lg mb-4">Company</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/about" className="text-neutral-400 hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-neutral-400 hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link to="/community" className="text-neutral-400 hover:text-white transition-colors">
-                  Community
-                </Link>
+                <p className="text-neutral-400">
+                  123 DevLift Street, Startup City, SC 12345
+                </p>
               </li>
             </ul>
           </div>
@@ -95,17 +65,6 @@ const Footer: React.FC = () => {
           <p className="text-neutral-500 text-sm">
             &copy; {new Date().getFullYear()} DevLift. All rights reserved.
           </p>
-          <div className="mt-4 md:mt-0 flex space-x-6">
-            <Link to="/privacy" className="text-neutral-500 hover:text-white text-sm transition-colors">
-              Privacy Policy
-            </Link>
-            <Link to="/terms" className="text-neutral-500 hover:text-white text-sm transition-colors">
-              Terms of Service
-            </Link>
-            <Link to="/cookies" className="text-neutral-500 hover:text-white text-sm transition-colors">
-              Cookie Policy
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

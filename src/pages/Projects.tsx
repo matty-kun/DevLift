@@ -143,7 +143,7 @@ const Projects: React.FC = () => {
     const matchesSearch = !searchQuery || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      project.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+      project.skills.some((skill: string, index: number) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesSkills = selectedSkills.length === 0 || 
       selectedSkills.some(skill => project.skills.includes(skill));

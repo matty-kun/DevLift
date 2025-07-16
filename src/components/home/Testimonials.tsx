@@ -77,8 +77,7 @@ const Testimonials: React.FC = () => {
 
         <div className="relative">
           <div className="max-w-3xl mx-auto">
-            <div className="relative h-[26rem] flex items-center justify-center">
-              <AnimatePresence initial={false} custom={direction}>
+          <div className="relative flex items-center justify-center min-h-[350px]">              <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                   key={page}
                   custom={direction}
@@ -104,11 +103,11 @@ const Testimonials: React.FC = () => {
                   className="w-full absolute"
                 >
                   <div className="w-full flex-shrink-0 px-4">
-                    <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 shadow-medium relative overflow-hidden">
-                        <Quote className="absolute top-6 left-6 w-12 h-12 text-neutral-700/50" />
+                    <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-10 shadow-medium relative overflow-hidden">
+                        <Quote className="absolute top-8 left-8 w-12 h-12 text-neutral-700/50" />
                         <div className="relative z-10">
                             
-                            <p className="text-lg font-light italic leading-relaxed mb-6 text-neutral-200 h-32 overflow-y-auto">
+                            <p className="text-lg font-light italic leading-relaxed mb-8 text-neutral-200 h-32 overflow-y-auto">
                             "{testimonials[imageIndex].content}"
                             </p>
                             <div className="flex items-center">

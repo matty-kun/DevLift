@@ -10,11 +10,11 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
         <div className="absolute left-1/4 top-32 h-48 w-48 rounded-full bg-custom-purple opacity-60 blur-3xl"></div>
-        <div className="absolute left-2/10 top-32 h-48 w-48 rounded-full bg-white opacity-60 blur-3xl"></div>
+        <div className="absolute left-1/20 bottom-1 h-48 w-48 rounded-full bg-white opacity-60 blur-3xl"></div>
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-50 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-16 md:py-24 relative z-10 flex flex-col items-center justify-center">
+      <div className="container mx-auto px-4 py-32 md:py-48 relative z-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl text-center mx-auto">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight animate-fade-in whitespace-nowrap">
             <span className="text-custom-cyan">Experience </span>
@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
               <Button 
                 size="lg" 
                 variant="primary"
-                className="border-2 border-custom-cyan"
+                className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
                 rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
               >
                 Join as Student
@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white"
+                className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 I'm a Founder
               </Button>
