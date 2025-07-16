@@ -2,10 +2,12 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
 import { Link } from 'react-router-dom';
+import Navbar from '../layout/Navbar'; // adjust the import path as needed
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative bg-black overflow-hidden">
+    <section>
+      <Navbar />
       {/* Background decorative elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>

@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: black;  /* This ensures the dark background is still applied */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: black;
 }
 
 @layer base {

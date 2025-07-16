@@ -24,8 +24,6 @@ import Settings from './pages/Settings';
 function App() {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-black">
-        <Navbar />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -75,7 +73,6 @@ function App() {
           </Routes>
         </main>
         <Footer />
-      </div>
     </Router>
   );
 }
