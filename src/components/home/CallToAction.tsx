@@ -2,6 +2,12 @@ import React from 'react';
 import Button from '../common/Button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, User, Briefcase } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const textVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
 
 const CallToAction: React.FC = () => {
   return (
@@ -13,14 +19,34 @@ const CallToAction: React.FC = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in">
+          <motion.h1
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+          >
             Your Future Won’t Wait. Start Building It.
-          </h1>
-          <p className="mt-6 text-xl text-white/80 animate-fade-in" style={{animationDelay: '100ms'}}>
+          </motion.h1>
+          <motion.p
+            className="mt-6 text-xl text-white/80"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.2 }}
+          >
             Stop waiting for permission. Start building your legacy.
-          </p>
+          </motion.p>
           
-          <div className="mt-12 flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <motion.div
+            className="mt-12 flex flex-col sm:flex-row gap-6 justify-center items-center"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.4 }}
+          >
             <Link to="/sign-up">
               <Button 
                 size="lg" 
@@ -43,10 +69,17 @@ const CallToAction: React.FC = () => {
                 <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </Link>
-          </div>
-          <p className="mt-8 text-sm text-neutral-400">
+          </motion.div>
+          <motion.p
+            className="mt-8 text-sm text-neutral-400"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.6 }}
+          >
             No long-term commitment. Start with a single project and grow from there.
-          </p>
+          </motion.p>
         </div>
       </div>
       

@@ -3,10 +3,16 @@ import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
 import { Link } from 'react-router-dom';
 import Navbar from '../layout/Navbar'; // adjust the import path as needed
+import { motion } from 'framer-motion';
+
+const textVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8} },
+};
 
 const Hero: React.FC = () => {
   return (
-    <section>
+    <section className="relative">
       <Navbar />
       {/* Background decorative elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -16,17 +22,37 @@ const Hero: React.FC = () => {
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-50 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-32 md:py-48 relative z-10 flex flex-col items-center justify-center">
+      <div className="container mx-auto min-h-screen px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl text-center mx-auto">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight animate-fade-in whitespace-nowrap">
+          <motion.h1
+            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight whitespace-nowrap"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+          >
             <span className="text-custom-cyan">Experience </span>
             <span className="text-white">&gt;</span>
             <span className="text-custom-orange"> Degrees</span>
-          </h1>
-          <p className="mt-8 text-2xl md:text-3xl text-white/80 font-medium max-w-3xl mx-auto animate-fade-in" style={{animationDelay: '100ms'}}>
+          </motion.h1>
+          <motion.p
+            className="mt-8 text-2xl md:text-3xl text-white/80 font-medium max-w-3xl mx-auto"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.2 }}
+          >
             Because skills, not grades, get you hired.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{animationDelay: '200ms'}}>
+          </motion.p>
+          <motion.div
+            className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.4 }}
+          >
             <Link to="/sign-up">
               <Button 
                 size="lg" 
@@ -47,9 +73,16 @@ const Hero: React.FC = () => {
                 I'm a Founder
               </Button>
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="mt-10 grid grid-cols-3 gap-x-6 animate-fade-in" style={{animationDelay: '300ms'}}>
+          <motion.div
+            className="mt-10 grid grid-cols-3 gap-x-6"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.6 }}
+          >
             <div className="text-center">
               <p className="text-3xl font-bold text-custom-cyan">0+</p>
               <p className="mt-1 text-sm text-white/70">Interested Students</p>
@@ -59,10 +92,10 @@ const Hero: React.FC = () => {
               <p className="mt-1 text-sm text-white/70">Interested Founders</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-bold text-custom-orange">0+</p>
+              <p className="text-3xl font-bold text-custom-orange">0+</p>
               <p className="mt-1 text-sm text-white/70">Startups</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

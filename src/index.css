@@ -123,3 +123,32 @@ body::-webkit-scrollbar-track {
 
 
 /* Add any other custom styles here if needed */
+
+.particle-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+}
+
+.particle-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(25, 195, 247, 0.1) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  animation: particle-move 20s linear infinite;
+}
+
+@keyframes particle-move {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-2rem, -2rem);
+  }
+}

@@ -20,101 +20,13 @@ const Navbar: React.FC = () => {
   
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-lg bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 shadow-xl">
+      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-full bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 shadow-xl">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
             <span className="text-custom-cyan text-2xl font-bold hidden sm:inline">Dev<span className="text-custom-orange">Lift</span></span>
           </Link>
-        </div>
-
-        <nav className="flex-1 flex justify-center">
-          <Link to="/projects" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
-            Projects
-          </Link>
-          <Link to="/community" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
-            Community
-          </Link>
-          <Link to="/startups" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
-            Startups
-          </Link>
-          <Link to="/about" className="px-3 py-2 text-white hover:text-custom-cyan rounded-lg transition-colors">
-            About
-          </Link>
-        </nav>
-
-        {/* Right Side Menu - Show Dashboard links on /projects, otherwise Get Started */}
-        <div className="flex-1 hidden md:flex justify-end items-center space-x-4 relative">
-          {location.pathname === '/projects' ? (
-            <>
-              <Link to="/student-dashboard">
-                <Button variant="primary" size="sm">
-                  Student Dashboard
-                </Button>
-              </Link>
-              <div className="relative">
-                <button onClick={() => setIsAvatarMenuOpen((open) => !open)} className="focus:outline-none">
-                  <Avatar src="https://randomuser.me/api/portraits/men/32.jpg" alt="Demo User" size="sm" />
-                </button>
-                {isAvatarMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-700 rounded-lg shadow-lg z-50 animate-fade-in">
-                    <ul className="py-2 text-white">
-                      <li>
-                        <Link to="/settings" className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors block">Settings</Link>
-                      </li>
-                      <li>
-                        <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Log Out</button>
-                      </li>
-                      <li>
-                        <div className="px-4 py-2 text-neutral-400 cursor-default">Dark Mode / Light Mode</div>
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : location.pathname === '/startups' ? (
-            <>
-              <Link to="/student-dashboard">
-                <Button variant="primary" size="sm">
-                  Student Dashboard
-                </Button>
-              </Link>
-              <Link to="/founder-dashboard">
-                <Button variant="secondary" size="sm">
-                  Founder Dashboard
-                </Button>
-                
-              </Link>
-              <div className="relative">
-                <button onClick={() => setIsAvatarMenuOpen((open) => !open)} className="focus:outline-none">
-                  <Avatar src="https://randomuser.me/api/portraits/men/32.jpg" alt="Demo User" size="sm" />
-                </button>
-                {isAvatarMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-700 rounded-lg shadow-lg z-50 animate-fade-in">
-                    <ul className="py-2 text-white">
-                      <li>
-                        <Link to="/settings" className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors block">Settings</Link>
-                      </li>
-                      <li>
-                        <button className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors">Log Out</button>
-                      </li>
-                      <li>
-                        <div className="px-4 py-2 text-neutral-400 cursor-default">Dark Mode / Light Mode</div>
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <Link to="/sign-up">
-              <Button variant="primary" size="sm">
-                Lezgooooo
-              </Button>
-            </Link>
-          )}
         </div>
 
         {/* Mobile Menu Button */}

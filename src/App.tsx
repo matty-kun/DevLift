@@ -17,6 +17,7 @@ import FounderDashboard from './pages/FounderDashboard';
 import PostProject from './pages/PostProject';
 import StudentDashboard from './pages/StudentDashboard';
 import Settings from './pages/Settings';
+import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 
@@ -29,19 +30,19 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:id" element={<ProjectDetails />} />
-            <Route path="/startups" element={<Startups />} />
+            <Route path="/projects" element={<UnderConstruction />} />
+            <Route path="/projects/:id" element={<UnderConstruction />} />
+            <Route path="/startups" element={<UnderConstruction />} />
             <Route path="/startups/:id" element={<StartupDetails />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
-            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community" element={<UnderConstruction />} />
 
-            <Route path="/founder-dashboard" element={<FounderDashboard />} />
-            <Route path="/post-project" element={<PostProject />} />
+            <Route path="/founder-dashboard" element={<UnderConstruction />} />
+            <Route path="/post-project" element={<UnderConstruction />} />
 
-            <Route path="/student-dashboard" element={<StudentDashboard />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/student-dashboard" element={<UnderConstruction />} />
+            <Route path="/settings" element={<UnderConstruction />} />
 
             {/* <Route 
               path="/projects" 

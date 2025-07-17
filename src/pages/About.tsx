@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import VisionAndMission from '../components/home/VisionAndMission';
 
 const About: React.FC = () => (
   <div className="min-h-screen bg-black py-12">
@@ -8,34 +9,7 @@ const About: React.FC = () => (
         <h1 className="text-4xl font-bold text-white mb-2">About <span className="text-custom-cyan">Dev</span><span className="text-custom-orange">Lift</span></h1>
         <p className="text-lg text-white">Empowering students and startups to build the future together.</p>
       </div>
-      <div className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-cyan mb-8">
-        <h2 className="text-2xl font-semibold text-custom-orange mb-4">Our Mission</h2>
-        <p className="text-white mb-4">
-          To empower student-builders and startup founders to co-create real products, gain experience, and grow together through meaningful collaboration.
-        </p>
-        <h2 className="text-2xl font-semibold text-custom-purple mb-4 mt-8">Our Vision</h2>
-        <p className="text-white mb-4">
-          To become the world's leading platform for building the next generation of innovators, creating a world where anyone with an idea can build and anyone with skills can grow - no matter where they start.
-        </p>
-        <h2 className="text-2xl font-semibold text-custom-cyan mb-4 mt-8">Core Values</h2>
-        <ul className="list-disc pl-6 text-white space-y-4 mb-4">
-          <li>
-            <span className="font-bold">Build with Purpose:</span> <span className="italic">We don't just ship features — we solve real problems. Every line of code, every message sent, and every project started has a reason behind it.</span>
-          </li>
-          <li>
-            <span className="font-bold">Grow through Action:</span> <span className="italic">We learn by doing. We believe that real growth happens through execution — building, failing, and iterating quickly.</span>
-          </li>
-          <li>
-            <span className="font-bold">Radical Collaboration:</span> <span className="italic">We create together, not just work together. Founders and students co-own outcomes, not just tasks.</span>
-          </li>
-          <li>
-            <span className="font-bold">Be Resourceful, Be a Builder:</span> <span className="italic">We don't wait for perfect conditions. We solve problems with what we have — creatively and relentlessly.</span>
-          </li>
-          <li>
-            <span className="font-bold">Earn Trust, Always:</span> <span className="italic">We lead with transparency, respect, and honesty. Whether you're a founder, a student, or a teammate — we do what's right, even when it's hard.</span>
-          </li>
-        </ul>
-      </div>
+      <VisionAndMission />
       <div className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-purple mb-8">
         <h2 className="text-2xl font-semibold text-custom-cyan mb-4">Meet the Team</h2>
         <div className="flex flex-col md:flex-row gap-8 items-center justify-center">

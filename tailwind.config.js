@@ -116,6 +116,27 @@ export default {
             },
             backgroundImage: {
                 'hero-gradient': 'linear-gradient(135deg, #19c3f7 0%, #7b2ff2 100%)',
+                'grid-pattern': "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(156 163 175 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e\")",
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              'fade-in-up': {
+                '0%': {
+                  opacity: '0',
+                  transform: 'translateY(20px)',
+                },
+                '100%': {
+                  opacity: '1',
+                  transform: 'translateY(0)',
+                },
+              },
+            },
+            animation: {
+              float: 'float 3s ease-in-out infinite',
+              'fade-in-up': 'fade-in-up 1s ease-out',
             },
         },
     },

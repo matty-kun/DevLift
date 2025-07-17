@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Quote, Star } from 'lucide-react';
 import Avatar from '../common/Avatar';
+import VisionAndMission from './VisionAndMission';
 
 interface Testimonial {
   id: string;
@@ -56,6 +57,11 @@ const variants = {
   }),
 };
 
+const textVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
+
 const Testimonials: React.FC = () => {
   const [[page, direction], setPage] = useState([0, 0]);
 
@@ -68,16 +74,34 @@ const Testimonials: React.FC = () => {
   return (
     <section className="py-20 bg-black text-white overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-50">Why are we doing this?</h2>
-          <p className="mt-4 text-xl text-primary-200">
+        <motion.div
+          className="max-w-3xl mx-auto text-center mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold text-primary-50"
+            variants={textVariants}
+          >Why are we doing this?</motion.h2>
+          <motion.p
+            className="mt-4 text-xl text-primary-200"
+            variants={textVariants}
+            transition={{ delay: 0.2 }}
+          >
             Let us tell you why this matters to us and to thousands of students like you.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ delay: 0.4 }}
+        >
           <div className="max-w-3xl mx-auto">
-          <div className="relative flex items-center justify-center min-h-[350px]">              <AnimatePresence initial={false} custom={direction}>
+            <div className="relative flex items-center justify-center min-h-[350px]">              <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                   key={page}
                   custom={direction}
@@ -158,7 +182,25 @@ const Testimonials: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
+
+        <motion.div
+          className="mt-20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ delay: 0.6 }}
+        >
+          <motion.div
+          className="mt-20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ delay: 0.6 }}
+        >
+          <VisionAndMission />
+        </motion.div>
+        </motion.div>
       </div>
     </section>
   );

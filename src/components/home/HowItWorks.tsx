@@ -1,5 +1,23 @@
 import React from 'react';
 import { Rocket, Users, Code, Award } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const textVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.2, // Stagger delay for each card
+      duration: 0.6,
+    },
+  }),
+};
 
 const HowItWorks: React.FC = () => {
   const steps = [
@@ -29,12 +47,25 @@ const HowItWorks: React.FC = () => {
     <section className="py-20 md:py-28 bg-black">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+          <motion.h2
+            className="text-4xl md:text-5xl font-extrabold text-white leading-tight"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+          >
             <span className="text-white">How DevLift Works</span>
-          </h2>
-          <p className="mt-4 text-xl md:text-2xl text-neutral-300 font-medium">
+          </motion.h2>
+          <motion.p
+            className="mt-4 text-xl md:text-2xl text-neutral-300 font-medium"
+            variants={textVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.2 }}
+          >
             Projects over promises. Skills over slides. Your journey to real-world impact starts here.
-          </p>
+          </motion.p>
         </div>
 
         <div className="relative">
@@ -43,9 +74,14 @@ const HowItWorks: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
-              <div 
+              <motion.div 
                 key={index} 
-                                className="relative bg-gradient-to-br from-gray-900 to-black rounded-xl shadow-lg p-8 z-10 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl border border-gray-800 hover:border-custom-cyan"
+                className="relative bg-gradient-to-br from-gray-900 to-black rounded-xl shadow-lg p-8 z-10 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl border border-gray-800 hover:border-custom-cyan"
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                custom={index}
               >
                 <div className="flex flex-col items-center text-center">
                   <div className="p-3 border border-custom-purple rounded-full mb-4">
@@ -57,7 +93,7 @@ const HowItWorks: React.FC = () => {
                 <div className="hidden lg:flex absolute top-6 -left-3 h-8 w-8 rounded-full bg-custom-purple text-white font-medium items-center justify-center border-4 border-custom-purple">
                   {index + 1}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
