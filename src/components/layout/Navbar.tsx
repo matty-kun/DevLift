@@ -19,8 +19,8 @@ const Navbar: React.FC = () => {
   };
   
   return (
-    <header className="sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-1 mt-4 rounded-full bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 shadow-xl">
+    <header className="fixed top-0 left-0 w-full z-50">
+      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-lg bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 shadow-xl">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link to="/" className="flex items-center">
