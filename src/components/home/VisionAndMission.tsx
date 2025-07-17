@@ -21,7 +21,8 @@ const VisionAndMission: React.FC = () => (
   <motion.div
     className="bg-black/80 rounded-xl shadow-lg p-8 border border-custom-cyan mb-8"
     initial="hidden"
-    animate="visible"
+    whileInView="visible"
+    viewport={{ once: true, amount: "some" }}
     variants={containerVariants}
   >
     <motion.div variants={itemVariants}>

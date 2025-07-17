@@ -80,7 +80,7 @@ const FeaturedProjects: React.FC = () => {
                 <motion.div
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.5 }}
+                  viewport={{ once: true, amount: "some" }}
                 >
                     <motion.h2
                       className="text-3xl md:text-4xl font-bold text-neutral-50"
@@ -97,7 +97,7 @@ const FeaturedProjects: React.FC = () => {
                 <motion.div
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.5 }}
+                  viewport={{ once: true, amount: "some" }}
                   transition={{ delay: 0.4 }}
                 >
                   <Link to="/projects">
@@ -119,7 +119,7 @@ const FeaturedProjects: React.FC = () => {
                       variants={cardVariants}
                       initial="hidden"
                       whileInView="visible"
-                      viewport={{ once: true, amount: 0.5 }}
+                      viewport={{ once: true, amount: "some" }}
                       custom={index}
                     >
                       <ProjectCard project={project} />

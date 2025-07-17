@@ -52,7 +52,7 @@ const HowItWorks: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
           >
             <span className="text-white">How DevLift Works</span>
           </motion.h2>
@@ -61,7 +61,7 @@ const HowItWorks: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.2 }}
           >
             Projects over promises. Skills over slides. Your journey to real-world impact starts here.
@@ -80,7 +80,7 @@ const HowItWorks: React.FC = () => {
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.5 }}
+                viewport={{ once: true, amount: "some" }}
                 custom={index}
               >
                 <div className="flex flex-col items-center text-center">

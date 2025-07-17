@@ -24,7 +24,7 @@ const CallToAction: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
           >
             Your Future Won’t Wait. Start Building It.
           </motion.h1>
@@ -33,7 +33,7 @@ const CallToAction: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.2 }}
           >
             Stop waiting for permission. Start building your legacy.
@@ -44,7 +44,7 @@ const CallToAction: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.4 }}
           >
             <Link to="/sign-up">
@@ -75,7 +75,7 @@ const CallToAction: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.6 }}
           >
             No long-term commitment. Start with a single project and grow from there.

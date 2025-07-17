@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
           >
             <span className="text-custom-cyan">Experience </span>
             <span className="text-white">&gt;</span>
@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.2 }}
           >
             Because skills, not grades, get you hired.
@@ -50,7 +50,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.4 }}
           >
             <Link to="/sign-up">
@@ -80,7 +80,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">

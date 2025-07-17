@@ -78,7 +78,7 @@ const Testimonials: React.FC = () => {
           className="max-w-3xl mx-auto text-center mb-12"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: true, amount: "some" }}
         >
           <motion.h2
             className="text-3xl md:text-4xl font-bold text-primary-50"
@@ -97,7 +97,7 @@ const Testimonials: React.FC = () => {
           className="relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: true, amount: "some" }}
           transition={{ delay: 0.4 }}
         >
           <div className="max-w-3xl mx-auto">
@@ -188,18 +188,10 @@ const Testimonials: React.FC = () => {
           className="mt-20"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ delay: 0.6 }}
-        >
-          <motion.div
-          className="mt-20"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ delay: 0.6 }}
+          viewport={{ once: true, amount: "some" }}
+          transition={{ delay: 0.4 }}
         >
           <VisionAndMission />
-        </motion.div>
         </motion.div>
       </div>
     </section>
