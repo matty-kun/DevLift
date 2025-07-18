@@ -39,8 +39,7 @@ const VisionAndMission: React.FC = () => (
         <Lightbulb className="w-6 h-6 mr-2" /> Our Vision
       </h2>
       <p className="text-white mb-8">
-        To become the world's leading platform for building the next generation of innovators, creating a world where anyone with an idea can build and anyone with skills can grow - no matter where they start.
-      </p>
+      To help build the next generation of innovators—creating a world where anyone with an idea can build, and anyone with skills can grow, no matter where they start.      </p>
     </motion.div>
 
     <motion.div variants={itemVariants}>
