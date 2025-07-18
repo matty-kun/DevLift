@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, User, Briefcase } from 'lucide-react';
 import Button from '../common/Button';
 import { Link } from 'react-router-dom';
 import Navbar from '../layout/Navbar'; // adjust the import path as needed
@@ -68,7 +68,8 @@ const Hero: React.FC = () => {
             <Button 
               size="lg" 
               variant="primary"
-              className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
+              className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
+              leftIcon={<User className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
               data-tally-open="3X6BNe"
               data-tally-layout="modal"
@@ -82,7 +83,9 @@ const Hero: React.FC = () => {
             <Button 
               size="lg" 
               variant="outline"
-              className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
+              className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
+              leftIcon={<Briefcase className="h-5 w-5" />}
+              rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
               data-tally-open="3q8YD8"  // <-- Use your new founder form ID here
               data-tally-layout="modal"
               data-tally-width="800"
