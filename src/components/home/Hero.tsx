@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Button from '../common/Button';
 import { Link } from 'react-router-dom';
@@ -7,10 +7,22 @@ import { motion } from 'framer-motion';
 
 const textVariants = {
   hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8} },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
 };
 
 const Hero: React.FC = () => {
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://tally.so/widgets/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <section className="relative">
       <Navbar />
@@ -29,7 +41,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+            viewport={{ once: true, amount: 0.5 }}
           >
             <span className="text-custom-cyan">Experience </span>
             <span className="text-white">&gt;</span>
@@ -40,7 +52,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+            viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.2 }}
           >
             Because skills, not grades, get you hired.
@@ -50,29 +62,35 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+            viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.4 }}
           >
-            <Link to="/sign-up">
-              <Button 
-                size="lg" 
-                variant="primary"
-                className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
-                rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              >
-                Join as Student
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              variant="primary"
+              className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
+              rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
+              data-tally-open="3X6BNe"
+              data-tally-layout="modal"
+              data-tally-width="600"
+              data-tally-emoji-text="🚀"
+              data-tally-emoji-animation="wave"
+            >
+              Join as Student
+            </Button>
 
-            <Link to="/sign-up">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                I'm a Founder
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
+              data-tally-open="3X6BNe"
+              data-tally-layout="modal"
+              data-tally-width="600"
+              data-tally-emoji-text="🚀"
+              data-tally-emoji-animation="wave"
+            >
+              I'm a Founder
+            </Button>
           </motion.div>
 
           <motion.div
@@ -80,7 +98,7 @@ const Hero: React.FC = () => {
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+            viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">

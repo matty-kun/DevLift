@@ -47,28 +47,34 @@ const CallToAction: React.FC = () => {
             viewport={{ once: true, amount: "some" }}
             transition={{ delay: 0.4 }}
           >
-            <Link to="/sign-up">
-              <Button 
-                size="lg" 
-                variant="accent"
-                className="w-full sm:w-auto group flex items-center justify-center gap-x-2 shadow-lg hover:shadow-accent-500/40 transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <User className="w-5 h-5" />
-                <span>Apply as Student</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Link to="/sign-up">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="w-full sm:w-auto group flex items-center justify-center gap-x-2 bg-neutral-800/50 border-neutral-700 text-white hover:bg-neutral-800 hover:border-neutral-600 shadow-lg hover:shadow-primary-500/30 transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <Briefcase className="w-5 h-5" />
-                <span>Join as Founder</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              variant="accent"
+              className="w-full sm:w-auto group flex items-center justify-center gap-x-2 shadow-lg hover:shadow-accent-500/40 transition-all duration-300 transform hover:-translate-y-1"
+              data-tally-open="3X6BNe"
+              data-tally-layout="modal"
+              data-tally-width="600"
+              data-tally-emoji-text="🚀"
+              data-tally-emoji-animation="wave"
+            >
+              <User className="w-5 h-5" />
+              <span>Apply as Student</span>
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full sm:w-auto group flex items-center justify-center gap-x-2 bg-neutral-800/50 border-neutral-700 text-white hover:bg-neutral-800 hover:border-neutral-600 shadow-lg hover:shadow-primary-500/30 transition-all duration-300 transform hover:-translate-y-1"
+              data-tally-open="3X6BNe"
+              data-tally-layout="modal"
+              data-tally-width="600"
+              data-tally-emoji-text="🚀"
+              data-tally-emoji-animation="wave"
+            >
+              <Briefcase className="w-5 h-5" />
+              <span>Join as Founder</span>
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Button>
           </motion.div>
           <motion.p
             className="mt-8 text-sm text-neutral-400"
