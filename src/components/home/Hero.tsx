@@ -72,8 +72,8 @@ const Hero: React.FC = () => {
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
               data-tally-open="3X6BNe"
               data-tally-layout="modal"
-              data-tally-width="600"
-              data-tally-emoji-text="🚀"
+              data-tally-width="800"
+              data-tally-emoji-text="🎓"
               data-tally-emoji-animation="wave"
             >
               Join as Student
@@ -83,9 +83,9 @@ const Hero: React.FC = () => {
               size="lg" 
               variant="outline"
               className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
-              data-tally-open="3X6BNe"
+              data-tally-open="3q8YD8"  // <-- Use your new founder form ID here
               data-tally-layout="modal"
-              data-tally-width="600"
+              data-tally-width="800"
               data-tally-emoji-text="🚀"
               data-tally-emoji-animation="wave"
             >

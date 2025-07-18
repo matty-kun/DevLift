@@ -53,8 +53,8 @@ const CallToAction: React.FC = () => {
               className="w-full sm:w-auto group flex items-center justify-center gap-x-2 shadow-lg hover:shadow-accent-500/40 transition-all duration-300 transform hover:-translate-y-1"
               data-tally-open="3X6BNe"
               data-tally-layout="modal"
-              data-tally-width="600"
-              data-tally-emoji-text="🚀"
+              data-tally-width="800"
+              data-tally-emoji-text="🎓"
               data-tally-emoji-animation="wave"
             >
               <User className="w-5 h-5" />
@@ -65,9 +65,9 @@ const CallToAction: React.FC = () => {
               size="lg" 
               variant="outline"
               className="w-full sm:w-auto group flex items-center justify-center gap-x-2 bg-neutral-800/50 border-neutral-700 text-white hover:bg-neutral-800 hover:border-neutral-600 shadow-lg hover:shadow-primary-500/30 transition-all duration-300 transform hover:-translate-y-1"
-              data-tally-open="3X6BNe"
+              data-tally-open="3q8YD8"
               data-tally-layout="modal"
-              data-tally-width="600"
+              data-tally-width="800"
               data-tally-emoji-text="🚀"
               data-tally-emoji-animation="wave"
             >
