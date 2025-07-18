@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
       <div className="container mx-auto min-h-screen px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl text-center mx-auto">
           <motion.h1
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight whitespace-nowrap"
+            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight md:whitespace-nowrap whitespace-normal"
             variants={textVariants}
             initial="hidden"
             whileInView="visible"

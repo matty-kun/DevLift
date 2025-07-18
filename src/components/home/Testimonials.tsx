@@ -101,7 +101,7 @@ const Testimonials: React.FC = () => {
           transition={{ delay: 0.4 }}
         >
           <div className="max-w-3xl mx-auto">
-            <div className="relative flex items-center justify-center min-h-[350px]">              <AnimatePresence initial={false} custom={direction}>
+            <div className="relative flex items-center justify-center min-h-[400px]">              <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                   key={page}
                   custom={direction}
@@ -131,7 +131,7 @@ const Testimonials: React.FC = () => {
                         <Quote className="absolute top-8 left-8 w-12 h-12 text-neutral-700/50" />
                         <div className="relative z-10">
                             
-                            <p className="text-lg font-light italic leading-relaxed mb-8 text-neutral-200 h-32 overflow-y-auto">
+                            <p className="text-lg font-light italic leading-relaxed mb-8 text-neutral-200 h-40 overflow-y-auto">
                             "{testimonials[imageIndex].content}"
                             </p>
                             <div className="flex items-center">
