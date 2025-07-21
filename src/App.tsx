@@ -76,6 +76,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <SpeedInsights />
     </Router>
   );
 }
