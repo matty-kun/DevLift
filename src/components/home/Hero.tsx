@@ -71,11 +71,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<User className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              data-tally-open="3X6BNe"
-              data-tally-layout="modal"
-              data-tally-width="800"
-              data-tally-emoji-text="🎓"
-              data-tally-emoji-animation="wave"
+              onClick={() => window.open("https://tally.so/r/3X6BNe", "_blank", "noopener,noreferrer")}
             >
               Join as Student
             </Button>
@@ -86,11 +82,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<Briefcase className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              data-tally-open="3q8YD8"  // <-- Use your new founder form ID here
-              data-tally-layout="modal"
-              data-tally-width="800"
-              data-tally-emoji-text="🚀"
-              data-tally-emoji-animation="wave"
+              onClick={() => window.open("https://tally.so/r/3q8YD8", "_blank", "noopener,noreferrer")}
             >
               I'm a Founder
             </Button>
