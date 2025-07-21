@@ -19,7 +19,7 @@ const testimonials: Testimonial[] = [
         content: "I am a student too, and I wanted something real, not just academics. I am tired of feeling unprepared — despite all the grades. It started with frustration. It grew into a mission.",
         name: "Jan Matthew Vargas",
         role: "Computer Science Student-Founder",
-        avatar: "https://scontent.fmnl33-5.fna.fbcdn.net/v/t39.30808-6/517747093_715434427865520_5616217978803779133_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGiEHBQq41lTJrhT5puug2JGhI_zs5jbDMaEj_OzmNsMw_VqQwE3ioDugcuM6umIkJ3RxziNjoBeb26Ne22SxuK&_nc_ohc=uIip0BTRh18Q7kNvwHUplqp&_nc_oc=AdloHDF3gwqijv1rlrMAwLGk4f1g7WKVt2QIREz0rhNrzdn2x86lNA_7Bm6mCqTD_DU&_nc_zt=23&_nc_ht=scontent.fmnl33-5.fna&_nc_gid=C7Nzd9BoRXe-nFhTOYXcCg&oh=00_AfTJvCXWCXSyJ469q6l-wIBdPsrpjg5UOl5REjEnSPbkBg&oe=687BD954",
+        avatar: "https://scontent.fmnl33-5.fna.fbcdn.net/v/t39.30808-6/517747093_715434427865520_5616217978803779133_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGiEHBQq41lTJrhT5puug2JGhI_zs5jbDMaEj_OzmNsMw_VqQwE3ioDugcuM6umIkJ3RxziNjoBeb26Ne22SxuK&_nc_ohc=FJvlafsir5wQ7kNvwGlLV2D&_nc_oc=AdmPykL7G_wh085I_KrJ9Rqs5_6k0YwEn-6hhM_-ELulQb9WgudFBI2EGGeJm3mkyTU&_nc_zt=23&_nc_ht=scontent.fmnl33-5.fna&_nc_gid=5tzweShARSaspPNcbsdX0A&oh=00_AfT4GLqSzeiVWNEY_EPBGsa73As-PdUdb0rdUDyclGM3-w&oe=6883C254",
         rating: 5,
       },
       {
@@ -127,7 +127,7 @@ const Testimonials: React.FC = () => {
                   className="w-full absolute"
                 >
                   <div className="w-full flex-shrink-0 px-4">
-                    <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-10 shadow-medium relative overflow-hidden">
+                    <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-10 shadow-medium relative overflow-hidden font-sans">
                         <Quote className="absolute top-8 left-8 w-12 h-12 text-neutral-700/50" />
                         <div className="relative z-10">
                             
