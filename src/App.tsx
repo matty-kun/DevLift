@@ -21,6 +21,8 @@ import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 
 function App() {
   return (
