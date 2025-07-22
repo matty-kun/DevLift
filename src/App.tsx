@@ -22,6 +22,8 @@ import UnderConstruction from './pages/UnderConstruction';
 // import Messages from './pages/Messages';
 
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/next"
+
 
 
 function App() {
@@ -77,6 +79,7 @@ function App() {
         </main>
         <Footer />
         <SpeedInsights />
+        <Analytics />
     </Router>
   );
 }
