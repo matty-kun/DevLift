@@ -22,7 +22,7 @@ import UnderConstruction from './pages/UnderConstruction';
 // import Messages from './pages/Messages';
 
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 
 
 
