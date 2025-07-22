@@ -97,15 +97,15 @@ const Hero: React.FC = () => {
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-cyan">0+</p>
+              <p className="text-3xl font-bold text-custom-cyan">22+</p>
               <p className="mt-1 text-sm text-white/70">Interested Students</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-purple">0+</p>
+              <p className="text-3xl font-bold text-custom-purple">2+</p>
               <p className="mt-1 text-sm text-white/70">Interested Founders</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-orange">0+</p>
+              <p className="text-3xl font-bold text-custom-orange">2+</p>
               <p className="mt-1 text-sm text-white/70">Startups</p>
             </div>
           </motion.div>
