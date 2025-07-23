@@ -31,31 +31,32 @@ const Hero: React.FC = () => {
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
         <div className="absolute left-1/4 top-32 h-48 w-48 rounded-full bg-custom-purple opacity-60 blur-3xl"></div>
         <div className="absolute left-1/20 bottom-1 h-48 w-48 rounded-full bg-white opacity-60 blur-3xl"></div>
-        <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-50 blur-3xl"></div>
+        <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-60 blur-3xl"></div>
       </div>
 
       <div className="container mx-auto min-h-screen px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
-        <div className="w-full max-w-5xl text-center mx-auto">
+        <div className="w-full max-w-5xl mx-auto flex justify-center">
           <motion.h1
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight md:whitespace-nowrap whitespace-normal"
+            className="inline-block text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight md:whitespace-nowrap whitespace-normal text-center"
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
           >
-            <span className="text-custom-cyan">Experience </span>
-            <span className="text-white">&gt;</span>
-            <span className="text-custom-orange"> Degrees</span>
+            <span className="text-custom-cyan">Knowledge </span>
+            <span className="text-white">meets </span>
+            <span className="text-custom-orange"> Action</span>
           </motion.h1>
+        </div>
           <motion.p
-            className="mt-8 text-2xl md:text-3xl text-white/80 font-medium max-w-3xl mx-auto"
+            className="mt-8 text-xl md:text-3xl text-white/80 font-medium max-w-3xl mx-auto text-center"
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.2 }}
           >
-            Because skills, not grades, get you hired.
+            Because education shines brighter when you put it to use.
           </motion.p>
           <motion.div
             className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
@@ -89,7 +90,7 @@ const Hero: React.FC = () => {
           </motion.div>
 
           <motion.div
-            className="mt-10 grid grid-cols-3 gap-x-6"
+            className="mt-10 grid grid-cols-3 gap-x-10 md:gap-x-16 lg:gap-x-40"
             variants={textVariants}
             initial="hidden"
             whileInView="visible"
@@ -97,7 +98,7 @@ const Hero: React.FC = () => {
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-cyan">47+</p>
+              <p className="text-3xl font-bold text-custom-cyan">66+</p>
               <p className="mt-1 text-sm text-white/70">Interested Students</p>
             </div>
             <div className="text-center">
@@ -110,7 +111,6 @@ const Hero: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </div>
     </section>
   );
 };
