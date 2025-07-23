@@ -4,6 +4,7 @@ import HowItWorks from '../components/home/HowItWorks';
 import FeaturedProjects from '../components/home/FeaturedProjects';
 import Testimonials from '../components/home/Testimonials';
 import CallToAction from '../components/home/CallToAction';
+import Community from './Community';
 
 const Home: React.FC = () => {
     return (
@@ -12,6 +13,7 @@ const Home: React.FC = () => {
             <HowItWorks />
             <FeaturedProjects />
             <Testimonials />
+            <Community />
             <CallToAction />
         </div>
     );

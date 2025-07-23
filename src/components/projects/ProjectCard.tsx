@@ -5,7 +5,6 @@ import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import Card from '../common/Card';
-import { Project } from '../../types';
 
 interface ProjectCardProps {
     project: Project;
