@@ -1,119 +1,124 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
 import Avatar from '../components/common/Avatar';
 import { Project } from '../types';
+import { supabase } from '../lib/supabase';
 
-// Sample data with founderName, startupLogo, and bannerUrl for demo
-const sampleProjects: (Project & { founderName: string; startupLogo?: string; bannerUrl?: string })[] = [
-  {
-    id: '1',
-    title: 'E-Commerce Mobile App Development',
-    description: 'Build a fully functional e-commerce app using React Native with payment integration, product catalog, and user authentication.',
-    mentorId: 'mentor1',
-    founderName: 'Alice Johnson',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
-    skills: ['React Native', 'JavaScript', 'Firebase', 'Redux'],
-    duration: '8 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 3,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-  },
-  {
-    id: '2',
-    title: 'Data Visualization Dashboard',
-    description: 'Design and develop an interactive dashboard to visualize complex datasets for a healthcare organization using modern web technologies.',
-    mentorId: 'mentor2',
-    founderName: 'Priya Patel',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    skills: ['React', 'D3.js', 'TypeScript', 'Tailwind CSS'],
-    duration: '6 weeks',
-    status: 'open',
-    difficulty: 'advanced',
-    maxStudents: 2,
-    assignedStudents: ['student1'],
-    applicants: ['student1', 'student2', 'student3'],
-    createdAt: new Date(),
-  },
-  {
-    id: '3',
-    title: 'AI Chatbot Integration',
-    description: 'Implement a conversational AI chatbot into an existing platform to improve customer service and automate repetitive tasks.',
-    mentorId: 'mentor3',
-    founderName: 'Mark Lee',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
-    skills: ['Python', 'NLP', 'Machine Learning', 'API Integration'],
-    duration: '10 weeks',
-    status: 'in-progress',
-    difficulty: 'advanced',
-    maxStudents: 4,
-    assignedStudents: ['student4', 'student5'],
-    applicants: ['student4', 'student5', 'student6', 'student7'],
-    createdAt: new Date(),
-  },
-  {
-    id: '4',
-    title: 'Social Media Analytics Tool',
-    description: 'Create a web application that analyzes social media data and provides insights using data visualization and machine learning.',
-    mentorId: 'mentor4',
-    founderName: 'Lucas Green',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    skills: ['React', 'Python', 'Data Analysis', 'Machine Learning'],
-    duration: '12 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 3,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-  },
-  {
-    id: '5',
-    title: 'Blockchain Wallet Integration',
-    description: 'Integrate cryptocurrency wallet functionality into an existing web application using Web3 technologies.',
-    mentorId: 'mentor5',
-    founderName: 'Satoshi Nakamoto',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
-    skills: ['Web3.js', 'Solidity', 'React', 'TypeScript'],
-    duration: '8 weeks',
-    status: 'open',
-    difficulty: 'advanced',
-    maxStudents: 2,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-  },
-  {
-    id: '6',
-    title: 'Mobile Game Development',
-    description: 'Build a casual mobile game using Unity and implement core gameplay mechanics, UI, and monetization features.',
-    mentorId: 'mentor6',
-    founderName: 'Jane Doe',
-    startupLogo: 'https://via.placeholder.com/64x64.png?text=Logo',
-    bannerUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    skills: ['Unity', 'C#', 'Game Design', 'UI/UX'],
-    duration: '10 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 4,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-  },
-];
+type ProjectRow = {
+  id: string;
+  title: string;
+  description: string;
+  mentor_id: string;
+  status: 'open' | 'in_progress' | 'completed' | null;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  duration_weeks: number | null;
+  max_students: number | null;
+  created_at: string;
+};
+
+type ProjectSkillRow = { project_id: string; skills: { name: string } | null };
+type ApplicationRow = { status: 'pending' | 'accepted' | 'rejected'; student_id: string | null };
+type UserProfile = { full_name: string | null; avatar_url: string | null } | null;
+
+const mapStatus = (s: string | null): Project['status'] => {
+  if (!s) return 'open';
+  if (s === 'in_progress') return 'in-progress';
+  if (s === 'completed') return 'completed';
+  return 'open';
+};
+
+const defaultImage = (title: string) =>
+  `https://source.unsplash.com/1200x400/?technology,${encodeURIComponent(title)}`;
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const project = sampleProjects.find((p) => p.id === id);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [project, setProject] = useState<(Project & { founderName: string; startupLogo?: string; bannerUrl?: string }) | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Project core
+        const { data: pRow, error: pErr } = await supabase
+          .from('projects')
+          .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, created_at')
+          .eq('id', id)
+          .maybeSingle();
+        if (pErr) throw pErr;
+        if (!pRow) { setProject(null); setLoading(false); return; }
+
+        const row = pRow as ProjectRow;
+
+        // Mentor profile
+        const { data: mentor, error: mErr } = await supabase
+          .from('users')
+          .select('full_name, avatar_url')
+          .eq('id', row.mentor_id)
+          .maybeSingle();
+        if (mErr) throw mErr;
+        const profile = (mentor as UserProfile) ?? null;
+
+        // Skills
+        const { data: ps } = await supabase
+          .from('project_skills')
+          .select('project_id, skills(name)')
+          .eq('project_id', row.id);
+        const skills = ((ps as ProjectSkillRow[] | null) ?? [])
+          .map(r => r.skills?.name)
+          .filter((s): s is string => !!s);
+
+        // Applications (accepted vs total)
+        const { data: apps } = await supabase
+          .from('applications')
+          .select('student_id, status')
+          .eq('project_id', row.id);
+        const applicants = ((apps as ApplicationRow[] | null) ?? []).map(a => a.student_id ?? '');
+        const assigned = ((apps as ApplicationRow[] | null) ?? [])
+          .filter(a => a.status === 'accepted')
+          .map(a => a.student_id ?? '');
+
+        const mapped: Project & { founderName: string; startupLogo?: string; bannerUrl?: string } = {
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          mentorId: row.mentor_id,
+          skills,
+          duration: `${row.duration_weeks ?? 0} weeks`,
+          status: mapStatus(row.status),
+          difficulty: row.difficulty,
+          maxStudents: row.max_students ?? 0,
+          assignedStudents: assigned,
+          applicants,
+          createdAt: new Date(row.created_at),
+          imageUrl: defaultImage(row.title),
+          founderName: profile?.full_name ?? 'Founder',
+          startupLogo: profile?.avatar_url ?? undefined,
+          bannerUrl: defaultImage(row.title),
+        };
+
+        setProject(mapped);
+        setLoading(false);
+      } catch (e) {
+        console.error(e);
+        setError('Failed to load project');
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading…</div>
+    );
+  }
 
   if (!project) {
     return (
@@ -128,14 +133,9 @@ const ProjectDetails: React.FC = () => {
       <div className="container mx-auto px-4 max-w-2xl">
         <Link to="/projects" className="text-custom-cyan hover:text-custom-purple mb-4 inline-block">&larr; Back to Projects</Link>
         <Card className="mb-8 text-white">
-          {/* Banner at the top of the card */}
           {project.bannerUrl && (
             <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
-              <img
-                src={project.bannerUrl}
-                alt="Project Banner"
-                className="w-full h-40 object-cover"
-              />
+              <img src={project.bannerUrl} alt="Project Banner" className="w-full h-40 object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
           )}

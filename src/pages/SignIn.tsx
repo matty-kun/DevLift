@@ -1,13 +1,47 @@
 import { useState, FormEvent } from "react";
-import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/DevLift Logo.svg"; // adjust path if needed
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 
 const SignInForm: React.FC = () => {
+  const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [rememberMe, setRememberMe] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted");
+    setError(null);
+    setSubmitting(true);
+    try {
+  await signIn(email.trim(), password);
+      // Fetch role to route accordingly
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes.user?.id;
+      let dest = "/";
+      if (userId) {
+        const { data: prof } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", userId)
+          .maybeSingle();
+        const role = (prof as { role?: string } | null)?.role;
+        if (role === "mentor" || role === "founder") dest = "/founder-dashboard";
+        else dest = "/student-dashboard";
+      }
+      navigate(dest, { replace: true });
+      
+    } catch (err: unknown) {
+      const hasMessage = (e: unknown): e is { message: string } =>
+        typeof e === 'object' && e !== null && 'message' in e && typeof (e as { message: unknown }).message === 'string';
+      setError(hasMessage(err) ? err.message : 'Sign in failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -36,12 +70,14 @@ const SignInForm: React.FC = () => {
             />
           </div>
 
-          {/* Username */}
+      {/* Email */}
           <div className="mb-4">
             <input
-              type="text"
-              placeholder="Username or email"
+        type="email"
+        placeholder="Email"
               required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border border-[#232336] rounded-md bg-black text-custom-orange text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
             />
           </div>
@@ -52,6 +88,8 @@ const SignInForm: React.FC = () => {
               type="password"
               placeholder="Password"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
             />
           </div>
@@ -72,51 +110,48 @@ const SignInForm: React.FC = () => {
             </a>
           </div>
 
+          {error && (
+            <div className="mb-3 rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
+
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-hero-gradient text-white border-none py-3 rounded-md text-lg font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110"
+            disabled={submitting}
+            className="w-full bg-hero-gradient text-white border-none py-3 rounded-md text-lg font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Sign in
+            {submitting ? "Signing in…" : "Sign in"}
           </button>
+
+          
 
           {/* Register link */}
           <div className="text-center text-[0.98rem]">
             <p className="text-white">
               Don't have an account?{" "}
-              <a href="#" className="text-custom-cyan hover:underline">
+              <Link to="/sign-up" className="text-custom-cyan hover:underline">
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
 
-          {/* Social media */}
+          {/* Social media (temporarily disabled for debugging SVG path error)
           <div className="text-center text-[0.98rem] mt-4">
             <p className="text-neutral-300 mb-2">Or sign in with</p>
             <div className="flex justify-center gap-4">
-              <a
-                href="#"
-                title="Sign in with Google"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
+              <a href="#" title="Sign in with Google" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
                 <FaGoogle />
               </a>
-              <a
-                href="#"
-                title="Sign in with Facebook"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
+              <a href="#" title="Sign in with Facebook" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
                 <FaFacebook />
               </a>
-              <a
-                href="#"
-                title="Sign in with GitHub"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
+              <a href="#" title="Sign in with GitHub" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
                 <FaGithub />
               </a>
             </div>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

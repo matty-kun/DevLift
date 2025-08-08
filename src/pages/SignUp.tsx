@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock, User, Briefcase } from 'lucide-react';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SignUpFormData {
     email: string;
@@ -16,17 +17,31 @@ interface SignUpFormData {
 }
 
 const SignUp: React.FC = () => {
+    const navigate = useNavigate();
+    const { signUp } = useAuth();
     const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<'student' | 'founder' | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const password = watch('password');
 
-    const onSubmit = async () => {
+    const onSubmit = async (data: SignUpFormData) => {
+        setError(null);
+        setSuccess(null);
+        if (!userType) { setError('Please choose your role.'); return; }
         try {
-            setError(null);
-            console.log('Form submitted, but no action taken');
-        } catch {
-            console.log('Form submitted, but no action taken');
+            // Map founder to mentor for now, unless your DB enum includes founder
+            const role = userType === 'founder' ? 'founder' : 'student';
+            await signUp(data.email, data.password, role, '');
+            // If email confirmation is enabled, inform the user
+            setSuccess('Account created. Check your email to confirm before signing in.');
+            // Optionally navigate to sign-in
+            navigate('/sign-in');
+            
+                } catch (e: unknown) {
+                        const hasMessage = (x: unknown): x is { message: string } =>
+                            typeof x === 'object' && x !== null && 'message' in x && typeof (x as { message?: unknown }).message === 'string';
+                        setError(hasMessage(e) ? e.message : 'Sign up failed. Please try again.');
         }
     };
 
@@ -119,6 +134,13 @@ const SignUp: React.FC = () => {
                                     {error}
                                 </div>
                             )}
+                            {success && (
+                                <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-2 rounded-lg">
+                                    {success}
+                                </div>
+                            )}
+
+                            
 
                             <Button
                                 type="submit"
