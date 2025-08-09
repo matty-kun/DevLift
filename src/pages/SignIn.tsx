@@ -1,8 +1,8 @@
 import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../assets/DevLift Logo.svg"; // adjust path if needed
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
+import Logo from "../assets/DevLift Logo.svg"; // adjust path if needed
 
 const SignInForm: React.FC = () => {
   const navigate = useNavigate();
@@ -55,10 +55,10 @@ const SignInForm: React.FC = () => {
       </div>
 
       {/* Wrapper */}
-      <div className="bg-black rounded-2xl p-8 w-[400px] shadow-medium animate-fade-in-up z-10 relative">
+      <div className="bg-black rounded-2xl p-6 w-[380px] shadow-medium animate-fade-in-up z-10 relative">
         <form onSubmit={handleSubmit}>
           {/* Logo */}
-          <div className="text-center relative h-[120px]">
+          <div className="text-center relative h-[80px] mb-4">
             <h3 className="hidden font-bold text-[1.6rem] tracking-wide">
               <span className="text-custom-cyan">sign</span>
               <span className="text-white">in</span>
@@ -120,7 +120,7 @@ const SignInForm: React.FC = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-hero-gradient text-white border-none py-3 rounded-md text-lg font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-hero-gradient text-white border-none py-3 rounded-md text-lg font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110"
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
@@ -128,7 +128,7 @@ const SignInForm: React.FC = () => {
           
 
           {/* Register link */}
-          <div className="text-center text-[0.98rem]">
+          <div className="text-center text-[0.98rem] mb-3">
             <p className="text-white">
               Don't have an account?{" "}
               <Link to="/sign-up" className="text-custom-cyan hover:underline">
@@ -137,22 +137,13 @@ const SignInForm: React.FC = () => {
             </p>
           </div>
 
-          {/* Social media (temporarily disabled for debugging SVG path error)
-          <div className="text-center text-[0.98rem] mt-4">
-            <p className="text-neutral-300 mb-2">Or sign in with</p>
-            <div className="flex justify-center gap-4">
-              <a href="#" title="Sign in with Google" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
-                <FaGoogle />
-              </a>
-              <a href="#" title="Sign in with Facebook" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
-                <FaFacebook />
-              </a>
-              <a href="#" title="Sign in with GitHub" className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition">
-                <FaGithub />
-              </a>
-            </div>
-          </div> */}
+          {/* Social sign-in buttons can go here later */}
         </form>
+        <div className="text-center mt-6">
+            <p className="text-neutral-500 text-xs">
+              Made by a Student - Jieson Delafuente
+            </p>
+      </div>
       </div>
     </div>
   );

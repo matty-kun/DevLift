@@ -11,7 +11,7 @@ import SignIn from './pages/SignIn';
 import StartupDetails from './pages/StartupDetails';
 import Resources from './pages/Resources';
 import About from './pages/About';
-import CommunityPage from './pages/Community';
+// import CommunityPage from './pages/Community';
 import FounderDashboard from './pages/FounderDashboard';
 import PostProject from './pages/PostProject';
 import StudentDashboard from './pages/StudentDashboard';
@@ -20,8 +20,8 @@ import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 
-// import { SpeedInsights } from "@vercel/speed-insights/react";
-// import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 
 
 
@@ -89,6 +89,9 @@ function App() {
   <Footer />
   {/* <SpeedInsights /> */}
   {/* <Analytics /> */}
+        
+        <SpeedInsights />
+        <Analytics />
     </Router>
   );
 }
