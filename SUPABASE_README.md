@@ -325,3 +325,19 @@ on conflict do nothing;
 
 
 
+
+
+
+
+========= SETUP THIRD PARTY AUTHENTICATORS
+=== THIRD PARTY AUTH (GOOGLE)
+Follow guide: https://supabase.com/docs/guides/auth/social-login/auth-google
+
+
+=== THIRD PARTY AUTH (GITHUB )
+Follow guide: https://supabase.com/docs/guides/auth/social-login/auth-github
+
+
+=== THIRD PARTY AUTH (FACEBOOK)
+Follow guide: https://supabase.com/docs/guides/auth/social-login/auth-facebook
+or https://www.youtube.com/watch?v=EbV746pWDas

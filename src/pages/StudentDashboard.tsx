@@ -1,56 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
 import Avatar from '../components/common/Avatar';
 import ProjectCard from '../components/projects/ProjectCard';
 import { Project } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
-// Mock student data
-const studentName = 'Jordan';
-const studentAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
-const studentSkills = ['React', 'TypeScript', 'UI/UX', 'Node.js'];
-const recentActivity = [
-  'You applied to "AI Chatbot Integration"',
-  'Project "Data Visualization Dashboard" assigned to you',
-  'Feedback received for "E-Commerce Mobile App"',
-];
+// Helpers to map DB to UI
+const mapStatus = (s: string | null): Project['status'] => {
+  if (!s) return 'open';
+  if (s === 'in_progress') return 'in-progress';
+  if (s === 'completed') return 'completed';
+  return 'open';
+};
+const defaultImage = (title: string) =>
+  `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(title)}`;
 
-// Mock projects (reuse sampleProjects structure)
-const assignedProjects: Project[] = [
-  {
-    id: '2',
-    title: 'Data Visualization Dashboard',
-    description: 'Design and develop an interactive dashboard to visualize complex datasets for a healthcare organization using modern web technologies.',
-    mentorId: 'mentor2',
-    skills: ['React', 'D3.js', 'TypeScript', 'Tailwind CSS'],
-    duration: '6 weeks',
-    status: 'in-progress',
-    difficulty: 'advanced',
-    maxStudents: 2,
-    assignedStudents: ['student1'],
-    applicants: ['student1', 'student2', 'student3'],
-    createdAt: new Date(),
-  },
-];
-const applications: Project[] = [
-  {
-    id: '1',
-    title: 'AI Chatbot Integration',
-    description: 'Implement a conversational AI chatbot into an existing platform to improve customer service and automate repetitive tasks.',
-    mentorId: 'mentor3',
-    skills: ['Python', 'NLP', 'Machine Learning', 'API Integration'],
-    duration: '10 weeks',
-    status: 'open',
-    difficulty: 'advanced',
-    maxStudents: 4,
-    assignedStudents: ['student4', 'student5'],
-    applicants: ['student4', 'student5', 'student6', 'student7'],
-    createdAt: new Date(),
-  },
-];
+type ProjectRow = {
+  id: string;
+  title: string;
+  description: string;
+  mentor_id: string;
+  status: 'open' | 'in_progress' | 'completed' | null;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  duration_weeks: number | null;
+  max_students: number | null;
+  created_at: string;
+};
+type ProjectSkillRow = {
+  project_id: string;
+  skills: { name: string } | null;
+};
+type ApplicationRow = {
+  project_id: string;
+  student_id: string | null;
+  status: 'pending' | 'accepted' | 'rejected';
+};
 
 const resources = [
   {
@@ -74,6 +63,133 @@ const resources = [
 ];
 
 const StudentDashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { session, profile, signOut, loading: authLoading } = useAuth();
+
+  const [applications, setApplications] = useState<Project[]>([]);
+  const [assignedProjects, setAssignedProjects] = useState<Project[]>([]);
+  const [studentSkills, setStudentSkills] = useState<string[]>([]);
+  const [recentActivity, setRecentActivity] = useState<string[]>([]);
+  const displayName = profile?.full_name || session?.user?.email || 'Student';
+  const avatarSrc = profile?.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=student';
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !session) {
+      navigate('/sign-in', { replace: true });
+    }
+  }, [authLoading, session, navigate]);
+
+  // Load applications and assigned projects for this student
+  useEffect(() => {
+    const load = async () => {
+      if (!session?.user?.id) return;
+      const uid = session.user.id;
+
+      // Get all applications by this student
+      const { data: apps, error: appsErr } = await supabase
+        .from('applications')
+        .select('project_id, student_id, status')
+        .eq('student_id', uid);
+      if (appsErr) {
+        console.error(appsErr);
+        return;
+      }
+
+      const appRows = (apps as ApplicationRow[] | null) ?? [];
+      const projectIds = Array.from(new Set(appRows.map(a => a.project_id))).filter(Boolean) as string[];
+      const acceptedIds = new Set(appRows.filter(a => a.status === 'accepted').map(a => a.project_id));
+
+      if (projectIds.length === 0) {
+        setApplications([]);
+        setAssignedProjects([]);
+        setStudentSkills([]);
+        setRecentActivity([]);
+        return;
+      }
+
+      // Fetch projects
+      const { data: proj, error: projErr } = await supabase
+        .from('projects')
+        .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, created_at')
+        .in('id', projectIds);
+      if (projErr) {
+        console.error(projErr);
+        return;
+      }
+      const rows: ProjectRow[] = (proj as ProjectRow[] | null) ?? [];
+
+      // Skills per project
+      const skillsMap = new Map<string, string[]>();
+      const { data: ps } = await supabase
+        .from('project_skills')
+        .select('project_id, skills(name)')
+        .in('project_id', projectIds);
+      (ps as ProjectSkillRow[] | null)?.forEach((row) => {
+        const name = row.skills?.name;
+        if (!name) return;
+        const list = skillsMap.get(row.project_id) ?? [];
+        list.push(name);
+        skillsMap.set(row.project_id, list);
+      });
+
+      // For counts
+      const acceptedMap = new Map<string, string[]>();
+      const applicantsMap = new Map<string, string[]>();
+      const { data: appsAll } = await supabase
+        .from('applications')
+        .select('project_id, student_id, status')
+        .in('project_id', projectIds);
+      (appsAll as ApplicationRow[] | null)?.forEach((a) => {
+        const pid = a.project_id;
+        const sid = a.student_id ?? '';
+        const applicants = applicantsMap.get(pid) ?? [];
+        applicants.push(sid);
+        applicantsMap.set(pid, applicants);
+        if (a.status === 'accepted') {
+          const acc = acceptedMap.get(pid) ?? [];
+          acc.push(sid);
+          acceptedMap.set(pid, acc);
+        }
+      });
+
+      const mapped: Project[] = rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        mentorId: r.mentor_id,
+        skills: skillsMap.get(r.id) ?? [],
+        duration: `${r.duration_weeks ?? 0} weeks`,
+        status: mapStatus(r.status),
+        difficulty: r.difficulty,
+        maxStudents: r.max_students ?? 0,
+        assignedStudents: acceptedMap.get(r.id) ?? [],
+        applicants: applicantsMap.get(r.id) ?? [],
+        createdAt: new Date(r.created_at),
+        imageUrl: defaultImage(r.title),
+      }));
+
+      setApplications(mapped);
+      setAssignedProjects(mapped.filter(p => acceptedIds.has(p.id)));
+      setStudentSkills(Array.from(new Set(mapped.flatMap(p => p.skills))).slice(0, 8));
+      // Recent activity from application statuses
+      const titleById = new Map(mapped.map(m => [m.id, m.title] as const));
+      const activity = appRows.slice(-5).map((a) => {
+        const title = titleById.get(a.project_id) || 'a project';
+        if (a.status === 'accepted') return `You were accepted to "${title}"`;
+        if (a.status === 'rejected') return `Your application was rejected for "${title}"`;
+        return `You applied to "${title}"`;
+      }).reverse();
+      setRecentActivity(activity);
+    };
+    load();
+  }, [session?.user?.id]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/sign-in', { replace: true });
+  };
+
   return (
     <div className="bg-black min-h-screen flex flex-col">
       <main className="flex-1 px-4 py-8">
@@ -81,16 +197,21 @@ const StudentDashboard: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <Avatar src={studentAvatar} alt={studentName} size="lg" />
+              <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>
-                <h1 className="text-2xl font-bold text-custom-cyan">Welcome, {studentName}!</h1>
+                <h1 className="text-2xl font-bold text-custom-cyan">Welcome, {displayName}!</h1>
                 <p className="text-neutral-400 text-sm">Here's your student dashboard.</p>
               </div>
             </div>
-            <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors">
-              <Bell className="h-6 w-6 text-custom-orange" />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-custom-orange rounded-full"></span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors" aria-label="Notifications">
+                <Bell className="h-6 w-6 text-custom-orange" />
+                <span className="absolute top-1 right-1 h-2 w-2 bg-custom-orange rounded-full"></span>
+              </button>
+              <button onClick={handleSignOut} className="bg-neutral-900 text-red-400 border border-red-500/40 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition-colors">
+                Sign out
+              </button>
+            </div>
           </div>
 
           {/* Stats Cards */}

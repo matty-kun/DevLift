@@ -86,7 +86,7 @@ function App() {
             />            */}
           </Routes>
         </main>
-  <Footer />
+  {/* <Footer /> */}
   {/* <SpeedInsights /> */}
   {/* <Analytics /> */}
         

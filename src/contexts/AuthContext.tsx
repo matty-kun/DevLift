@@ -18,6 +18,7 @@ type AuthContextType = {
 	loading: boolean;
 	signUp: (email: string, password: string, role?: string, fullName?: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
+	signInWithProvider: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
 	signOut: () => Promise<void>;
 };
 
@@ -108,7 +109,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		await supabase.auth.signOut();
 	};
 
-		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, signUp, signIn, signOut }), [session, profile, loading]);
+	const signInWithProvider = async (provider: 'google' | 'facebook' | 'github') => {
+		const redirectTo = `${window.location.origin}/sign-in`;
+		const scopes = provider === 'github' ? 'read:user user:email' : provider === 'google' ? 'email profile' : 'email';
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider,
+			options: { redirectTo, scopes }
+		});
+		if (error) throw error;
+	};
+
+		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, signUp, signIn, signInWithProvider, signOut }), [session, profile, loading]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
