@@ -4,6 +4,7 @@ import HowItWorks from '../components/home/HowItWorks';
 import FeaturedProjects from '../components/home/FeaturedProjects';
 import Testimonials from '../components/home/Testimonials';
 import CallToAction from '../components/home/CallToAction';
+import Footer from '../components/layout/Footer';
 
 const Home: React.FC = () => {
     return (
@@ -13,6 +14,7 @@ const Home: React.FC = () => {
             <FeaturedProjects />
             <Testimonials />
             <CallToAction />
+            <Footer />
         </div>
     );
 };

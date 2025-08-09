@@ -1,6 +1,6 @@
 import { useState, FormEvent } from "react";
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
-import Logo from "../assets/DevLift Logo.svg"; // adjust path if needed
+import Logo from "../assets/DevLift Logo.svg"; 
 
 const SignInForm: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -42,7 +42,7 @@ const SignInForm: React.FC = () => {
               type="text"
               placeholder="Username or email"
               required
-              className="w-full p-3 border border-[#232336] rounded-md bg-black text-custom-orange text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
+              className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
             />
           </div>
 

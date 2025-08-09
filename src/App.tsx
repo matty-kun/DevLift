@@ -77,7 +77,7 @@ function App() {
             />            */}
           </Routes>
         </main>
-        <Footer />
+        
         <SpeedInsights />
         <Analytics />
     </Router>
