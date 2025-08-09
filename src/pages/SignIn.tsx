@@ -21,10 +21,10 @@ const SignInForm: React.FC = () => {
       </div>
 
       {/* Wrapper */}
-      <div className="bg-black rounded-2xl p-8 w-[400px] shadow-medium animate-fade-in-up z-10 relative">
+      <div className="bg-black rounded-2xl p-6 w-[380px] shadow-medium animate-fade-in-up z-10 relative">
         <form onSubmit={handleSubmit}>
           {/* Logo */}
-          <div className="text-center relative h-[120px]">
+          <div className="text-center relative h-[80px] mb-4">
             <h3 className="hidden font-bold text-[1.6rem] tracking-wide">
               <span className="text-custom-cyan">sign</span>
               <span className="text-white">in</span>
@@ -37,23 +37,27 @@ const SignInForm: React.FC = () => {
           </div>
 
           {/* Username */}
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Username or email"
-              required
-              className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
-            />
+          <div className="mb-3">
+            <label>
+              <input
+                type="text"
+                placeholder="Username or email"
+                required
+                className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
+              />
+            </label>
           </div>
 
           {/* Password */}
-          <div className="mb-4">
-            <input
-              type="password"
-              placeholder="Password"
-              required
-              className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
-            />
+          <div className="mb-3">
+            <label>
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
+              />
+            </label>
           </div>
 
           {/* Remember me */}
@@ -75,13 +79,13 @@ const SignInForm: React.FC = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-hero-gradient text-white border-none py-3 rounded-md text-lg font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110"
+            className="w-full bg-custom-cyan text-black border-none py-2 rounded-md text-base font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110"
           >
             Sign in
           </button>
 
           {/* Register link */}
-          <div className="text-center text-[0.98rem]">
+          <div className="text-center text-[0.98rem] mb-3">
             <p className="text-white">
               Don't have an account?{" "}
               <a href="#" className="text-custom-cyan hover:underline">
@@ -91,33 +95,38 @@ const SignInForm: React.FC = () => {
           </div>
 
           {/* Social media */}
-          <div className="text-center text-[0.98rem] mt-4">
+          <div className="text-center text-[0.98rem]">
             <p className="text-neutral-300 mb-2">Or sign in with</p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3">
               <a
                 href="#"
                 title="Sign in with Google"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
               >
                 <FaGoogle />
               </a>
               <a
                 href="#"
                 title="Sign in with Facebook"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
               >
                 <FaFacebook />
               </a>
               <a
                 href="#"
                 title="Sign in with GitHub"
-                className="text-neutral-300 text-[1.7rem] w-10 h-10 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
               >
                 <FaGithub />
               </a>
             </div>
           </div>
         </form>
+        <div className="text-center mt-6">
+            <p className="text-neutral-500 text-xs">
+              Made by a Student - Jieson Delafuente
+            </p>
+      </div>
       </div>
     </div>
   );
