@@ -1,17 +1,35 @@
-import { useState, FormEvent } from "react";
+import React, { useState } from "react";
+import { useForm } from 'react-hook-form';
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
+import { Mail, Lock } from 'lucide-react';
 import Logo from "../assets/DevLift Logo.svg"; 
+import Card from '../components/common/Card';
+import Input from '../components/common/Input';
+import Button from '../components/common/Button'; 
+
+interface SignInFormData {
+    email: string;
+    password: string;
+} 
 
 const SignInForm: React.FC = () => {
-  const [rememberMe, setRememberMe] = useState(false);
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignInFormData>();
+    const [error, setError] = useState<string | null>(null);
+    const [rememberMe, setRememberMe] = useState(false); // Keep rememberMe state
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+    const onSubmit = async (data: SignInFormData) => {
+        try {
+            setError(null);
+            console.log('Form submitted with data:', data);
+            // Add actual sign-in logic here
+        } catch (err) {
+            setError('Sign-in failed. Please check your credentials.');
+            console.error('Sign-in error:', err);
+        }
+    };
 
   return (
-    <div className="min-h-screen bg-black flex justify-center items-center relative overflow-hidden font-sans">
+    <div className="h-screen bg-black relative overflow-y-hidden flex items-center justify-center">
       {/* Background decorative elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
@@ -20,113 +38,129 @@ const SignInForm: React.FC = () => {
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-60 blur-3xl"></div>
       </div>
 
-      {/* Wrapper */}
-      <div className="bg-black rounded-2xl p-6 w-[380px] shadow-medium animate-fade-in-up z-10 relative">
-        <form onSubmit={handleSubmit}>
-          {/* Logo */}
-          <div className="text-center relative h-[80px] mb-4">
-            <h3 className="hidden font-bold text-[1.6rem] tracking-wide">
-              <span className="text-custom-cyan">sign</span>
-              <span className="text-white">in</span>
-            </h3>
+      <div className="container mx-auto px-4 relative z-10 py-12">
+        <div className="max-w-md mx-auto">
+          <div className="text-center mb-8">
             <img
               src={Logo}
               alt="Logo"
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-auto"
+              className="w-48 mx-auto h-auto -mt-10 pb-5"
             />
+            <p className="text-white text-lg h-auto -mt-20">Your journey to innovation starts here.</p>
           </div>
+          <Card>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-          {/* Username */}
-          <div className="mb-3">
-            <label>
-              <input
-                type="text"
-                placeholder="Username or email"
-                required
-                className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
-              />
-            </label>
-          </div>
+              {/* Username */}
+              <div className="mb-4">
+                <Input
+                    label="Username or email"
+                    type="text"
+                    leftIcon={<Mail className="h-5 w-5" />}
+                    error={errors.email?.message}
+                    {...register('email', {
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: 'Invalid email address'
+                        }
+                    })}
+                />
+              </div>
 
-          {/* Password */}
-          <div className="mb-3">
-            <label>
-              <input
-                type="password"
-                placeholder="Password"
-                required
-                className="w-full p-3 border border-[#232336] rounded-md bg-black text-white text-base transition duration-200 focus:border-custom-purple focus:bg-[#0302025f] outline-none"
-              />
-            </label>
-          </div>
+              {/* Password */}
+              <div className="mb-4">
+                <Input
+                    label="Password"
+                    type="password"
+                    leftIcon={<Lock className="h-5 w-5" />}
+                    error={errors.password?.message}
+                    {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                            value: 7,
+                            message: 'Password must be at least 7 characters'
+                        }
+                    })}
+                />
+              </div>
 
-          {/* Remember me */}
-          <div className="flex justify-between items-center text-[0.97rem] mb-4 text-neutral-300">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                className="accent-custom-cyan"
-              />
-              <span className="text-white">Remember me</span>
-            </label>
-            <a href="#" className="text-custom-cyan hover:underline">
-              Forgot password?
-            </a>
-          </div>
+              {/* Remember me */}
+              <div className="flex justify-between items-center text-[0.97rem] mb-4 text-neutral-300">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    className="accent-custom-cyan"
+                  />
+                  <span className="text-white">Remember me</span>
+                </label>
+                <a href="#" className="text-custom-cyan hover:underline">
+                  Forgot password?
+                </a>
+              </div>
 
-          {/* Submit */}
-          <button
+              {/* Submit */}
+          {error && (
+                  <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-2 rounded-lg">
+                      {error}
+                  </div>
+              )}
+
+          <Button
             type="submit"
-            className="w-full bg-custom-cyan text-black border-none py-2 rounded-md text-base font-bold cursor-pointer mb-3 transition duration-200 shadow-md hover:brightness-110"
+            variant="primary"
+            className="w-full mb-4"
           >
             Sign in
-          </button>
+          </Button>
 
-          {/* Register link */}
-          <div className="text-center text-[0.98rem] mb-3">
-            <p className="text-white">
-              Don't have an account?{" "}
-              <a href="#" className="text-custom-cyan hover:underline">
-                Sign up
-              </a>
-            </p>
-          </div>
+              {/* Register link */}
+          <div className="text-center text-[0.98rem] mb-4">
+                <p className="text-white">
+                  Don't have an account?{" "}
+                  <a href="sign-up" className="text-custom-cyan hover:underline">
+                    Sign up
+                  </a>
+                </p>
+              </div>
 
-          {/* Social media */}
-          <div className="text-center text-[0.98rem]">
-            <p className="text-neutral-300 mb-2">Or sign in with</p>
-            <div className="flex justify-center gap-3">
-              <a
-                href="#"
-                title="Sign in with Google"
-                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
-                <FaGoogle />
-              </a>
-              <a
-                href="#"
-                title="Sign in with Facebook"
-                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
-                <FaFacebook />
-              </a>
-              <a
-                href="#"
-                title="Sign in with GitHub"
-                className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
-              >
-                <FaGithub />
-              </a>
-            </div>
-          </div>
-        </form>
-        <div className="text-center mt-6">
+              {/* Social media */}
+              <div className="text-center text-[0.98rem]">
+                <p className="text-neutral-300 mb-2">Or sign in with</p>
+                <div className="flex justify-center gap-3">
+                  <a
+                    href="#"
+                    title="Sign in with Google"
+                    className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                  >
+                    <FaGoogle />
+                  </a>
+                  <a
+                    href="#"
+                    title="Sign in with Facebook"
+                    className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                  >
+                    <FaFacebook />
+                  </a>
+                  <a
+                    href="#"
+                    title="Sign in with GitHub"
+                    className="text-neutral-300 text-[1.5rem] w-9 h-9 flex items-center justify-center rounded-full bg-[#232336] border border-[#232336] hover:bg-custom-orange hover:text-white hover:border-[#d3480c] transition"
+                  >
+                    <FaGithub />
+                  </a>
+                </div>
+              </div>
+            </form>
+        <div className="text-center mt-4">
             <p className="text-neutral-500 text-xs">
               Made by a Student - Jieson Delafuente
             </p>
       </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
