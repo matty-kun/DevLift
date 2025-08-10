@@ -189,6 +189,48 @@ create policy "Users read relevant applications" on public.applications for sele
     )
   );
 
+  -- Fix policy creation for skills and project_skills without using unsupported "IF NOT EXISTS"
+
+-- Skills: mentors can insert
+DROP POLICY IF EXISTS "Mentors can insert skills" ON skills;
+CREATE POLICY "Mentors can insert skills"
+    ON skills FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE id = auth.uid()
+            AND role = 'mentor'
+        )
+    );
+
+-- Skills: founders can insert
+DROP POLICY IF EXISTS "Founders can insert skills" ON skills;
+CREATE POLICY "Founders can insert skills"
+    ON skills FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE id = auth.uid()
+            AND role = 'founder'
+        )
+    );
+
+-- project_skills: mentors can link skills to their own projects
+DROP POLICY IF EXISTS "Mentors can link skills to own projects" ON project_skills;
+CREATE POLICY "Mentors can link skills to own projects"
+    ON project_skills FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM projects
+            WHERE projects.id = project_skills.project_id
+            AND projects.mentor_id = auth.uid()
+        )
+    );
+
+
 -- ====================
 -- TRIGGERS
 -- ====================
