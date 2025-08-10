@@ -15,14 +15,35 @@ const SignInForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already authenticated, redirect away from sign-in automatically
+  // If already authenticated, redirect away from sign-in automatically.
+  // Wait for profile.role if available; otherwise fetch it before deciding.
   useEffect(() => {
-    if (!authLoading && session) {
-      const role = profile?.role;
-      const dest = role === "mentor" || role === "founder" ? "/founder-dashboard" : "/student-dashboard";
+    let cancelled = false;
+    const go = async () => {
+      if (authLoading || !session) return;
+      let role = profile?.role;
+      if (!role) {
+        const { data: userRes } = await supabase.auth.getUser();
+        const userId = userRes.user?.id;
+        if (userId) {
+          const { data: prof } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', userId)
+            .maybeSingle();
+          role = (prof as { role?: string } | null)?.role;
+        }
+      }
+      if (cancelled) return;
+      if (!role) return; // no profile yet; skip redirect for now
+      const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
       navigate(dest, { replace: true });
-    }
-  }, [authLoading, session, session?.user?.id, profile?.role, navigate]);
+    };
+    go();
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, session, profile?.role, navigate]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();

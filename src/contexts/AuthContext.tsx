@@ -69,7 +69,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				setProfile(null);
 				return;
 			}
-			setProfile((data as Profile) ?? null);
+			const prof = (data as Profile) ?? null;
+			setProfile(prof);
+
+			// Reconcile role with auth user metadata ONLY if DB role is missing.
+			// This avoids overwriting a deliberate DB role (e.g., changing 'founder' -> 'mentor').
+			try {
+				const metaRole = (session.user.user_metadata as { role?: string } | undefined)?.role;
+				if (metaRole && (!prof?.role || prof.role.trim().length === 0)) {
+					await supabase
+						.from('users')
+						.update({ role: metaRole })
+						.eq('id', session.user.id);
+					// optimistic update
+					setProfile((p) => (p ? { ...p, role: metaRole } : p));
+				}
+			} catch {
+				// ignore; RLS or other issues will just keep existing role
+			}
 		};
 		load();
 		return () => {
@@ -83,14 +100,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			role?: string,
 			fullName?: string,
 		) => {
+			const safeName = (fullName && fullName.trim().length > 0)
+				? fullName.trim()
+				: (email.includes('@') ? email.split('@')[0] : email);
 			const { error } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
+					emailRedirectTo: `${window.location.origin}/sign-in`,
 					data: {
 						// pass metadata for DB trigger to consume if present
 						...(role ? { role } : {}),
-						...(fullName ? { full_name: fullName } : {}),
+						full_name: safeName,
 					},
 				},
 			});
