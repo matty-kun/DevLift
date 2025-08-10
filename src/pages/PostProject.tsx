@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
-import Navbar from '../components/layout/Navbar';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import ImageUpload from '../components/common/ImageUpload';
 import { Book, Briefcase, Clock, Code, Cpu, Users, Zap } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface PostProjectFormData {
   title: string;
   description: string;
   skills: string;
-  duration: string;
+  duration: string; // we will parse number of weeks from this string (e.g., "6 weeks")
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   maxStudents: number;
 
@@ -20,17 +22,118 @@ interface PostProjectFormData {
 }
 
 const PostProject: React.FC = () => {
-  const { control, register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<PostProjectFormData>({
+  const navigate = useNavigate();
+  const { session, profile } = useAuth();
+  const isMentor = useMemo(() => {
+    const meta = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
+    return profile?.role === 'mentor' || meta === 'mentor';
+  }, [profile?.role, session?.user?.user_metadata]);
+
+  // Log the detected role(s) in the console whenever auth/profile changes
+  useEffect(() => {
+    const metaRole = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
+    const resolvedRole = profile?.role ?? metaRole ?? 'unknown';
+    // Compact log for quick inspection in DevTools
+    console.log('[PostProject] role check:', {
+      profileRole: profile?.role ?? null,
+      metaRole: metaRole ?? null,
+      resolvedRole,
+      isMentor,
+    });
+  }, [profile?.role, session?.user?.user_metadata, isMentor]);
+
+  const { control, register, handleSubmit, formState: { errors, isSubmitting }, reset, setError } = useForm<PostProjectFormData>({
     defaultValues: {
       projectImage: null,
     },
   });
 
   const onSubmit = async (data: PostProjectFormData) => {
-    // For now, just log the data
-    console.log('Project Data:', data);
-    reset();
-    alert('Project submitted! (Check console for data)');
+    try {
+      if (!session?.user) {
+        navigate('/sign-in');
+        return;
+      }
+      if (!isMentor) {
+        alert('Only mentors can post projects.');
+        return;
+      }
+
+      // parse duration weeks from free text like "6 weeks"
+      const m = data.duration.match(/\d+/);
+      const durationWeeks = m ? parseInt(m[0], 10) : NaN;
+      if (!Number.isFinite(durationWeeks) || durationWeeks <= 0) {
+        setError('duration', { type: 'validate', message: 'Enter a number like "6" or "6 weeks"' });
+        return;
+      }
+
+      // insert project
+      const insertPayload = {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        mentor_id: session.user.id,
+        difficulty: data.difficulty,
+        duration_weeks: durationWeeks,
+        max_students: data.maxStudents,
+      } as const;
+
+      const { data: project, error: perr } = await supabase
+        .from('projects')
+        .insert(insertPayload)
+        .select('id')
+        .single();
+      if (perr) throw perr;
+
+      const projectId = project?.id as string;
+
+      // skills handling: split comma-separated values, upsert into skills, then link
+      const rawSkills = data.skills.split(',').map(s => s.trim()).filter(Boolean);
+      const uniqueSkillNames = Array.from(new Set(rawSkills.map(s => s.toLowerCase())));
+      if (uniqueSkillNames.length > 0) {
+        // fetch existing skills by name
+        const { data: existing, error: selErr } = await supabase
+          .from('skills')
+          .select('id, name')
+          .in('name', uniqueSkillNames);
+        if (selErr) throw selErr;
+        const existingByName = new Map((existing ?? []).map((r) => [r.name.toLowerCase(), r.id] as const));
+
+        const toInsert = uniqueSkillNames
+          .filter((n) => !existingByName.has(n.toLowerCase()))
+          .map((name) => ({ name }));
+        let insertedIds: string[] = [];
+        if (toInsert.length) {
+          const { data: inserted, error: insErr } = await supabase
+            .from('skills')
+            .insert(toInsert)
+            .select('id, name');
+          if (insErr) {
+            // If RLS forbids inserting new skills, continue with only existing skills
+            console.warn('Skipping new skill insert due to RLS:', insErr?.message);
+            insertedIds = [];
+          } else {
+            insertedIds = (inserted ?? []).map((r) => r.id);
+          }
+        }
+
+        const allSkillIds = [
+          ...Array.from(existingByName.values()),
+          ...insertedIds,
+        ];
+        if (allSkillIds.length) {
+          const linkRows = allSkillIds.map((sid: string) => ({ project_id: projectId, skill_id: sid }));
+          const { error: lerr } = await supabase.from('project_skills').insert(linkRows);
+          if (lerr) throw lerr;
+        }
+      }
+
+      reset();
+      navigate(`/projects/${projectId}`);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error('Post project failed:', e);
+      alert(msg || 'Failed to post project');
+    }
   };
 
   return (
@@ -117,11 +220,15 @@ const PostProject: React.FC = () => {
                 })}
                 error={errors.maxStudents?.message}
               />
+              {!isMentor && (
+                <p className="text-yellow-400 text-sm -mt-4">Note: Only mentors can post projects.</p>
+              )}
               <Button
                 type="submit"
                 variant="primary"
                 className="w-full flex items-center justify-center gap-2"
                 isLoading={isSubmitting}
+                disabled={!isMentor || isSubmitting}
               >
                 <Cpu className="w-5 h-5" />
                 {isSubmitting ? 'Submitting...' : 'Post Project'}
