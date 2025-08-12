@@ -6,6 +6,7 @@ import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 
 interface SignUpFormData {
@@ -26,23 +27,43 @@ const SignUp: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
     const password = watch('password');
 
+    // Import supabase client
+    // @ts-ignore
+
+
     const onSubmit = async (data: SignUpFormData) => {
         setError(null);
         setSuccess(null);
         if (!userType) { setError('Please choose your role.'); return; }
         try {
-            // Map founder to mentor for now, unless your DB enum includes founder
             const role = userType === 'founder' ? 'founder' : 'student';
-            await signUp(data.email, data.password, role, '');
-            // If email confirmation is enabled, inform the user
+            // Sign up with Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: data.email,
+                password: data.password,
+            });
+            if (authError) throw authError;
+            const user = authData?.user;
+            if (!user) throw new Error('No user returned from sign up');
+
+            // Insert into custom users table
+            const { error: dbError } = await supabase.from('users').insert([
+                {
+                    id: user.id,
+                    role,
+                    full_name: '', // You can add a full name field to your form
+                    avatar_url: '',
+                    bio: '',
+                }
+            ]);
+            if (dbError) throw dbError;
+
             setSuccess('Account created. Check your email to confirm before signing in.');
-            // Optionally navigate to sign-in
             navigate('/sign-in');
-            
-                } catch (e: unknown) {
-                        const hasMessage = (x: unknown): x is { message: string } =>
-                            typeof x === 'object' && x !== null && 'message' in x && typeof (x as { message?: unknown }).message === 'string';
-                        setError(hasMessage(e) ? e.message : 'Sign up failed. Please try again.');
+        } catch (e: unknown) {
+            const hasMessage = (x: unknown): x is { message: string } =>
+                typeof x === 'object' && x !== null && 'message' in x && typeof (x as { message?: unknown }).message === 'string';
+            setError(hasMessage(e) ? e.message : 'Sign up failed. Please try again.');
         }
     };
 

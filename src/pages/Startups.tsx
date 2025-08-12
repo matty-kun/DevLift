@@ -27,6 +27,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
       {
         id: 's2',
@@ -40,6 +41,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
       {
         id: 's3',
@@ -53,6 +55,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
       {
         id: 's4',
@@ -66,6 +69,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
       {
         id: 's5',
@@ -79,6 +83,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
       {
         id: 's6',
@@ -92,6 +97,7 @@ const sampleStartups: Startup[] = [
         status: 'open',
         createdAt: new Date(),
         avatar: sign,
+        imageUrl: sign,
       },
 ];
 

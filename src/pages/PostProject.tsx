@@ -26,7 +26,7 @@ const PostProject: React.FC = () => {
   const { session, profile } = useAuth();
   const isMentor = useMemo(() => {
     const meta = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
-    return profile?.role === 'mentor' || meta === 'mentor';
+    return profile?.role === 'founder' || meta === 'founder';
   }, [profile?.role, session?.user?.user_metadata]);
 
   // Log the detected role(s) in the console whenever auth/profile changes
