@@ -4,7 +4,7 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import ProjectCard from '../components/projects/ProjectCard';
-import { Project } from '../types';
+import { Project } from '../../types';
 
 // Sample project data (will be replaced with Supabase data)
 const sampleProjects: Project[] = [
