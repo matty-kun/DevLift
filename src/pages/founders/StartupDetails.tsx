@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Card from '../components/common/Card';
+import Card from '../../components/common/Card';
 
 // Sample data for demonstration (in a real app, fetch by ID)
 const sampleStartups = [
@@ -34,7 +34,7 @@ const StartupDetails: React.FC = () => {
 
   if (!startup) {
     return (
-        <div className="min-h-screen flex bg-black flex items-center justify-center text-white">
+        <div className="min-h-screen bg-black flex items-center justify-center text-white">
           <p>Startup not found.</p>
         </div>
     );

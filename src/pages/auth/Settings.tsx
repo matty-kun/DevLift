@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock, User, Bell } from 'lucide-react';
-import Card from '../components/common/Card';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
-import Avatar from '../components/common/Avatar';
-import ImageUpload from '../components/common/ImageUpload';
+import Card from '../../components/common/Card';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import Avatar from '../../components/common/Avatar';
+import ImageUpload from '../../components/common/ImageUpload';
 
 interface SettingsFormData {
     fullName: string;

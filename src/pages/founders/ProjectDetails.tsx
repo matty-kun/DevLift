@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Card from '../components/common/Card';
-import Badge from '../components/common/Badge';
-import Avatar from '../components/common/Avatar';
-import { Project } from '../types';
-import { supabase } from '../lib/supabase';
+import Card from '../../components/common/Card';
+import Badge from '../../components/common/Badge';
+import Avatar from '../../components/common/Avatar';
+import { Project } from '../../types';
+import { supabase } from '../../lib/supabase';
 
 type ProjectRow = {
   id: string;

@@ -1,9 +1,16 @@
+
 import { useState, useEffect, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase";
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
-import Logo from "../assets/DevLift Logo.svg";
+import Logo from "../../assets/DevLift Logo.svg";
+import { useForm } from 'react-hook-form';
+import { Mail, Lock } from 'lucide-react';
+import Card from '../../components/common/Card';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+
 
 const SignInForm: React.FC = () => {
   const navigate = useNavigate();

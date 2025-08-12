@@ -3,19 +3,19 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
-import ProjectDetails from './pages/ProjectDetails';
+import ProjectDetails from './pages/founders/ProjectDetails';
 // import Profile from './pages/Profile';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-// import Startups from './pages/Startups';
-import StartupDetails from './pages/StartupDetails';
-import Resources from './pages/Resources';
+import SignUp from './pages/auth/SignUp';
+import SignIn from './pages/auth/SignIn';
+import Startups from './pages/founders/Startups';
+import StartupDetails from './pages/founders/StartupDetails';
+import Resources from './pages/students/Resources';
 import About from './pages/About';
-// import CommunityPage from './pages/Community';
-import FounderDashboard from './pages/FounderDashboard';
-import PostProject from './pages/PostProject';
-import StudentDashboard from './pages/StudentDashboard';
-import Settings from './pages/Settings';
+import CommunityPage from './pages/Community';
+import FounderDashboard from './pages/founders/FounderDashboard';
+import PostProject from './pages/founders/PostProject';
+import StudentDashboard from './pages/students/StudentDashboard';
+import Settings from './pages/auth/Settings';
 import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
@@ -26,7 +26,6 @@ import { Analytics } from "@vercel/analytics/react";
 
 
 import { useAuth } from './contexts/AuthContext';
-import Startups from './pages/Startups';
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { session, loading } = useAuth();

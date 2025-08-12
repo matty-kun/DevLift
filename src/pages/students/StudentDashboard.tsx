@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import Footer from '../components/layout/Footer';
-import Card from '../components/common/Card';
-import Badge from '../components/common/Badge';
-import Avatar from '../components/common/Avatar';
-import ProjectCard from '../components/projects/ProjectCard';
-import { Project } from '../types';
-import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import Footer from '../../components/layout/Footer';
+import Card from '../../components/common/Card';
+import Badge from '../../components/common/Badge';
+import Avatar from '../../components/common/Avatar';
+import ProjectCard from '../../components/projects/ProjectCard';
+import { Project } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 // Helpers to map DB to UI
 const mapStatus = (s: string | null): Project['status'] => {

@@ -4,8 +4,8 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import ProjectCard from '../components/projects/ProjectCard';
-import { Project } from '../types';
 import { supabase } from '../lib/supabase';
+import { Project } from '../types';
 
 // Helper to map DB status to UI status
 const mapStatus = (s: string | null): Project['status'] => {
