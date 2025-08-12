@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import Card from '../components/common/Card';
+import Card from '../../components/common/Card';
 import { Project } from '../types';
 import { Link } from 'react-router-dom';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 import sign from '../assets/DevLift Sign.svg';
 
 // Define a Startup type (for now, reuse Project type for demo purposes)

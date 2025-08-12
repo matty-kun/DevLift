@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
-import Navbar from '../components/layout/Navbar';
-import Card from '../components/common/Card';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
-import ImageUpload from '../components/common/ImageUpload';
+import Navbar from '../../components/layout/Navbar';
+import Card from '../../components/common/Card';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import ImageUpload from '../../components/common/ImageUpload';
 import { Book, Briefcase, Clock, Code, Cpu, Users, Zap } from 'lucide-react';
 
 interface PostProjectFormData {
