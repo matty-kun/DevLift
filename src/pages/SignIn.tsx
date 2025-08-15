@@ -35,8 +35,10 @@ const SignInForm: React.FC = () => {
         }
       }
       if (cancelled) return;
-      if (!role) return; // no profile yet; skip redirect for now
-      const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
+      // If role still missing (e.g., first-time OAuth), send to onboarding to choose role.
+      const dest = !role
+        ? '/onboarding'
+        : (role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard');
       navigate(dest, { replace: true });
     };
     go();
