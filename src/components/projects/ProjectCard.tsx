@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, ExternalLink, Zap } from 'lucide-react';
+import { Clock, Users, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
@@ -32,6 +32,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                     src={project.imageUrl}
                     alt={project.title}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (target.dataset.fallbackApplied === '1') return;
+                        target.dataset.fallbackApplied = '1';
+                        target.src = `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(project.title)}`;
+                    }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
                 <div className="absolute top-3 right-3">

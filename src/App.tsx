@@ -17,7 +17,6 @@ import PostProject from './pages/PostProject';
 import StudentDashboard from './pages/StudentDashboard';
 import Settings from './pages/Settings';
 import UnderConstruction from './pages/UnderConstruction';
-import Onboarding from './pages/Onboarding';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
 
@@ -57,7 +56,6 @@ function App() {
 
             <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
-            <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
 
             {/* <Route 
               path="/projects" 

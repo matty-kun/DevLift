@@ -29,6 +29,7 @@ type ProjectRow = {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks: number | null;
   max_students: number | null;
+  header_image_url?: string | null;
   created_at: string;
 };
 type ProjectSkillRow = {
@@ -111,7 +112,7 @@ const StudentDashboard: React.FC = () => {
       // Fetch projects
       const { data: proj, error: projErr } = await supabase
         .from('projects')
-        .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, created_at')
+        .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at')
         .in('id', projectIds);
       if (projErr) {
         console.error(projErr);
@@ -166,7 +167,7 @@ const StudentDashboard: React.FC = () => {
         assignedStudents: acceptedMap.get(r.id) ?? [],
         applicants: applicantsMap.get(r.id) ?? [],
         createdAt: new Date(r.created_at),
-        imageUrl: defaultImage(r.title),
+        imageUrl: r.header_image_url ?? defaultImage(r.title),
       }));
 
       setApplications(mapped);
