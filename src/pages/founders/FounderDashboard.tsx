@@ -161,18 +161,6 @@ const FounderDashboard: React.FC = () => {
           >
             + Post New Project
           </Link>
-          <Link
-            to="/projects"
-            className="bg-neutral-900 text-custom-cyan border border-custom-cyan px-6 py-3 rounded hover:bg-custom-cyan hover:text-black transition-colors duration-200"
-          >
-            View All Projects
-          </Link>
-          <Link
-            to="/applications"
-            className="bg-neutral-900 text-custom-orange border border-custom-orange px-6 py-3 rounded hover:bg-custom-orange hover:text-black transition-colors duration-200"
-          >
-            View Applications
-          </Link>
         </div>
 
         {/* Recent Activity */}
@@ -237,7 +225,7 @@ const FounderDashboard: React.FC = () => {
                           </td>
                           <td className="px-4 py-2">{applicants}</td>
                           <td className="px-4 py-2 space-x-2">
-                            <Link className="text-custom-cyan hover:underline" to={`/projects/${project.id}`}>View</Link>
+                            <Link className="text-custom-cyan hover:underline" to={`/projects/${project.id}`}>Applications</Link>
                             <button className="text-custom-orange opacity-60 cursor-not-allowed">Edit</button>
                             <button className="text-red-500 opacity-60 cursor-not-allowed">Delete</button>
                           </td>

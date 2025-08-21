@@ -19,12 +19,9 @@ import Settings from './pages/auth/Settings';
 import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
 // import Messages from './pages/Messages';
-
+import Applications from './pages/founders/Applications';
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
-
-
-
 import { useAuth } from './contexts/AuthContext';
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
@@ -49,6 +46,7 @@ function App() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
             <Route path="/community" element={<UnderConstruction />} />
+            <Route path="/founders/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
 
             <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard/></PrivateRoute>} />
             <Route path="/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
