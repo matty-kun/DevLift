@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, ChevronDown, ChevronUp, Zap, X } from 'lucide-react';
+import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, Zap, X } from 'lucide-react';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
@@ -27,6 +27,7 @@ type ProjectRow = {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks: number | null;
   max_students: number | null;
+  header_image_url?: string | null;
   created_at: string;
 };
 
@@ -66,7 +67,7 @@ const Projects: React.FC = () => {
         let query = supabase
           .from('projects')
           .select(
-            'id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, created_at',
+            'id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at',
             { count: 'exact' }
           );
 
@@ -130,7 +131,7 @@ const Projects: React.FC = () => {
           assignedStudents: acceptedMap.get(r.id) ?? [],
           applicants: applicantsMap.get(r.id) ?? [],
           createdAt: new Date(r.created_at),
-          imageUrl: defaultImage(r.title),
+          imageUrl: r.header_image_url ?? defaultImage(r.title),
         }));
 
         setProjects(prev => page === 1 ? mapped : [...prev, ...mapped]);

@@ -42,8 +42,9 @@ const SignInForm: React.FC = () => {
         }
       }
       if (cancelled) return;
-      if (!role) return; // no profile yet; skip redirect for now
-      const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
+  // Fallback: if session exists but role is missing (e.g., first-time OAuth, profile row not created yet),
+  // default to student dashboard so the user is not stuck on the sign-in route.
+  const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
       navigate(dest, { replace: true });
     };
     go();

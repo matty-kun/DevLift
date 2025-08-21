@@ -15,6 +15,7 @@ type ProjectRow = {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks: number | null;
   max_students: number | null;
+  header_image_url?: string | null;
   created_at: string;
 };
 
@@ -35,7 +36,6 @@ const defaultImage = (title: string) =>
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [project, setProject] = useState<(Project & { founderName: string; startupLogo?: string; bannerUrl?: string }) | null>(null);
 
   useEffect(() => {
@@ -43,12 +43,12 @@ const ProjectDetails: React.FC = () => {
       if (!id) return;
       try {
         setLoading(true);
-        setError(null);
+  // reset any previous error state (none currently tracked)
 
         // Project core
         const { data: pRow, error: pErr } = await supabase
           .from('projects')
-          .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, created_at')
+          .select('id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at')
           .eq('id', id)
           .maybeSingle();
         if (pErr) throw pErr;
@@ -97,17 +97,16 @@ const ProjectDetails: React.FC = () => {
           assignedStudents: assigned,
           applicants,
           createdAt: new Date(row.created_at),
-          imageUrl: defaultImage(row.title),
+          imageUrl: row.header_image_url ?? defaultImage(row.title),
           founderName: profile?.full_name ?? 'Founder',
           startupLogo: profile?.avatar_url ?? undefined,
-          bannerUrl: defaultImage(row.title),
+          bannerUrl: row.header_image_url ?? defaultImage(row.title),
         };
 
         setProject(mapped);
         setLoading(false);
       } catch (e) {
-        console.error(e);
-        setError('Failed to load project');
+  console.error(e);
         setLoading(false);
       }
     };
@@ -135,7 +134,17 @@ const ProjectDetails: React.FC = () => {
         <Card className="mb-8 text-white">
           {project.bannerUrl && (
             <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
-              <img src={project.bannerUrl} alt="Project Banner" className="w-full h-40 object-cover" />
+              <img
+                src={project.bannerUrl}
+                alt="Project Banner"
+                className="w-full h-40 object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (target.dataset.fallbackApplied === '1') return;
+                  target.dataset.fallbackApplied = '1';
+                  target.src = defaultImage(project.title);
+                }}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
           )}
