@@ -5,11 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 import Logo from "../../assets/DevLift Logo.svg";
-import { useForm } from 'react-hook-form';
-import { Mail, Lock } from 'lucide-react';
-import Card from '../../components/common/Card';
-import Input from '../../components/common/Input';
-import Button from '../../components/common/Button';
+// cleaned unused imports
 
 
 const SignInForm: React.FC = () => {
@@ -42,9 +38,11 @@ const SignInForm: React.FC = () => {
         }
       }
       if (cancelled) return;
-  // Fallback: if session exists but role is missing (e.g., first-time OAuth, profile row not created yet),
-  // default to student dashboard so the user is not stuck on the sign-in route.
-  const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
+      if (!role) {
+        navigate('/onboarding', { replace: true });
+        return;
+      }
+      const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
       navigate(dest, { replace: true });
     };
     go();
@@ -70,8 +68,8 @@ const SignInForm: React.FC = () => {
           .eq("id", userId)
           .maybeSingle();
         const role = (prof as { role?: string } | null)?.role;
-        if (role === "mentor" || role === "founder") dest = "/founder-dashboard";
-        else dest = "/student-dashboard";
+        if (!role) dest = '/onboarding';
+        else if (role === "mentor" || role === "founder") dest = "/founder-dashboard"; else dest = "/student-dashboard";
       }
       navigate(dest, { replace: true });
     } catch (err: unknown) {

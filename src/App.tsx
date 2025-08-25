@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/founders/ProjectDetails';
@@ -11,7 +10,6 @@ import Startups from './pages/founders/Startups';
 import StartupDetails from './pages/founders/StartupDetails';
 import Resources from './pages/students/Resources';
 import About from './pages/About';
-import CommunityPage from './pages/Community';
 import FounderDashboard from './pages/founders/FounderDashboard';
 import PostProject from './pages/founders/PostProject';
 import StudentDashboard from './pages/students/StudentDashboard';
@@ -23,11 +21,14 @@ import Applications from './pages/founders/Applications';
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import { useAuth } from './contexts/AuthContext';
+import Onboarding from './pages/Onboarding';
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
-  const { session, loading } = useAuth();
+  const { session, loading, profile } = useAuth();
   if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading…</div>;
   if (!session) return <SignIn />;
+  // If authenticated but no role yet, send to onboarding except if already there
+  if (!profile?.role) return <Onboarding />;
   return children;
 }
 
@@ -39,6 +40,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
             <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
             <Route path="/projects/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
             <Route path="/startups" element={<PrivateRoute><Startups /></PrivateRoute>} />
@@ -46,7 +48,7 @@ function App() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
             <Route path="/community" element={<UnderConstruction />} />
-            <Route path="/founders/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
+            <Route path="/projects/:id/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
 
             <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard/></PrivateRoute>} />
             <Route path="/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />

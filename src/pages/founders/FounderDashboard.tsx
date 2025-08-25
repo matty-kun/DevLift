@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -114,6 +115,7 @@ const FounderDashboard: React.FC = () => {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
+          <div className="absolute left-4 top-4 hidden md:block"><BackToProfileButton /></div>
           <div className="flex items-center gap-4">
             <div className="bg-neutral-800 rounded-full p-2 overflow-hidden">
               {/* Avatar or placeholder icon */}
@@ -225,7 +227,7 @@ const FounderDashboard: React.FC = () => {
                           </td>
                           <td className="px-4 py-2">{applicants}</td>
                           <td className="px-4 py-2 space-x-2">
-                            <Link className="text-custom-cyan hover:underline" to={`/projects/${project.id}`}>Applications</Link>
+                            <Link className="text-custom-cyan hover:underline" to={`/projects/${project.id}/applications`}>Applications</Link>
                             <button className="text-custom-orange opacity-60 cursor-not-allowed">Edit</button>
                             <button className="text-red-500 opacity-60 cursor-not-allowed">Delete</button>
                           </td>

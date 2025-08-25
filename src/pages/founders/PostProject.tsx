@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { useForm, Controller } from 'react-hook-form';
 
-import Navbar from '../../components/layout/Navbar';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -29,7 +29,10 @@ const PostProject: React.FC = () => {
   const { session, profile } = useAuth();
   const isMentor = useMemo(() => {
     const meta = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
-    return profile?.role === 'founder' || meta === 'founder';
+    // Accept either 'mentor' (normalized) or legacy 'founder' from metadata or profile
+    const metaIsMentor = meta === 'mentor' || meta === 'founder';
+    const profileIsMentor = profile?.role === 'mentor' || profile?.role === 'founder';
+    return metaIsMentor || profileIsMentor;
   }, [profile?.role, session?.user?.user_metadata]);
 
   // Log the detected role(s) in the console whenever auth/profile changes
@@ -145,6 +148,7 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
+      <div className="container mx-auto px-4 pt-6"><BackToProfileButton /></div>
       {showToast && (
         <Toast message="Project posted successfully!" type="success" duration={1500} onClose={() => setShowToast(false)} />
       )}

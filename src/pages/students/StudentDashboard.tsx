@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../../components/layout/Footer';
@@ -196,7 +197,8 @@ const StudentDashboard: React.FC = () => {
       <main className="flex-1 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 relative">
+            <div className="absolute -top-10 left-0 hidden md:block"><BackToProfileButton /></div>
             <div className="flex items-center gap-4">
               <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>

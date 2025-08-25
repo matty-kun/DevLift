@@ -20,6 +20,7 @@ type AuthContextType = {
 	signIn: (email: string, password: string) => Promise<void>;
 	signInWithProvider: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
 	signOut: () => Promise<void>;
+	setUserRole: (role: 'student' | 'mentor' | 'founder') => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,7 +71,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				return;
 			}
 			const prof = (data as Profile) ?? null;
-			setProfile(prof);
+			if (prof) setProfile(prof); else {
+				// Do NOT auto-create when no metadata role (OAuth first login) – onboarding will handle.
+				const metaRole = (session.user.user_metadata as { role?: string } | undefined)?.role;
+				if (metaRole) {
+					try {
+						const mappedRole = metaRole === 'founder' ? 'mentor' : (metaRole === 'mentor' ? 'mentor' : 'student');
+						const fallbackName = (session.user.user_metadata as { full_name?: string } | undefined)?.full_name
+							|| (session.user.email?.split('@')[0] ?? 'User');
+						await supabase.from('users').insert({ id: session.user.id, role: mappedRole, full_name: fallbackName });
+						const { data: reload } = await supabase
+							.from('users')
+							.select('id, role, full_name, avatar_url')
+							.eq('id', session.user.id)
+							.maybeSingle();
+						setProfile((reload as Profile) ?? null);
+					} catch { /* ignore */ }
+				} else {
+					setProfile(null);
+				}
+			}
 
 			// Reconcile role with auth user metadata ONLY if DB role is missing.
 			// This avoids overwriting a deliberate DB role (e.g., changing 'founder' -> 'mentor').
@@ -100,22 +120,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			role?: string,
 			fullName?: string,
 		) => {
+			// Derive safe display name (we never store email in public.users)
 			const safeName = (fullName && fullName.trim().length > 0)
 				? fullName.trim()
 				: (email.includes('@') ? email.split('@')[0] : email);
-			const { error } = await supabase.auth.signUp({
+			// Map founder -> mentor before persisting
+			const mappedRole = role === 'founder' ? 'mentor' : (role || 'student');
+			const { data: signUpData, error } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
 					emailRedirectTo: `${window.location.origin}/sign-in`,
-					data: {
-						// pass metadata for DB trigger to consume if present
-						...(role ? { role } : {}),
-						full_name: safeName,
-					},
+					data: { role: mappedRole, full_name: safeName },
 				},
 			});
 			if (error) throw error;
+			// If signup immediately returns a session/user (no email confirmation required),
+			// proactively create profile row (id, role, full_name only). Ignore conflicts.
+			try {
+				if (signUpData?.user) {
+					await supabase.from('users').insert({
+						id: signUpData.user.id,
+						role: mappedRole,
+						full_name: safeName,
+					});
+				}
+			} catch {
+				// Ignore (could be email-confirm flow or RLS until session established)
+			}
 		};
 
 		const signIn = async (email: string, password: string) => {
@@ -140,7 +172,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		if (error) throw error;
 	};
 
-		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, signUp, signIn, signInWithProvider, signOut }), [session, profile, loading]);
+	const setUserRole = React.useCallback(async (role: 'student' | 'mentor' | 'founder') => {
+		if (!session?.user) return;
+		const mapped = role === 'founder' ? 'mentor' : role;
+		await supabase.from('users').upsert({ id: session.user.id, role: mapped }, { onConflict: 'id' });
+		try { await supabase.auth.updateUser({ data: { role: mapped } }); } catch { /* ignore */ }
+		setProfile(p => p ? { ...p, role: mapped } : { id: session.user!.id, role: mapped });
+	}, [session?.user]);
+
+		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, signUp, signIn, signInWithProvider, signOut, setUserRole }), [session, profile, loading, setUserRole]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

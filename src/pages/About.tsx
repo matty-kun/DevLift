@@ -1,9 +1,11 @@
 import React from 'react';
+import BackToProfileButton from '../components/common/BackToProfileButton';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import VisionAndMission from '../components/home/VisionAndMission';
 
 const About: React.FC = () => (
   <div className="min-h-screen bg-black py-12">
+    <div className="container mx-auto px-4 mb-4"><BackToProfileButton /></div>
     <div className="container mx-auto px-4 max-w-3xl">
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-bold text-white mb-2">About <span className="text-custom-cyan">Dev</span><span className="text-custom-orange">Lift</span></h1>

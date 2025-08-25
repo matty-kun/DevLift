@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import BackToProfileButton from '../../components/common/BackToProfileButton';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
 import Avatar from '../../components/common/Avatar';
 import { Project } from '../../types';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 
 type ProjectRow = {
   id: string;
@@ -35,8 +37,13 @@ const defaultImage = (title: string) =>
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { session, profile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<(Project & { founderName: string; startupLogo?: string; bannerUrl?: string }) | null>(null);
+  const [coverLetter, setCoverLetter] = useState('');
+  const [applyStatus, setApplyStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [applyError, setApplyError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -127,10 +134,66 @@ const ProjectDetails: React.FC = () => {
     );
   }
 
+  const userId = session?.user?.id;
+  const isStudent = (profile?.role === 'student' || !profile?.role); // fallback: if profile row missing yet, allow apply
+  const alreadyApplied = !!(userId && project.applicants.includes(userId));
+  const projectFull = project.assignedStudents.length >= project.maxStudents;
+  const projectOpen = project.status === 'open';
+  const canApply = userId && isStudent && projectOpen && !alreadyApplied && !projectFull;
+
+  const handleApply = async () => {
+    if (!userId) { navigate('/sign-in'); return; }
+    if (!canApply) return;
+    setApplyStatus('submitting');
+    setApplyError(null);
+    try {
+      // Ensure user profile exists with student role (RLS requires role='student' to insert applications)
+      if (isStudent) {
+        const { data: existingProfile, error: profileErr } = await supabase
+          .from('users')
+          .select('id, role')
+          .eq('id', userId)
+          .maybeSingle();
+        if (profileErr) throw profileErr; // surface unexpected error
+        if (!existingProfile) {
+          // Derive fallback name only from user metadata (avoid depending on auth email in public.users)
+          const fallbackName = (session?.user?.user_metadata as { full_name?: string } | undefined)?.full_name || 'Student';
+          const { error: insertProfErr } = await supabase.from('users').insert({
+            id: userId,
+            role: 'student',
+            full_name: fallbackName
+          });
+          if (insertProfErr) throw insertProfErr;
+        } else if (existingProfile && (existingProfile as { role?: string }).role !== 'student') {
+          // If role not student, prevent misleading application attempt
+          setApplyStatus('error');
+          setApplyError('Your account role cannot apply to projects.');
+          return;
+        }
+      }
+      const { error } = await supabase.from('applications').insert({
+        project_id: project.id,
+        student_id: userId,
+        cover_letter: coverLetter.trim() || 'N/A'
+      });
+      if (error) throw error;
+      // Optimistic update
+      setProject(p => p ? { ...p, applicants: [...p.applicants, userId] } : p);
+      setApplyStatus('success');
+    } catch (e: unknown) {
+      const msg = (typeof e === 'object' && e && 'message' in e) ? String((e as { message?: unknown }).message) : 'Failed to submit application';
+      setApplyError(msg);
+      setApplyStatus('error');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black py-12">
       <div className="container mx-auto px-4 max-w-2xl">
-        <Link to="/projects" className="text-custom-cyan hover:text-custom-purple mb-4 inline-block">&larr; Back to Projects</Link>
+        <div className="flex justify-between items-center mb-4">
+          <BackToProfileButton />
+          <Link to="/projects" className="text-custom-cyan hover:text-custom-purple inline-block">&larr; Back to Projects</Link>
+        </div>
         <Card className="mb-8 text-white">
           {project.bannerUrl && (
             <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
@@ -186,12 +249,47 @@ const ProjectDetails: React.FC = () => {
           <div className="text-neutral-400 text-sm mb-6">
             Posted on: {project.createdAt.toLocaleDateString()}
           </div>
-          <button
-            className="w-full bg-custom-cyan text-black font-semibold py-3 rounded-lg mt-2 hover:bg-custom-cyan/90 transition-colors text-lg"
-            onClick={() => alert('Application submitted!')}
-          >
-            Apply
-          </button>
+          {/* Application Section */}
+          <div className="border-t border-neutral-800 pt-6 mt-8">
+            <h2 className="text-xl font-semibold mb-3">Apply to this Project</h2>
+            {!userId && (
+              <p className="text-neutral-400 text-sm mb-4">You must <button onClick={()=>navigate('/sign-in')} className="text-custom-cyan underline">sign in</button> to apply.</p>
+            )}
+            {userId && !isStudent && (
+              <p className="text-neutral-400 text-sm mb-4">Only student accounts can apply to projects.</p>
+            )}
+            {alreadyApplied && (
+              <p className="text-custom-cyan text-sm mb-4">You have already applied. Good luck!</p>
+            )}
+            {projectFull && (
+              <p className="text-red-400 text-sm mb-4">This project has reached its maximum number of students.</p>
+            )}
+            {!alreadyApplied && isStudent && projectOpen && !projectFull && (
+              <>
+                <label className="block text-sm font-medium mb-1">Cover Letter (optional)</label>
+                <textarea
+                  value={coverLetter}
+                  onChange={e=>setCoverLetter(e.target.value)}
+                  rows={4}
+                  placeholder="Share briefly why you're a good fit..."
+                  className="w-full bg-neutral-900 border border-neutral-700 focus:border-custom-cyan rounded p-3 text-sm resize-y outline-none"
+                  disabled={applyStatus==='submitting' || applyStatus==='success'}
+                />
+                {applyError && <div className="text-red-400 text-sm mt-2">{applyError}</div>}
+                {applyStatus==='success' && <div className="text-green-400 text-sm mt-2">Application submitted!</div>}
+                <button
+                  className="w-full bg-custom-cyan text-black font-semibold py-3 rounded-lg mt-4 hover:bg-custom-cyan/90 transition-colors text-lg disabled:opacity-50"
+                  onClick={handleApply}
+                  disabled={!canApply || applyStatus==='submitting'}
+                >
+                  {applyStatus==='submitting' ? 'Submitting...' : 'Apply'}
+                </button>
+              </>
+            )}
+            {!projectOpen && (
+              <p className="text-neutral-400 text-sm">Project is not open for new applications.</p>
+            )}
+          </div>
         </Card>
       </div>
     </div>

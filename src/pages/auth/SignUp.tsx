@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock, User, Briefcase } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -27,43 +26,25 @@ const SignUp: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
     const password = watch('password');
 
-    // Import supabase client
-    // @ts-ignore
+    // Import handled in AuthContext via signUp helper
 
 
     const onSubmit = async (data: SignUpFormData) => {
         setError(null);
         setSuccess(null);
         if (!userType) { setError('Please choose your role.'); return; }
+        const mappedRole = userType === 'founder' ? 'mentor' : 'student';
+        const fullName = data.email.split('@')[0];
         try {
-            const role = userType === 'founder' ? 'founder' : 'student';
-            // Sign up with Supabase Auth
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email: data.email,
-                password: data.password,
-            });
-            if (authError) throw authError;
-            const user = authData?.user;
-            if (!user) throw new Error('No user returned from sign up');
-
-            // Insert into custom users table
-            const { error: dbError } = await supabase.from('users').insert([
-                {
-                    id: user.id,
-                    role,
-                    full_name: '', // You can add a full name field to your form
-                    avatar_url: '',
-                    bio: '',
-                }
-            ]);
-            if (dbError) throw dbError;
-
-            setSuccess('Account created. Check your email to confirm before signing in.');
+            await signUp(data.email, data.password, mappedRole, fullName);
+            // We rely on DB trigger to create the public.users row after email confirmation.
+            setSuccess('Check your email to confirm your account before signing in.');
             navigate('/sign-in');
         } catch (e: unknown) {
             const hasMessage = (x: unknown): x is { message: string } =>
                 typeof x === 'object' && x !== null && 'message' in x && typeof (x as { message?: unknown }).message === 'string';
             setError(hasMessage(e) ? e.message : 'Sign up failed. Please try again.');
+            console.error('Sign up error:', e);
         }
     };
 

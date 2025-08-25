@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
+import BackToProfileButton from '../components/common/BackToProfileButton';
 import { useForm, Controller } from 'react-hook-form';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
@@ -25,7 +26,10 @@ const PostProject: React.FC = () => {
   const { session, profile } = useAuth();
   const isMentor = useMemo(() => {
     const meta = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
-    return profile?.role === 'mentor' || meta === 'mentor';
+    // Treat both 'mentor' and legacy 'founder' metadata as mentor capability
+    const metaIsMentor = meta === 'mentor' || meta === 'founder';
+    const profileIsMentor = profile?.role === 'mentor' || profile?.role === 'founder';
+    return metaIsMentor || profileIsMentor;
   }, [profile?.role, session?.user?.user_metadata]);
 
   // Log the detected role(s) in the console whenever auth/profile changes
@@ -159,6 +163,7 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
+      <div className="container mx-auto px-4 pt-6"><BackToProfileButton /></div>
       <main className="flex-1 px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <Card className="bg-neutral-900 border border-custom-cyan shadow-lg shadow-custom-cyan/10">
