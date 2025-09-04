@@ -43,9 +43,9 @@ const Hero: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
           >
-            <span className="text-custom-cyan">Knowledge </span>
+            <span className="text-custom-cyan">Education </span>
             <span className="text-white">meets </span>
-            <span className="text-custom-orange"> Action</span>
+            <span className="text-custom-orange"> Innovation</span>
           </motion.h1>
         </div>
           <motion.p
@@ -56,7 +56,7 @@ const Hero: React.FC = () => {
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.2 }}
           >
-            Because education shines brighter when you put it to use.
+            Where curiosity becomes creation
           </motion.p>
           <motion.div
             className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
