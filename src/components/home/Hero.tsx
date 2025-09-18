@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ArrowRight, User, Briefcase } from 'lucide-react';
 import Button from '../common/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate import
 import Navbar from '../layout/Navbar'; // adjust the import path as needed
 import { motion } from 'framer-motion';
 
@@ -11,6 +11,7 @@ const textVariants = {
 };
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate(); // Added this hook
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -72,7 +73,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<User className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              onClick={() => window.open("https://tally.so/r/3X6BNe", "_blank", "noopener,noreferrer")}
+              onClick={() => navigate('/sign-in?type=student')}
             >
               Join as Student
             </Button>
@@ -83,7 +84,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<Briefcase className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              onClick={() => window.open("https://tally.so/r/3q8YD8", "_blank", "noopener,noreferrer")}
+              onClick={() => navigate('/sign-in?type=founder')}
             >
               I'm a Founder
             </Button>

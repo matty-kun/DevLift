@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, User } from 'lucide-react';
+import { Bell, User, Pencil, Trash2, FileText } from 'lucide-react';
+import Modal from '../../components/common/Modal';
+import StarRating from '../../components/common/StarRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -110,6 +112,49 @@ const FounderDashboard: React.FC = () => {
 
   const handleSignOut = async () => { await signOut(); navigate('/sign-in', { replace: true }); };
 
+  // Feedback modal state
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbacks, setFeedbacks] = useState<{ studentId: string; rating: number; review: string }[]>([]);
+  const [projectToComplete, setProjectToComplete] = useState<string | null>(null);
+  const [studentNames, setStudentNames] = useState<Record<string, string>>({});
+  const [projectNames, setProjectNames] = useState<Record<string, string>>({});
+
+  // Fetch student and project names for feedback modal
+  useEffect(() => {
+    if (!showFeedbackModal || !projectToComplete) return;
+    // Get project name
+    const project = projects.find(p => p.id === projectToComplete);
+    setProjectNames(prev => ({ ...prev, [projectToComplete]: project?.title || projectToComplete }));
+    // Get student ids for accepted applications
+    const accepted = applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted');
+    const ids = accepted.map(a => a.student_id).filter(Boolean);
+    if (ids.length === 0) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, full_name')
+        .in('id', ids);
+      if (!error && data) {
+        const nameMap: Record<string, string> = {};
+        data.forEach((u: { id: string; full_name: string }) => {
+          nameMap[u.id] = u.full_name || u.id;
+        });
+        setStudentNames(prev => ({ ...prev, ...nameMap }));
+      }
+    })();
+  }, [showFeedbackModal, projectToComplete, projects, applications]);
+
+  // Edit modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editProjectId, setEditProjectId] = useState<string | null>(null);
+
+  const handleMarkCompleted = (projectId: string) => {
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: 'completed' } : p));
+    setProjectToComplete(projectId);
+    setShowFeedbackModal(true);
+    setShowEditModal(false);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-5xl mx-auto">
@@ -205,7 +250,7 @@ const FounderDashboard: React.FC = () => {
                       <th className="px-4 py-2 text-neutral-400">Project</th>
                       <th className="px-4 py-2 text-neutral-400">Status</th>
                       <th className="px-4 py-2 text-neutral-400">Applicants</th>
-                      <th className="px-4 py-2 text-neutral-400">Actions</th>
+                      <th className="px-4 py-2 text-center text-neutral-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -226,11 +271,112 @@ const FounderDashboard: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-4 py-2">{applicants}</td>
-                          <td className="px-4 py-2 space-x-2">
-                            <Link className="text-custom-cyan hover:underline" to={`/projects/${project.id}/applications`}>Applications</Link>
-                            <button className="text-custom-orange opacity-60 cursor-not-allowed">Edit</button>
-                            <button className="text-red-500 opacity-60 cursor-not-allowed">Delete</button>
+                          <td className="px-4 py-2">
+                            <div className="flex flex-row items-end gap-8 justify-center">
+                              <div className="flex flex-col items-center">
+                                <Link to={`/projects/${project.id}/applications`} className="flex flex-col items-center group">
+                                  <FileText className="h-6 w-6 text-custom-cyan group-hover:text-custom-cyan/80" />
+                                  <span className="text-xs font-semibold mt-1 text-custom-cyan">Applications</span>
+                                </Link>
+                              </div>
+                              <div className="flex flex-col items-center">
+                                <button
+                                  className="flex flex-col items-center group"
+                                  onClick={() => { setEditProjectId(project.id); setShowEditModal(true); }}
+                                >
+                                  <Pencil className="h-6 w-6 text-custom-orange group-hover:text-custom-orange/80" />
+                                  <span className="text-xs font-semibold mt-1 text-custom-orange">Edit</span>
+                                </button>
+                              </div>
+                              <div className="flex flex-col items-center">
+                                <button className="flex flex-col items-center group">
+                                  <Trash2 className="h-6 w-6 text-custom-purple group-hover:text-custom-purple/80" />
+                                  <span className="text-xs font-semibold mt-1 text-custom-purple">Delete</span>
+                                </button>
+                              </div>
+                            </div>
                           </td>
+        {/* Edit Modal (with Mark as Completed) */}
+        <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Project">
+          <div className="mb-4">(Edit form placeholder)</div>
+          {editProjectId && projects.find(p => p.id === editProjectId)?.status !== 'completed' && (
+            <button
+              className="w-full bg-custom-purple text-white px-4 py-2 rounded hover:bg-custom-cyan transition-colors mb-2"
+              onClick={() => handleMarkCompleted(editProjectId)}
+            >
+              Mark as Completed
+            </button>
+          )}
+          <button
+            className="w-full bg-neutral-800 text-white px-4 py-2 rounded mt-2"
+            onClick={() => setShowEditModal(false)}
+          >
+            Close
+          </button>
+        </Modal>
+        {/* Feedback Modal (frontend only) */}
+        <Modal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} title="Leave Feedback for Students">
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              setShowFeedbackModal(false);
+              alert('Feedback submitted! (frontend only)');
+            }}
+          >
+            {projectToComplete && (
+              <>
+                <div className="font-semibold mb-4 text-center text-lg">
+                  {projectNames[projectToComplete] || projectToComplete}
+                </div>
+                {applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted').length === 0 ? (
+                  <div className="text-neutral-400">No accepted students to review.</div>
+                ) : (
+                  applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted').map((a, idx) => (
+                    <div key={a.student_id} className="mb-8 p-4 bg-neutral-800 rounded-lg">
+                      <div className="font-semibold mb-2 text-center text-custom-cyan text-base">
+                        {studentNames[a.student_id || ''] || a.student_id}
+                      </div>
+                      <label className="block text-sm mb-1 text-center">Rating:</label>
+                      <div className="flex justify-center mb-2">
+                        <StarRating
+                          value={feedbacks[idx]?.rating || 0}
+                          onChange={val => {
+                            setFeedbacks(fb => {
+                              const arr = [...fb];
+                              arr[idx] = { ...arr[idx], studentId: a.student_id || '', rating: val, review: arr[idx]?.review || '' };
+                              return arr;
+                            });
+                          }}
+                        />
+                      </div>
+                      <label className="block text-sm mb-1">Feedback:</label>
+                      <textarea
+                        className="w-full bg-neutral-900 border border-neutral-700 rounded p-2 text-sm"
+                        rows={2}
+                        value={feedbacks[idx]?.review || ''}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setFeedbacks(fb => {
+                            const arr = [...fb];
+                            arr[idx] = { ...arr[idx], studentId: a.student_id || '', rating: arr[idx]?.rating || 0, review: val };
+                            return arr;
+                          });
+                        }}
+                        required
+                      />
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-custom-cyan text-black font-semibold py-2 rounded-lg mt-2 hover:bg-custom-cyan/90 transition-colors"
+            >
+              Submit Feedback
+            </button>
+          </form>
+        </Modal>
                         </tr>
                       );
                     })}

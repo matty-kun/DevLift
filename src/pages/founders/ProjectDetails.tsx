@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Modal from '../../components/common/Modal';
 import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Card from '../../components/common/Card';
@@ -44,6 +45,10 @@ const ProjectDetails: React.FC = () => {
   const [coverLetter, setCoverLetter] = useState('');
   const [applyStatus, setApplyStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [applyError, setApplyError] = useState<string | null>(null);
+  // Frontend-only: mark as completed and feedback modal
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbacks, setFeedbacks] = useState<{ studentId: string; rating: number; review: string }[]>([]);
+  const [localStatus, setLocalStatus] = useState<string | null>(null); // simulate status change
 
   useEffect(() => {
     const load = async () => {
@@ -138,8 +143,10 @@ const ProjectDetails: React.FC = () => {
   const isStudent = (profile?.role === 'student' || !profile?.role); // fallback: if profile row missing yet, allow apply
   const alreadyApplied = !!(userId && project.applicants.includes(userId));
   const projectFull = project.assignedStudents.length >= project.maxStudents;
-  const projectOpen = project.status === 'open';
+  const projectOpen = (localStatus ?? project.status) === 'open';
+  const projectCompleted = (localStatus ?? project.status) === 'completed';
   const canApply = userId && isStudent && projectOpen && !alreadyApplied && !projectFull;
+  const isMentor = userId && userId === project.mentorId;
 
   const handleApply = async () => {
     if (!userId) { navigate('/sign-in'); return; }
@@ -195,6 +202,18 @@ const ProjectDetails: React.FC = () => {
           <Link to="/projects" className="text-custom-cyan hover:text-custom-purple inline-block">&larr; Back to Projects</Link>
         </div>
         <Card className="mb-8 text-white">
+          {/* Mark as Completed button for founders */}
+          {isMentor && !projectCompleted && (
+            <button
+              className="mb-4 bg-custom-purple text-white px-4 py-2 rounded hover:bg-custom-cyan transition-colors"
+              onClick={() => {
+                setLocalStatus('completed');
+                setShowFeedbackModal(true);
+              }}
+            >
+              Mark Project as Completed
+            </button>
+          )}
           {project.bannerUrl && (
             <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
               <img
@@ -249,7 +268,69 @@ const ProjectDetails: React.FC = () => {
           <div className="text-neutral-400 text-sm mb-6">
             Posted on: {project.createdAt.toLocaleDateString()}
           </div>
-          {/* Application Section */}
+          {/* Feedback Modal (frontend only) */}
+          <Modal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} title="Leave Feedback for Students">
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                setShowFeedbackModal(false);
+                // Simulate storing feedback
+                alert('Feedback submitted! (frontend only)');
+              }}
+            >
+              {project.assignedStudents.length === 0 ? (
+                <div className="text-neutral-400">No accepted students to review.</div>
+              ) : (
+                project.assignedStudents.map((sid, idx) => (
+                  <div key={sid} className="mb-6">
+                    <div className="font-semibold mb-1">Student ID: {sid}</div>
+                    <label className="block text-sm mb-1">Rating:</label>
+                    <select
+                      className="mb-2 p-2 rounded bg-neutral-800 text-white"
+                      value={feedbacks[idx]?.rating || ''}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        setFeedbacks(fb => {
+                          const arr = [...fb];
+                          arr[idx] = { ...arr[idx], studentId: sid, rating: val, review: arr[idx]?.review || '' };
+                          return arr;
+                        });
+                      }}
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value={5}>5 - Excellent</option>
+                      <option value={4}>4 - Good</option>
+                      <option value={3}>3 - Average</option>
+                      <option value={2}>2 - Poor</option>
+                      <option value={1}>1 - Very Poor</option>
+                    </select>
+                    <label className="block text-sm mb-1">Feedback:</label>
+                    <textarea
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-sm"
+                      rows={2}
+                      value={feedbacks[idx]?.review || ''}
+                      onChange={e => {
+                        const val = e.target.value;
+                        setFeedbacks(fb => {
+                          const arr = [...fb];
+                          arr[idx] = { ...arr[idx], studentId: sid, rating: arr[idx]?.rating || 0, review: val };
+                          return arr;
+                        });
+                      }}
+                      required
+                    />
+                  </div>
+                ))
+              )}
+              <button
+                type="submit"
+                className="w-full bg-custom-cyan text-black font-semibold py-2 rounded-lg mt-2 hover:bg-custom-cyan/90 transition-colors"
+              >
+                Submit Feedback
+              </button>
+            </form>
+          </Modal>
           <div className="border-t border-neutral-800 pt-6 mt-8">
             <h2 className="text-xl font-semibold mb-3">Apply to this Project</h2>
             {!userId && (
