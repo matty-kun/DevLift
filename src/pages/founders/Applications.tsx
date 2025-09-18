@@ -1,6 +1,6 @@
 import { Download, Clock, XCircle } from 'lucide-react';
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import BackToProfileButton from '../../components/common/BackToProfileButton';
@@ -142,7 +142,11 @@ const Applications: React.FC = () => {
                 <img src={a.users?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${a.student_id}`} alt={a.users?.full_name || 'student'} className="h-10 w-10 rounded-full object-cover" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{a.users?.full_name || 'Student'}</span>
+                    {a.student_id ? (
+                      <Link to={`/students/${a.student_id}`} className="font-medium text-custom-cyan hover:underline">{a.users?.full_name || 'Student'}</Link>
+                    ) : (
+                      <span className="font-medium">{a.users?.full_name || 'Student'}</span>
+                    )}
                     <span className={`text-xs px-2 py-0.5 rounded ${a.status==='accepted' ? 'bg-custom-cyan text-black' : a.status==='rejected' ? 'bg-red-600' : 'bg-neutral-700'}`}>{a.status}</span>
                   </div>
                   <p className="text-neutral-400 text-xs mt-1 line-clamp-2">{a.cover_letter}</p>
@@ -159,7 +163,13 @@ const Applications: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <img src={selected.users?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${selected.student_id}`} className="h-12 w-12 rounded-full object-cover" alt={selected.users?.full_name || 'student'} />
                     <div>
-                      <h2 className="text-xl font-semibold">{selected.users?.full_name || 'Student'}</h2>
+                      <h2 className="text-xl font-semibold">
+                        {selected.student_id ? (
+                          <Link to={`/students/${selected.student_id}`} className="text-custom-cyan hover:underline">{selected.users?.full_name || 'Student'}</Link>
+                        ) : (
+                          selected.users?.full_name || 'Student'
+                        )}
+                      </h2>
                       <p className="text-neutral-500 text-sm">Applied {formatTimeAgo(selected.created_at)}</p>
                     </div>
                   </div>

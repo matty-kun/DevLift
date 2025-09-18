@@ -6,6 +6,7 @@ import Modal from '../../components/common/Modal';
 import StarRating from '../../components/common/StarRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { addOrUpdateReview } from '../../lib/feedback';
 
 type ProjectRow = {
   id: string;
@@ -148,11 +149,23 @@ const FounderDashboard: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editProjectId, setEditProjectId] = useState<string | null>(null);
 
-  const handleMarkCompleted = (projectId: string) => {
+  const handleMarkCompleted = async (projectId: string) => {
+    const original = projects.find(p => p.id === projectId)?.status ?? null;
+    // Optimistic UI
     setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: 'completed' } : p));
     setProjectToComplete(projectId);
     setShowFeedbackModal(true);
     setShowEditModal(false);
+    // Persist to DB
+    const { error } = await supabase
+      .from('projects')
+      .update({ status: 'completed' })
+      .eq('id', projectId);
+    if (error) {
+      // Revert if failed (likely RLS)
+      setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: original } : p));
+      alert('Failed to mark project as completed. Please check permissions.');
+    }
   };
 
   return (
@@ -317,10 +330,24 @@ const FounderDashboard: React.FC = () => {
         {/* Feedback Modal (frontend only) */}
         <Modal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} title="Leave Feedback for Students">
           <form
-            onSubmit={e => {
+            onSubmit={async e => {
               e.preventDefault();
+              if (!projectToComplete) { setShowFeedbackModal(false); return; }
+              // Collect accepted students for this project in the same order as rendered
+              const accepted = applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted');
+              const pairs = accepted.map((a, idx) => ({ studentId: a.student_id || '', rating: feedbacks[idx]?.rating || 0, review: feedbacks[idx]?.review || '' }));
+              // Submit reviews (only entries with rating >=1)
+              const results = await Promise.all(pairs
+                .filter(p => p.studentId && p.rating > 0)
+                .map(p => addOrUpdateReview({ projectId: projectToComplete, revieweeId: p.studentId, rating: p.rating, feedback: p.review }))
+              );
+              const errs = results.filter(r => r.error);
               setShowFeedbackModal(false);
-              alert('Feedback submitted! (frontend only)');
+              if (errs.length) {
+                alert(`Some reviews failed to submit: ${errs.map(e => e.error).join('; ')}`);
+              } else {
+                alert('Feedback submitted!');
+              }
             }}
           >
             {projectToComplete && (
@@ -334,7 +361,13 @@ const FounderDashboard: React.FC = () => {
                   applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted').map((a, idx) => (
                     <div key={a.student_id} className="mb-8 p-4 bg-neutral-800 rounded-lg">
                       <div className="font-semibold mb-2 text-center text-custom-cyan text-base">
-                        {studentNames[a.student_id || ''] || a.student_id}
+                        {a.student_id ? (
+                          <Link to={`/students/${a.student_id}`} className="hover:underline">
+                            {studentNames[a.student_id] || a.student_id}
+                          </Link>
+                        ) : (
+                          studentNames[a.student_id || ''] || a.student_id
+                        )}
                       </div>
                       <label className="block text-sm mb-1 text-center">Rating:</label>
                       <div className="flex justify-center mb-2">
@@ -362,7 +395,7 @@ const FounderDashboard: React.FC = () => {
                             return arr;
                           });
                         }}
-                        required
+                        // feedback text optional; rating determines validity
                       />
                     </div>
                   ))
