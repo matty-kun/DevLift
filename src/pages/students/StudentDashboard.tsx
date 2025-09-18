@@ -74,6 +74,7 @@ const StudentDashboard: React.FC = () => {
   const [recentActivity, setRecentActivity] = useState<string[]>([]);
   const displayName = profile?.full_name || session?.user?.email || 'Student';
   const avatarSrc = profile?.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=student';
+  const studentId = session?.user?.id; // Get the current user's ID
 
   // Redirect if not logged in
   useEffect(() => {
@@ -198,7 +199,9 @@ const StudentDashboard: React.FC = () => {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-8 relative">
-            <div className="absolute -top-10 left-0 hidden md:block"><BackToProfileButton /></div>
+            <div className="absolute -top-10 left-0 hidden md:block">
+              <BackToProfileButton to={studentId ? `/students/${studentId}` : '/profile'} />
+            </div>
             <div className="flex items-center gap-4">
               <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>
