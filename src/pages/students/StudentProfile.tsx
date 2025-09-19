@@ -1,87 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Star from '../../components/common/StarRating'; 
+import ProfileHeader from '../../components/students/ProfileHeader';
+import SkillsSection from '../../components/students/SkillsSection';
+import ReviewsSection from '../../components/students/ReviewsSection';
+import ProjectsSection from '../../components/students/ProjectsSection';
+import Modal from '../../components/common/Modal';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 
 const mockProfile = {
   name: 'Jane Doe',
   avatar_url: 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
   bio: 'Aspiring developer passionate about web and AI.',
-  skills: ['React', 'Node.js', 'Python'],
-  completedProjects: [
-    { id: 1, title: 'AI Chatbot' },
-    { id: 2, title: 'Portfolio Website' },
-  ],
+  skills: ['React', 'Node.js', 'Python', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'SQL'],
   reviews: [
-    { id: 1, founder: 'Demo Founder', rating: 5, review: 'Great collaborator!' },
-    { id: 2, founder: 'Another Founder', rating: 4, review: 'Solid work and communication.' },
+    { id: 1, founder: 'Demo Founder', rating: 5, review: 'Jane is an exceptional talent. Her ability to quickly grasp complex concepts and deliver high-quality code is remarkable. A true team player and a pleasure to work with.' },
+    { id: 2, founder: 'Another Founder', rating: 4, review: 'Solid work and communication. Jane consistently met deadlines and was receptive to feedback. I would recommend her for any web development project.' },
+  ],
+  projects: [
+    {
+      id: 1,
+      title: 'AI Chatbot for Customer Service',
+      description: 'A full-stack web application that uses machine learning to recommend movies.',
+      liveUrl: '#',
+      repoUrl: '#',
+      status: 'Completed' as const,
+    },
+    {
+      id: 2,
+      title: 'E-commerce Platform for Local Artisans',
+      description: 'A mobile app that helps users track their daily water intake.',
+      liveUrl: '#',
+      repoUrl: '#',
+      status: 'Completed' as const,
+    },
+    {
+      id: 3,
+      title: 'DevLift',
+      description: 'A platform to connect student developers with startups.',
+      liveUrl: '#',
+      repoUrl: '#',
+      status: 'In Progress' as const,
+    },
   ],
 };
 
 const StudentProfile: React.FC = () => {
-  // In real app, useParams to get student id and fetch data
+  const [isContactModalOpen, setContactModalOpen] = useState(false);
+  // In a real app, you would use useParams to get the student id and fetch data
   // const { id } = useParams();
 
   const profile = mockProfile;
 
   return (
-    <div className="max-w-2xl mx-auto bg-neutral-900 rounded-lg p-8 mt-8 text-white">
-      <div className="flex items-center gap-6 mb-6">
-        <img
-          src={profile.avatar_url}
-          alt={profile.name}
-          className="h-20 w-20 rounded-full object-cover border-4 border-custom-cyan"
+    <div className="container mx-auto p-8 text-white">
+      <div className="bg-neutral-900 rounded-2xl shadow-lg p-8">
+        <ProfileHeader 
+          name={profile.name} 
+          avatar_url={profile.avatar_url} 
+          bio={profile.bio} 
+          onContact={() => setContactModalOpen(true)}
         />
-        <div>
-          <h1 className="text-3xl font-bold">{profile.name}</h1>
-          <p className="text-neutral-400">{profile.bio}</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          <div className="md:col-span-2 space-y-8">
+            <ProjectsSection projects={profile.projects} />
+            <ReviewsSection reviews={profile.reviews} />
+          </div>
+          
+          <div className="space-y-8">
+            <SkillsSection skills={profile.skills} />
+          </div>
         </div>
       </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-custom-cyan mb-2">Skills</h2>
-        <div className="flex flex-wrap gap-2">
-          {profile.skills.map(skill => (
-            <span key={skill} className="bg-custom-cyan/20 text-custom-cyan px-3 py-1 rounded-full text-sm">{skill}</span>
-          ))}
-        </div>
-      </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-custom-cyan mb-2">Completed Projects</h2>
-        <ul className="list-disc list-inside text-neutral-300">
-          {profile.completedProjects.map(p => (
-            <li key={p.id}>{p.title}</li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h2 className="text-xl font-semibold text-custom-cyan mb-2">Reviews</h2>
-        {profile.reviews.length === 0 ? (
-          <p className="text-neutral-400">No reviews yet.</p>
-        ) : (
-          <ul className="space-y-4">
-            {profile.reviews.map(r => (
-              <li key={r.id} className="bg-neutral-800 rounded p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold">{r.founder}</span>
-                  <span className="flex">
-                    {/* Show stars */}
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <svg
-                        key={i}
-                        className={`h-5 w-5 ${i < r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-600'}`}
-                        fill={i < r.rating ? 'currentColor' : 'none'}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    ))}
-                  </span>
-                </div>
-                <div className="text-neutral-300">{r.review}</div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+
+      <Modal isOpen={isContactModalOpen} onClose={() => setContactModalOpen(false)} title={`Contact ${profile.name}`}>
+        <form>
+          <div className="mb-4">
+            <Input type="email" placeholder="Your Email" />
+          </div>
+          <div className="mb-4">
+            <textarea 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white placeholder-neutral-400 focus:border-custom-cyan focus:outline-none"
+              placeholder="Your Message" 
+              rows={4}
+            />
+          </div>
+          <div className="flex justify-end gap-4">
+            <Button variant="secondary" onClick={() => setContactModalOpen(false)}>Cancel</Button>
+            <Button variant="primary">Send Message</Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
