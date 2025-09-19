@@ -25,8 +25,8 @@ import { useAuth } from './contexts/AuthContext';
 import Onboarding from './pages/Onboarding';
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
-  const { session, loading, profile } = useAuth();
-  if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading…</div>;
+  const { session, loading, profile, profileLoading } = useAuth();
+  if (loading || profileLoading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading…</div>;
   if (!session) return <SignIn />;
   // If authenticated but no role yet, send to onboarding except if already there
   if (!profile?.role) return <Onboarding />;

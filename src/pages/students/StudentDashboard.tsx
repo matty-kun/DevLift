@@ -290,7 +290,7 @@ const StudentDashboard: React.FC = () => {
                 <Card className="text-neutral-400">You haven't applied to any projects yet.</Card>
               ) : (
                 applications.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
+                  <ProjectCard key={project.id} project={project} ctaLabel="Open Project" />
                 ))
               )}
             </div>

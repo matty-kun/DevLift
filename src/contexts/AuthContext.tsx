@@ -15,7 +15,8 @@ type Profile = {
 type AuthContextType = {
 	session: Session | null;
 	profile: Profile | null;
-	loading: boolean;
+	loading: boolean; // session loading
+	profileLoading: boolean; // profile (users row) loading
 	signUp: (email: string, password: string, role?: string, fullName?: string) => Promise<void>;
 	signIn: (email: string, password: string) => Promise<void>;
 	signInWithProvider: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
@@ -29,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [session, setSession] = useState<Session | null>(null);
 	const [profile, setProfile] = useState<Profile | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [profileLoading, setProfileLoading] = useState(true);
 
 	// Bootstrap session
 		useEffect(() => {
@@ -54,9 +56,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	// Load profile when session changes
 	useEffect(() => {
 		let active = true;
+		setProfileLoading(true);
 		const load = async () => {
 			if (!session?.user) {
 				setProfile(null);
+				setProfileLoading(false);
 				return;
 			}
 			const { data, error } = await supabase
@@ -68,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (error) {
 				// If profile row doesn't exist yet, keep null; app can handle
 				setProfile(null);
+				setProfileLoading(false);
 				return;
 			}
 			const prof = (data as Profile) ?? null;
@@ -107,6 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			} catch {
 				// ignore; RLS or other issues will just keep existing role
 			}
+			setProfileLoading(false);
 		};
 		load();
 		return () => {
@@ -180,7 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setProfile(p => p ? { ...p, role: mapped } : { id: session.user!.id, role: mapped });
 	}, [session?.user]);
 
-		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, signUp, signIn, signInWithProvider, signOut, setUserRole }), [session, profile, loading, setUserRole]);
+		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole }), [session, profile, loading, profileLoading, setUserRole]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -10,9 +10,10 @@ import { Project } from '../../types';
 interface ProjectCardProps {
     project: Project;
     className?: string;
+    ctaLabel?: string; // default: "Apply Now"
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaLabel }) => {
     const getDifficultyVariant = () => {
         switch (project.difficulty) {
             case 'beginner': return 'success';
@@ -101,7 +102,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = ''}) => 
                             className="border-custom-cyan text-custom-cyan group-hover:bg-custom-cyan group-hover:text-black transition-colors duration-300"
                         >
                             <Zap className="mr-2 h-4 w-4" />
-                            Apply Now
+                            {ctaLabel ?? 'Apply Now'}
                         </Button>
                     </Link>
                 </div>
