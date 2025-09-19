@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BackToProfileButton from '../../components/common/BackToProfileButton';
 import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '@/components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
@@ -195,13 +196,12 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <main className="flex-1 px-4 py-8">
+      <Navbar />
+      <main className="flex-1 px-4 py-8 pt-20">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8 relative">
-            <div className="absolute -top-10 left-0 hidden md:block">
-              <BackToProfileButton to={studentId ? `/students/${studentId}` : '/profile'} />
-            </div>
+          <div className="flex items-start justify-between mb-8">
+            <BackToProfileButton to={studentId ? `/students/${studentId}` : '/profile'} />
             <div className="flex items-center gap-4">
               <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>

@@ -6,6 +6,7 @@ import Modal from '../../components/common/Modal';
 import StarRating from '../../components/common/StarRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import Navbar from '../../components/layout/Navbar';
 import { addOrUpdateReview } from '../../lib/feedback';
 
 type ProjectRow = {
@@ -170,10 +171,10 @@ const FounderDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="absolute left-4 top-4 hidden md:block"><BackToProfileButton /></div>
+      <Navbar />
+      <div className="max-w-5xl mx-auto pt-20">
+        <div className="flex items-start justify-between mb-8">
+          <BackToProfileButton />
           <div className="flex items-center gap-4">
             <div className="bg-neutral-800 rounded-full p-2 overflow-hidden">
               {/* Avatar or placeholder icon */}
