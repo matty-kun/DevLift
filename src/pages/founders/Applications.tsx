@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import BackToProfileButton from '../../components/common/BackToProfileButton';
+import BackButton from '../../components/common/BackButton';
 
 type ApplicationRow = {
   id: string;
@@ -115,7 +115,7 @@ const Applications: React.FC = () => {
             <h1 className="text-2xl font-bold text-custom-cyan">Applications</h1>
             <p className="text-neutral-400 text-sm">Project: {project.title}</p>
           </div>
-          <BackToProfileButton className="!px-4 !py-2" />
+          <BackButton to="/founder-dashboard" text="Back to Dashboard" className="!px-4 !py-2" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

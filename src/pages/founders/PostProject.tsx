@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import BackToProfileButton from '../../components/common/BackToProfileButton';
+import BackButton from '../../components/common/BackButton';
 import { useForm, Controller } from 'react-hook-form';
 
 import Card from '../../components/common/Card';
@@ -148,7 +148,7 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
-      <div className="container mx-auto px-4 pt-6"><BackToProfileButton /></div>
+      <div className="container mx-auto px-4 pt-6"><BackButton to="/founder-dashboard" text="Back to Dashboard" /></div>
       {showToast && (
         <Toast message="Project posted successfully!" type="success" duration={1500} onClose={() => setShowToast(false)} />
       )}

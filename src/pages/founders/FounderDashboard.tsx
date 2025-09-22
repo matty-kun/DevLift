@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import BackToProfileButton from '../../components/common/BackToProfileButton';
+import BackButton from '../../components/common/BackButton';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, User, Pencil, Trash2, FileText } from 'lucide-react';
 import Modal from '../../components/common/Modal';
@@ -171,12 +171,12 @@ const FounderDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
-      <Navbar />
+      <Navbar showPostProjectButton={true} />
       <div className="max-w-5xl mx-auto pt-20">
         <div className="flex items-start justify-between mb-8">
-          <BackToProfileButton />
-          <div className="flex items-center gap-4">
-            <div className="bg-neutral-800 rounded-full p-2 overflow-hidden">
+          <BackButton to={`/founders/${session?.user?.id}`} text="Back to Profile" />
+          <Link to={`/founders/${session?.user?.id}`} className="flex items-center gap-4 group">
+            <div className="bg-neutral-800 rounded-full p-2 overflow-hidden group-hover:ring-2 group-hover:ring-custom-cyan transition-all">
               {/* Avatar or placeholder icon */}
               {avatarUrl ? (
                 <img src={avatarUrl} alt={founderName} className="h-8 w-8 rounded-full object-cover" />
@@ -185,10 +185,10 @@ const FounderDashboard: React.FC = () => {
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-custom-cyan">Welcome, {founderName}!</h1>
+              <h1 className="text-2xl font-bold text-custom-cyan group-hover:text-custom-cyan/80">Welcome, {founderName}!</h1>
               <p className="text-neutral-400 text-sm">Here's your founder dashboard.</p>
             </div>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors" aria-label="Notifications">
               <Bell className="h-6 w-6 text-custom-orange" />
@@ -216,12 +216,6 @@ const FounderDashboard: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <Link
-            to="/post-project"
-            className="bg-gradient-to-r from-custom-cyan to-custom-purple text-black font-semibold px-6 py-3 rounded shadow hover:scale-105 transition-transform duration-200"
-          >
-            + Post New Project
-          </Link>
         </div>
 
         {/* Recent Activity */}

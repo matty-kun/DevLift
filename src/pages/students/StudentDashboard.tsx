@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BackToProfileButton from '../../components/common/BackToProfileButton';
+import BackButton from '../../components/common/BackButton';
 import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -194,14 +194,28 @@ const StudentDashboard: React.FC = () => {
     navigate('/sign-in', { replace: true });
   };
 
+  const studentActionButtons = (
+    <>
+      <Link to="/projects" className="text-neutral-300 hover:text-custom-cyan transition-colors">
+        Browse Projects
+      </Link>
+      <Link to="/resources" className="text-neutral-300 hover:text-custom-orange transition-colors">
+        Learning Resources
+      </Link>
+      <Link to="/startups" className="text-neutral-300 hover:text-custom-purple transition-colors">
+        Find Startups
+      </Link>
+    </>
+  );
+
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar actionButtons={studentActionButtons} />
       <main className="flex-1 px-4 py-8 pt-20">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
-            <BackToProfileButton to={studentId ? `/students/${studentId}` : '/profile'} />
+            <BackButton to={studentId ? `/students/${studentId}` : '/profile'} text="Back to Profile" />
             <div className="flex items-center gap-4">
               <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>
@@ -243,27 +257,7 @@ const StudentDashboard: React.FC = () => {
             </Card>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Link
-              to="/projects"
-              className="bg-gradient-to-r from-custom-cyan to-custom-purple text-black font-semibold px-6 py-3 rounded shadow hover:scale-105 transition-transform duration-200 text-center"
-            >
-              Browse Projects
-            </Link>
-            <Link
-              to="/resources"
-              className="bg-neutral-900 text-custom-cyan border border-custom-cyan px-6 py-3 rounded hover:bg-custom-cyan hover:text-black transition-colors duration-200 text-center"
-            >
-              Learning Resources
-            </Link>
-            <Link
-              to="/startups"
-              className="bg-neutral-900 text-custom-orange border border-custom-orange px-6 py-3 rounded hover:bg-custom-orange hover:text-black transition-colors duration-200 text-center"
-            >
-              Find Startups
-            </Link>
-          </div>
+          
 
           {/* Recent Activity */}
           <div className="mb-8">

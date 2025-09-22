@@ -14,6 +14,7 @@ import FounderDashboard from './pages/founders/FounderDashboard';
 import PostProject from './pages/founders/PostProject';
 import StudentDashboard from './pages/students/StudentDashboard';
 import StudentProfile from './pages/students/StudentProfile';
+import FounderProfile from './pages/founders/FounderProfile';
 import Settings from './pages/auth/Settings';
 import UnderConstruction from './pages/UnderConstruction';
 // import Dashboard from './pages/Dashboard';
@@ -57,6 +58,7 @@ function App() {
             <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
             <Route path="/students/:id" element={<StudentProfile />} />
+            <Route path="/founders/:id" element={<PrivateRoute><FounderProfile /></PrivateRoute>} />
 
             {/* <Route 
               path="/projects" 

@@ -17,17 +17,17 @@ type ReviewItem = {
   created_at?: string;
 };
 
-const StudentProfile: React.FC = () => {
+const FounderProfile: React.FC = () => {
   const { id: paramId } = useParams();
   const { session } = useAuth();
   const userId = paramId || session?.user?.id || '';
 
   const [profile, setProfile] = React.useState({
-    name: 'Student',
-    avatar_url: 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
-    bio: 'Aspiring developer passionate about web and AI.',
-    skills: ['React', 'Node.js', 'Python'],
-    completedProjects: [] as { id: string; title: string }[],
+    name: 'Founder',
+    avatar_url: 'https://api.dicebear.com/7.x/identicon/svg?seed=founder',
+    bio: 'Visionary entrepreneur changing the world.',
+    skills: ['Leadership', 'Product Management', 'Fundraising'],
+    postedProjects: [] as { id: string; title: string }[],
     reviews: [] as ReviewItem[],
     avg: null as number | null,
     count: 0,
@@ -75,9 +75,9 @@ const StudentProfile: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <div className="mb-4">
             {paramId && session?.user?.id !== paramId ? (
-              <BackButton to={`/students/${session.user.id}`} text="Back to My Profile" className="px-2 py-1" />
+              <BackButton to={`/founders/${session.user.id}`} text="Back to My Profile" className="px-2 py-1" />
             ) : (
-              <BackButton to="/student-dashboard" text="Back to Dashboard" className="px-2 py-1" />
+              <BackButton to="/founder-dashboard" text="Back to Dashboard" className="px-2 py-1" />
             )}
           </div>
           <div className="bg-neutral-900 rounded-lg p-8">
@@ -106,9 +106,9 @@ const StudentProfile: React.FC = () => {
               </div>
             </div>
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-custom-cyan mb-2">Completed Projects</h2>
+              <h2 className="text-xl font-semibold text-custom-cyan mb-2">Posted Projects</h2>
               <ul className="list-disc list-inside text-neutral-300">
-                {profile.completedProjects.map(p => (
+                {profile.postedProjects.map(p => (
                   <li key={p.id}>{p.title}</li>
                 ))}
               </ul>
@@ -175,4 +175,4 @@ const StudentProfile: React.FC = () => {
   );
 };
 
-export default StudentProfile;
+export default FounderProfile;

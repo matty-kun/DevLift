@@ -97,15 +97,11 @@ export default {
             },
             fontFamily: {
                 sans: [
-                    'Inter',
-                    'ui-sans-serif',
-                    'system-ui',
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    '"Segoe UI"',
-                    'Roboto',
-                    '"Helvetica Neue"',
-                    'Arial',
+                    'Source Sans Pro',
+                    'sans-serif',
+                ],
+                headings: [
+                    'Montserrat',
                     'sans-serif',
                 ],
             },

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../components/common/Modal';
-import BackToProfileButton from '../../components/common/BackToProfileButton';
+import BackButton from '../../components/common/BackButton';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
@@ -198,7 +198,7 @@ const ProjectDetails: React.FC = () => {
     <div className="min-h-screen bg-black py-12">
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="flex justify-between items-center mb-4">
-          <BackToProfileButton />
+          <BackButton to="/founder-dashboard" text="Back to Dashboard" />
           <Link to="/projects" className="text-custom-cyan hover:text-custom-purple inline-block">&larr; Back to Projects</Link>
         </div>
         <Card className="mb-8 text-white">

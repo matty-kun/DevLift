@@ -6,7 +6,12 @@ import Button from '../common/Button';
 import sign from '../../assets/DevLift Sign.svg';
 import Avatar from '../common/Avatar';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  actionButtons?: React.ReactNode;
+  showPostProjectButton?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ actionButtons, showPostProjectButton }) => {
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,9 +23,24 @@ const Navbar: React.FC = () => {
         <div className="flex items-center">
           <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
-            <span className="text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
+            <span className="font-headings text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
           </Link>
         </div>
+
+        {actionButtons && (
+          <div className="hidden md:flex items-center gap-4">
+            {actionButtons}
+          </div>
+        )}
+
+        {showPostProjectButton && (
+          <Link
+            to="/post-project"
+            className="bg-gradient-to-r from-custom-cyan to-custom-purple text-black font-semibold px-4 py-2 rounded shadow hover:scale-105 transition-transform duration-200 text-sm"
+          >
+            + Post New Project
+          </Link>
+        )}
       </div>
     </header>
   );
