@@ -129,10 +129,15 @@ export default {
                   transform: 'translateY(0)',
                 },
               },
+              'fade-in-out': {
+                '0%, 100%': { opacity: 0.2 },
+                '50%': { opacity: 1 },
+              },
             },
             animation: {
               float: 'float 3s ease-in-out infinite',
               'fade-in-up': 'fade-in-up 1s ease-out',
+              'fade-in-out': 'fade-in-out 2s ease-in-out infinite',
             },
         },
     },

@@ -8,6 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import Navbar from '../../components/layout/Navbar';
 import { addOrUpdateReview } from '../../lib/feedback';
+import LoadingScreen from '../../components/common/LoadingScreen';
 
 type ProjectRow = {
   id: string;
@@ -150,6 +151,10 @@ const FounderDashboard: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editProjectId, setEditProjectId] = useState<string | null>(null);
 
+  // Delete modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+
   const handleMarkCompleted = async (projectId: string) => {
     const original = projects.find(p => p.id === projectId)?.status ?? null;
     // Optimistic UI
@@ -169,9 +174,39 @@ const FounderDashboard: React.FC = () => {
     }
   };
 
+  const handleDeleteProject = async (projectId: string) => {
+    setProjectToDelete(projectId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectToDelete);
+
+      if (error) {
+        throw error;
+      }
+
+      setProjects(projects.filter(p => p.id !== projectToDelete));
+      setShowDeleteModal(false);
+      setProjectToDelete(null);
+    } catch (error: any) {
+      alert('Error deleting project: ' + error.message);
+    }
+  };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
-      <Navbar showPostProjectButton={true} />
+      <Navbar showPostProjectButton={true} postProjectUrl="/founders/post-project" />
       <div className="max-w-5xl mx-auto pt-20">
         <div className="flex items-start justify-between mb-8">
           <BackButton to={`/founders/${session?.user?.id}`} text="Back to Profile" />
@@ -222,9 +257,7 @@ const FounderDashboard: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4 text-custom-cyan">Recent Activity</h2>
           <ul className="bg-neutral-900 rounded-lg p-6 text-neutral-300 space-y-2">
-            {loading ? (
-              <li className="text-neutral-500">Loading…</li>
-            ) : recentActivity.length === 0 ? (
+            {recentActivity.length === 0 ? (
               <li className="text-neutral-500">No recent activity yet.</li>
             ) : (
               recentActivity.map((activity, idx) => (
@@ -241,12 +274,10 @@ const FounderDashboard: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4 text-custom-cyan">Your Projects</h2>
           <div className="bg-neutral-900 rounded-lg p-6">
-            {loading ? (
-              <p className="text-neutral-400">Loading…</p>
-            ) : projects.length === 0 ? (
+            {projects.length === 0 ? (
               <p className="text-neutral-400">
                 No projects posted yet.{" "}
-                <Link to="/post-project" className="text-custom-cyan hover:underline">
+                <Link to="/founders/post-project" className="text-custom-cyan hover:underline">
                   Post your first project!
                 </Link>
               </p>
@@ -297,7 +328,7 @@ const FounderDashboard: React.FC = () => {
                                 </button>
                               </div>
                               <div className="flex flex-col items-center">
-                                <button className="flex flex-col items-center group">
+                                <button onClick={() => handleDeleteProject(project.id)} className="flex flex-col items-center group">
                                   <Trash2 className="h-6 w-6 text-custom-purple group-hover:text-custom-purple/80" />
                                   <span className="text-xs font-semibold mt-1 text-custom-purple">Delete</span>
                                 </button>
@@ -404,6 +435,28 @@ const FounderDashboard: React.FC = () => {
               Submit Feedback
             </button>
           </form>
+        </Modal>
+
+        {/* Delete Confirmation Modal */}
+        <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Confirm Deletion">
+          <div className="mb-4">
+            <p>Are you sure you want to delete the project "{projects.find(p => p.id === projectToDelete)?.title}"?</p>
+            <p className="text-sm text-red-400 mt-2">This action cannot be undone.</p>
+          </div>
+          <div className="flex justify-end gap-4">
+            <button
+              className="bg-neutral-800 text-white px-4 py-2 rounded hover:bg-neutral-700 transition-colors"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 transition-colors"
+              onClick={confirmDeleteProject}
+            >
+              Delete
+            </button>
+          </div>
         </Modal>
                         </tr>
                       );

@@ -9,16 +9,17 @@ import Avatar from '../common/Avatar';
 interface NavbarProps {
   actionButtons?: React.ReactNode;
   showPostProjectButton?: boolean;
+  postProjectUrl?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ actionButtons, showPostProjectButton }) => {
+const Navbar: React.FC<NavbarProps> = ({ actionButtons, showPostProjectButton, postProjectUrl = '/post-project' }) => {
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-full bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-row items-center justify-between shadow-xl">
+      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-lg bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-row items-center justify-between shadow-xl">
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -34,12 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ actionButtons, showPostProjectButton })
         )}
 
         {showPostProjectButton && (
-          <Link
-            to="/post-project"
-            className="bg-gradient-to-r from-custom-cyan to-custom-purple text-black font-semibold px-4 py-2 rounded shadow hover:scale-105 transition-transform duration-200 text-sm"
-          >
-            + Post New Project
-          </Link>
+          <Button to={postProjectUrl} variant="outline-cyan" size="sm">+ Post New Project</Button>
         )}
       </div>
     </header>

@@ -53,7 +53,7 @@ function App() {
             <Route path="/projects/:id/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
 
             <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard/></PrivateRoute>} />
-            <Route path="/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
+            <Route path="/founders/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
 
             <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
