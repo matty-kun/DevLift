@@ -12,6 +12,7 @@ import Resources from './pages/students/Resources';
 import About from './pages/About';
 import FounderDashboard from './pages/founders/FounderDashboard';
 import PostProject from './pages/founders/PostProject';
+import EditProject from './pages/founders/EditProject';
 import StudentDashboard from './pages/students/StudentDashboard';
 import StudentProfile from './pages/students/StudentProfile';
 import FounderProfile from './pages/founders/FounderProfile';
@@ -25,9 +26,11 @@ import { Analytics } from "@vercel/analytics/react";
 import { useAuth } from './contexts/AuthContext';
 import Onboarding from './pages/Onboarding';
 
+import LoadingScreen from './components/common/LoadingScreen';
+
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { session, loading, profile, profileLoading } = useAuth();
-  if (loading || profileLoading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading…</div>;
+  if (loading || profileLoading) return <LoadingScreen />;
   if (!session) return <SignIn />;
   // If authenticated but no role yet, send to onboarding except if already there
   if (!profile?.role) return <Onboarding />;
@@ -54,6 +57,7 @@ function App() {
 
             <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard/></PrivateRoute>} />
             <Route path="/founders/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
+            <Route path="/founders/projects/:projectId/edit" element={<PrivateRoute><EditProject /></PrivateRoute>} />
 
             <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />

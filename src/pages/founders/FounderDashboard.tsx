@@ -115,64 +115,9 @@ const FounderDashboard: React.FC = () => {
 
   const handleSignOut = async () => { await signOut(); navigate('/sign-in', { replace: true }); };
 
-  // Feedback modal state
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbacks, setFeedbacks] = useState<{ studentId: string; rating: number; review: string }[]>([]);
-  const [projectToComplete, setProjectToComplete] = useState<string | null>(null);
-  const [studentNames, setStudentNames] = useState<Record<string, string>>({});
-  const [projectNames, setProjectNames] = useState<Record<string, string>>({});
-
-  // Fetch student and project names for feedback modal
-  useEffect(() => {
-    if (!showFeedbackModal || !projectToComplete) return;
-    // Get project name
-    const project = projects.find(p => p.id === projectToComplete);
-    setProjectNames(prev => ({ ...prev, [projectToComplete]: project?.title || projectToComplete }));
-    // Get student ids for accepted applications
-    const accepted = applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted');
-    const ids = accepted.map(a => a.student_id).filter(Boolean);
-    if (ids.length === 0) return;
-    (async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, full_name')
-        .in('id', ids);
-      if (!error && data) {
-        const nameMap: Record<string, string> = {};
-        data.forEach((u: { id: string; full_name: string }) => {
-          nameMap[u.id] = u.full_name || u.id;
-        });
-        setStudentNames(prev => ({ ...prev, ...nameMap }));
-      }
-    })();
-  }, [showFeedbackModal, projectToComplete, projects, applications]);
-
-  // Edit modal state
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editProjectId, setEditProjectId] = useState<string | null>(null);
-
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-
-  const handleMarkCompleted = async (projectId: string) => {
-    const original = projects.find(p => p.id === projectId)?.status ?? null;
-    // Optimistic UI
-    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: 'completed' } : p));
-    setProjectToComplete(projectId);
-    setShowFeedbackModal(true);
-    setShowEditModal(false);
-    // Persist to DB
-    const { error } = await supabase
-      .from('projects')
-      .update({ status: 'completed' })
-      .eq('id', projectId);
-    if (error) {
-      // Revert if failed (likely RLS)
-      setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: original } : p));
-      alert('Failed to mark project as completed. Please check permissions.');
-    }
-  };
 
   const handleDeleteProject = async (projectId: string) => {
     setProjectToDelete(projectId);
@@ -301,9 +246,11 @@ const FounderDashboard: React.FC = () => {
                           <td className="px-4 py-2">
                             <span
                               className={`px-2 py-1 rounded text-xs font-semibold ${
-                                mapStatus(project.status) === 'Open'
-                                  ? 'bg-custom-cyan text-black'
-                                  : 'bg-custom-purple text-white'
+                                project.status === 'open'
+                                  ? 'bg-green-500 text-white'
+                                  : project.status === 'in_progress'
+                                  ? 'bg-yellow-500 text-black'
+                                  : 'bg-red-500 text-white'
                               }`}
                             >
                               {mapStatus(project.status)}
@@ -319,13 +266,10 @@ const FounderDashboard: React.FC = () => {
                                 </Link>
                               </div>
                               <div className="flex flex-col items-center">
-                                <button
-                                  className="flex flex-col items-center group"
-                                  onClick={() => { setEditProjectId(project.id); setShowEditModal(true); }}
-                                >
+                                <Link to={`/founders/projects/${project.id}/edit`} className="flex flex-col items-center group">
                                   <Pencil className="h-6 w-6 text-custom-orange group-hover:text-custom-orange/80" />
                                   <span className="text-xs font-semibold mt-1 text-custom-orange">Edit</span>
-                                </button>
+                                </Link>
                               </div>
                               <div className="flex flex-col items-center">
                                 <button onClick={() => handleDeleteProject(project.id)} className="flex flex-col items-center group">
@@ -335,108 +279,6 @@ const FounderDashboard: React.FC = () => {
                               </div>
                             </div>
                           </td>
-        {/* Edit Modal (with Mark as Completed) */}
-        <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Project">
-          <div className="mb-4">(Edit form placeholder)</div>
-          {editProjectId && projects.find(p => p.id === editProjectId)?.status !== 'completed' && (
-            <button
-              className="w-full bg-custom-purple text-white px-4 py-2 rounded hover:bg-custom-cyan transition-colors mb-2"
-              onClick={() => handleMarkCompleted(editProjectId)}
-            >
-              Mark as Completed
-            </button>
-          )}
-          <button
-            className="w-full bg-neutral-800 text-white px-4 py-2 rounded mt-2"
-            onClick={() => setShowEditModal(false)}
-          >
-            Close
-          </button>
-        </Modal>
-        {/* Feedback Modal (frontend only) */}
-        <Modal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} title="Leave Feedback for Students">
-          <form
-            onSubmit={async e => {
-              e.preventDefault();
-              if (!projectToComplete) { setShowFeedbackModal(false); return; }
-              // Collect accepted students for this project in the same order as rendered
-              const accepted = applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted');
-              const pairs = accepted.map((a, idx) => ({ studentId: a.student_id || '', rating: feedbacks[idx]?.rating || 0, review: feedbacks[idx]?.review || '' }));
-              // Submit reviews (only entries with rating >=1)
-              const results = await Promise.all(pairs
-                .filter(p => p.studentId && p.rating > 0)
-                .map(p => addOrUpdateReview({ projectId: projectToComplete, revieweeId: p.studentId, rating: p.rating, feedback: p.review }))
-              );
-              const errs = results.filter(r => r.error);
-              setShowFeedbackModal(false);
-              if (errs.length) {
-                alert(`Some reviews failed to submit: ${errs.map(e => e.error).join('; ')}`);
-              } else {
-                alert('Feedback submitted!');
-              }
-            }}
-          >
-            {projectToComplete && (
-              <>
-                <div className="font-semibold mb-4 text-center text-lg">
-                  {projectNames[projectToComplete] || projectToComplete}
-                </div>
-                {applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted').length === 0 ? (
-                  <div className="text-neutral-400">No accepted students to review.</div>
-                ) : (
-                  applications.filter(a => a.project_id === projectToComplete && a.status === 'accepted').map((a, idx) => (
-                    <div key={a.student_id} className="mb-8 p-4 bg-neutral-800 rounded-lg">
-                      <div className="font-semibold mb-2 text-center text-custom-cyan text-base">
-                        {a.student_id ? (
-                          <Link to={`/students/${a.student_id}`} className="hover:underline">
-                            {studentNames[a.student_id] || a.student_id}
-                          </Link>
-                        ) : (
-                          studentNames[a.student_id || ''] || a.student_id
-                        )}
-                      </div>
-                      <label className="block text-sm mb-1 text-center">Rating:</label>
-                      <div className="flex justify-center mb-2">
-                        <StarRating
-                          value={feedbacks[idx]?.rating || 0}
-                          onChange={val => {
-                            setFeedbacks(fb => {
-                              const arr = [...fb];
-                              arr[idx] = { ...arr[idx], studentId: a.student_id || '', rating: val, review: arr[idx]?.review || '' };
-                              return arr;
-                            });
-                          }}
-                        />
-                      </div>
-                      <label className="block text-sm mb-1">Feedback:</label>
-                      <textarea
-                        className="w-full bg-neutral-900 border border-neutral-700 rounded p-2 text-sm"
-                        rows={2}
-                        value={feedbacks[idx]?.review || ''}
-                        onChange={e => {
-                          const val = e.target.value;
-                          setFeedbacks(fb => {
-                            const arr = [...fb];
-                            arr[idx] = { ...arr[idx], studentId: a.student_id || '', rating: arr[idx]?.rating || 0, review: val };
-                            return arr;
-                          });
-                        }}
-                        // feedback text optional; rating determines validity
-                      />
-                    </div>
-                  ))
-                )}
-              </>
-            )}
-            <button
-              type="submit"
-              className="w-full bg-custom-cyan text-black font-semibold py-2 rounded-lg mt-2 hover:bg-custom-cyan/90 transition-colors"
-            >
-              Submit Feedback
-            </button>
-          </form>
-        </Modal>
-
         {/* Delete Confirmation Modal */}
         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Confirm Deletion">
           <div className="mb-4">
