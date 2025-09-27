@@ -1,42 +1,67 @@
-import React, { useState } from 'react';
-
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-
-import Button from '../common/Button';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import sign from '../../assets/DevLift Sign.svg';
-import Avatar from '../common/Avatar';
+import { LayoutDashboard, Briefcase, Users, Building, Book } from 'lucide-react';
 
 interface NavbarProps {
   actionButtons?: React.ReactNode;
-  showPostProjectButton?: boolean;
-  postProjectUrl?: string;
+  showNavLinks?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ actionButtons, showPostProjectButton, postProjectUrl = '/post-project' }) => {
-  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
-  const navigate = useNavigate();
+const navLinks = [
+  { href: '/founder-dashboard', text: 'Dashboard', icon: LayoutDashboard },
+  { href: '/projects', text: 'Projects', icon: Briefcase },
+  { href: '/people-dashboard', text: 'People', icon: Users },
+  { href: '/startups', text: 'Startups', icon: Building },
+  { href: '/resources', text: 'Resources', icon: Book },
+];
+
+const Navbar: React.FC<NavbarProps> = ({ actionButtons, showNavLinks = false }) => {
   const location = useLocation();
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      <div className="mx-5 md:mx-20 px-3 py-1 mt-4 rounded-lg bg-black/70 backdrop-blur-xl border border-neutral-700 flex flex-row items-center justify-between shadow-xl">
-        {/* Logo */}
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
-            <span className="font-headings text-custom-cyan text-2xl font-bold">Dev<span className="text-custom-orange">Lift</span></span>
-          </Link>
-        </div>
-
-        {actionButtons && (
-          <div className="hidden md:flex items-center gap-4">
-            {actionButtons}
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="relative flex items-center justify-between px-6 py-3 mt-4 rounded-lg bg-black/70 backdrop-blur-xl border border-neutral-700 shadow-xl">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
+              <span className="font-headings text-custom-cyan text-2xl font-bold ml-2">Dev<span className="text-custom-orange">Lift</span></span>
+            </Link>
           </div>
-        )}
 
-        {showPostProjectButton && (
-          <Button to={postProjectUrl} variant="outline-cyan" size="sm">+ Post New Project</Button>
-        )}
+          {/* Centered Navigation */}
+          {showNavLinks && (
+            <nav className="absolute left-1/2 -translate-x-1/2">
+              <ul className="flex items-center gap-8">
+                {navLinks.map((link) => {
+                  const Icon = link.icon;
+                  const isActive = location.pathname.startsWith(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link 
+                        to={link.href} 
+                        className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors ${isActive ? 'text-custom-cyan' : 'text-neutral-400 hover:text-white hover:bg-neutral-800'}`}>
+                        <Icon className={`h-6 w-6 ${isActive ? 'text-custom-cyan' : ''}`} />
+                        <span className="text-xs font-semibold">{link.text}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex-shrink-0">
+            {actionButtons && (
+              <div className="hidden md:flex items-center gap-4">
+                {actionButtons}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </header>
   );

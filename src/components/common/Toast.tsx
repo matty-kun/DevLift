@@ -23,8 +23,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', duration = 300
 
   return (
     <div
-      className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-lg shadow-lg border text-white text-base font-semibold transition-all animate-fade-in ${typeStyles[type]}`}
-      role="alert"
+      className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-lg shadow-lg border text-white text-base font-semibold transition-all animate-fade-in-up ${typeStyles[type]}`}
     >
       {message}
     </div>

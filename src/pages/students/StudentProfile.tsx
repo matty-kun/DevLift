@@ -74,7 +74,7 @@ const StudentProfile: React.FC = () => {
       <main className="pt-24 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="mb-4">
-            {paramId && session?.user?.id !== paramId ? (
+            {paramId && session?.user?.id && session.user.id !== paramId ? (
               <BackButton to={`/students/${session.user.id}`} text="Back to My Profile" className="px-2 py-1" />
             ) : (
               <BackButton to="/student-dashboard" text="Back to Dashboard" className="px-2 py-1" />

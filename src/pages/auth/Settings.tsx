@@ -1,241 +1,152 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Mail, Lock, User, Bell } from 'lucide-react';
-import Card from '../../components/common/Card';
-import Input from '../../components/common/Input';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/common/Button';
-import Avatar from '../../components/common/Avatar';
+import Input from '../../components/common/Input';
 import ImageUpload from '../../components/common/ImageUpload';
+import { User, Bell, Shield, Mail } from 'lucide-react';
+import Toast from '../../components/common/Toast';
+import BackButton from '../../components/common/BackButton';
 
-interface SettingsFormData {
-    fullName: string;
-    email: string;
-    currentPassword?: string;
-    newPassword?: string;
-    confirmPassword?: string;
-}
+// Import placeholder components
+import AccountSettings from '../../components/settings/AccountSettings';
+import NotificationSettings from '../../components/settings/NotificationSettings';
+import SecuritySettings from '../../components/settings/SecuritySettings';
 
-const Settings: React.FC = () => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<SettingsFormData>({
-        defaultValues: {
-            fullName: 'Demo User',
-            email: 'demo@example.com',
-        }
+const ProfileSettings = () => {
+  const { user, setUser } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState('');
+  const [bio, setBio] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' });
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.user_metadata.full_name || '');
+      setBio(user.user_metadata.bio || '');
+      setAvatarUrl(user.user_metadata.avatar_url || '');
+    }
+    setLoading(false);
+  }, [user]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { data, error } = await supabase.auth.updateUser({
+      data: { full_name: fullName, bio, avatar_url: avatarUrl },
     });
 
-    const [profileImage, setProfileImage] = useState<File | null>(null);
-    const newPassword = watch('newPassword');
+    if (error) {
+      setToast({ show: true, message: `Error: ${error.message}`, type: 'error' });
+    } else if (data.user) {
+      setUser(data.user);
+      setToast({ show: true, message: 'Profile updated successfully!', type: 'success' });
+    }
+    setLoading(false);
+  };
 
-    const onProfileSubmit = (data: SettingsFormData) => {
-        console.log('Profile updated:', data);
-        console.log('Profile image:', profileImage);
-        // Here you would typically call an API to update the user's profile
-    };
+  if (loading) {
+      return <div>Loading...</div>
+  }
 
-    const onPasswordSubmit = (data: SettingsFormData) => {
-        console.log('Password change requested:', data);
-        // Here you would typically call an API to change the password
-    };
+  return (
+    <div>
+      {toast.show && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
+      <h2 className="text-2xl font-bold text-white mb-6">Profile Settings</h2>
+      <div className="bg-neutral-900 p-8 rounded-lg">
+        <form onSubmit={handleUpdateProfile}>
+          <div className="mb-6">
+            <ImageUpload
+              onUpload={(url) => setAvatarUrl(url)}
+              currentImageUrl={avatarUrl}
+            />
+          </div>
+          <div className="mb-6">
+            <Input
+              label="Full Name"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-neutral-400 mb-2">Bio</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              className="w-full p-3 border border-neutral-700 rounded-md bg-neutral-800 text-white focus:ring-2 focus:ring-custom-cyan transition"
+              rows={4}
+            />
+          </div>
+          <Button type="submit" disabled={loading} variant="primary" size="lg">
+            {loading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
-    const handleFileChange = (file: File | null) => {
-        setProfileImage(file);
-    };
+const Settings = () => {
+  const [activeCategory, setActiveCategory] = useState('Profile');
 
-    return (
-        <div className="min-h-screen bg-black py-12">
-            <div className="container mx-auto px-4">
-                <div className="max-w-3xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl font-bold text-white">Settings</h1>
-                        <p className="mt-2 text-white">Manage your account and preferences</p>
-                    </div>
+  const categories = [
+    { name: 'Profile', icon: User },
+    { name: 'Account', icon: Mail },
+    { name: 'Notifications', icon: Bell },
+    { name: 'Security', icon: Shield },
+  ];
 
-                    {/* Profile Settings */}
-                    <Card className="mb-8">
-                        <h2 className="text-2xl font-semibold text-white mb-6 flex items-center">
-                            <User className="h-6 w-6 mr-3 text-custom-cyan" />
-                            Profile Information
-                        </h2>
-                        <form onSubmit={handleSubmit(onProfileSubmit)} className="space-y-6">
-                            <div className="flex items-center space-x-6">
-                                <Avatar src="https://randomuser.me/api/portraits/men/32.jpg" alt="Demo User" size="lg" />
-                                <ImageUpload label="Upload new picture" onFileChange={handleFileChange} />
-                            </div>
-                            <div>
-                                <Input
-                                    label="Full Name"
-                                    type="text"
-                                    leftIcon={<User className="h-5 w-5" />}
-                                    error={errors.fullName?.message}
-                                    {...register('fullName', { required: 'Full name is required' })}
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    label="Email Address"
-                                    type="email"
-                                    leftIcon={<Mail className="h-5 w-5" />}
-                                    error={errors.email?.message}
-                                    {...register('email', {
-                                        required: 'Email is required',
-                                        pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: 'Invalid email address'
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <Button type="submit" variant="primary">Save Changes</Button>
-                            </div>
-                        </form>
-                    </Card>
+  const renderContent = () => {
+    switch (activeCategory) {
+      case 'Profile':
+        return <ProfileSettings />;
+      case 'Account':
+        return <AccountSettings />;
+      case 'Notifications':
+        return <NotificationSettings />;
+      case 'Security':
+        return <SecuritySettings />;
+      default:
+        return null;
+    }
+  };
 
-                    {/* Password Settings */}
-                    <Card className="mb-8">
-                        <h2 className="text-2xl font-semibold text-white mb-6 flex items-center">
-                            <Lock className="h-6 w-6 mr-3 text-custom-cyan" />
-                            Change Password
-                        </h2>
-                        <form onSubmit={handleSubmit(onPasswordSubmit)} className="space-y-6">
-                            <div>
-                                <Input
-                                    label="Current Password"
-                                    type="password"
-                                    leftIcon={<Lock className="h-5 w-5" />}
-                                    {...register('currentPassword')}
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    label="New Password"
-                                    type="password"
-                                    leftIcon={<Lock className="h-5 w-5" />}
-                                    error={errors.newPassword?.message}
-                                    {...register('newPassword', {
-                                        minLength: {
-                                            value: 7,
-                                            message: 'Password must be at least 7 characters'
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    label="Confirm New Password"
-                                    type="password"
-                                    leftIcon={<Lock className="h-5 w-5" />}
-                                    error={errors.confirmPassword?.message}
-                                    {...register('confirmPassword', {
-                                        validate: value => value === newPassword || 'Passwords do not match'
-                                    })}
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <Button type="submit" variant="primary">Update Password</Button>
-                            </div>
-                        </form>
-                    </Card>
-
-                    {/* Notification Settings */}
-                    <Card>
-                        <h2 className="text-2xl font-semibold text-white mb-6 flex items-center">
-                            <Bell className="h-6 w-6 mr-3 text-custom-cyan" />
-                            Notifications
-                        </h2>
-                        <div className="space-y-4">
-                           <div className="flex items-center justify-between p-4 bg-neutral-900 rounded-lg">
-                               <div>
-                                   <h3 className="font-medium text-white">Project Updates</h3>
-                                   <p className="text-sm text-gray-400">Get notified about new comments and updates on your projects.</p>
-                               </div>
-                               <label className="switch">
-                                 <input type="checkbox" defaultChecked />
-                                 <span className="slider round"></span>
-                               </label>
-                           </div>
-                           <div className="flex items-center justify-between p-4 bg-neutral-900 rounded-lg">
-                               <div>
-                                   <h3 className="font-medium text-white">Community Alerts</h3>
-                                   <p className="text-sm text-gray-400">Receive notifications for new posts and replies in the community.</p>
-                               </div>
-                               <label className="switch">
-                                 <input type="checkbox" defaultChecked />
-                                 <span className="slider round"></span>
-                               </label>
-                           </div>
-                           <div className="flex items-center justify-between p-4 bg-neutral-900 rounded-lg">
-                               <div>
-                                   <h3 className="font-medium text-white">Newsletter</h3>
-                                   <p className="text-sm text-gray-400">Subscribe to our weekly newsletter.</p>
-                               </div>
-                               <label className="switch">
-                                 <input type="checkbox" />
-                                 <span className="slider round"></span>
-                               </label>
-                           </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="max-w-5xl mx-auto p-4 text-white">
+      <BackButton to="/founder-dashboard" text="Back to Dashboard" />
+      <div className="flex flex-col md:flex-row gap-12 mt-4">
+        <aside className="w-full md:w-1/4">
+          <h1 className="text-3xl font-bold mb-8">Settings</h1>
+          <nav className="space-y-2">
+            {categories.map(cat => {
+              const Icon = cat.icon;
+              const isActive = activeCategory === cat.name;
+              return (
+                <button 
+                  key={cat.name}
+                  onClick={() => setActiveCategory(cat.name)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-md text-left transition-colors text-lg ${isActive ? 'bg-custom-cyan/10 text-custom-cyan font-semibold' : 'hover:bg-neutral-800 text-neutral-400'}`}>
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-custom-cyan' : 'text-neutral-500'}`} />
+                  {cat.name}
+                </button>
+              )
+            })}
+          </nav>
+        </aside>
+        <main className="w-full md:w-3/4">
+          {renderContent()}
+        </main>
+      </div>
+    </div>
+  );
 };
-
-// Basic CSS for the toggle switch - you might want to move this to your main CSS file
-const styles = `
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-}
-input:checked + .slider {
-  background-color: #2196F3;
-}
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-.slider.round {
-  border-radius: 34px;
-}
-.slider.round:before {
-  border-radius: 50%;
-}
-`;
-
-const styleSheet = document.createElement("style");
-styleSheet.type = "text/css";
-styleSheet.innerText = styles;
-document.head.appendChild(styleSheet);
-
 
 export default Settings;
