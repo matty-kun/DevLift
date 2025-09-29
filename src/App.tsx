@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/founders/ProjectDetails';
@@ -14,6 +14,7 @@ import PostProject from './pages/founders/PostProject';
 import EditProject from './pages/founders/EditProject';
 import StudentDashboard from './pages/students/StudentDashboard';
 import StudentProfile from './pages/students/StudentProfile';
+import SearchPage from './pages/Search';
 import FounderProfile from './pages/founders/FounderProfile';
 import Settings from './pages/auth/Settings';
 import UnderConstruction from './pages/UnderConstruction';
@@ -25,6 +26,8 @@ import Onboarding from './pages/Onboarding';
 import LoadingScreen from './components/common/LoadingScreen';
 import MainLayout from './components/layout/MainLayout';
 
+import AccountActions from './components/layout/AccountActions';
+
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { session, loading, profile, profileLoading } = useAuth();
   if (loading || profileLoading) return <LoadingScreen />;
@@ -33,33 +36,40 @@ function PrivateRoute({ children }: { children: React.ReactElement }) {
   return children;
 }
 
-function App() {
+const App: React.FC = () => {
+  const homeActionButtons = null;
+
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
+        {/* Public routes with public layout */}
+        <Route element={<MainLayout actionButtons={homeActionButtons} showNavLinks={false} showFooter={true}><Outlet /></MainLayout>}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Route>
+
+        {/* Auth routes without layout */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
 
-        {/* Routes with Main Layout (Navbar with actions) */}
-        <Route element={<MainLayout />}>
+        {/* Private routes with main layout */}
+        <Route element={<MainLayout actionButtons={<AccountActions />} showNavLinks={true} showFooter={true}><Outlet /></MainLayout>}>
           <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
           <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
           <Route path="/projects/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
           <Route path="/startups" element={<PrivateRoute><Startups /></PrivateRoute>} />
-          <Route path="/startups/:id" element={<StartupDetails />} />
+          <Route path="/startups/:id" element={<PrivateRoute><StartupDetails /></PrivateRoute>} />
           <Route path="/resources" element={<PrivateRoute><Resources /></PrivateRoute>} />
-          <Route path="/about" element={<PrivateRoute><About /></PrivateRoute>} />
           <Route path="/community" element={<PrivateRoute><UnderConstruction /></PrivateRoute>} />
           <Route path="/projects/:id/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
-          <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard/></PrivateRoute>} />
+          <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard /></PrivateRoute>} />
           <Route path="/founders/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
           <Route path="/founders/projects/:projectId/edit" element={<PrivateRoute><EditProject /></PrivateRoute>} />
           <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           <Route path="/people/:id" element={<PrivateRoute><StudentProfile /></PrivateRoute>} />
           <Route path="/founders/:id" element={<PrivateRoute><FounderProfile /></PrivateRoute>} />
+          <Route path="/search" element={<PrivateRoute><SearchPage /></PrivateRoute>} />
         </Route>
       </Routes>
       <SpeedInsights />
@@ -69,3 +79,4 @@ function App() {
 }
 
 export default App;
+

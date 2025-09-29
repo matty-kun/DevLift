@@ -36,3 +36,17 @@ export interface UserRatingSummary {
   reviews_count: number;
   last_review_at: string | null;
 }
+
+export interface Person {
+  id: string;
+  name: string;
+  role: string;
+  avatar_url: string;
+}
+
+export interface Startup {
+  id: string;
+  name: string;
+  description: string;
+  logo_url: string;
+}

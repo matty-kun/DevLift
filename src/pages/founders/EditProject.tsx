@@ -12,6 +12,8 @@ import StarRating from '../../components/common/StarRating';
 import { addOrUpdateReview } from '../../lib/feedback';
 import { Link } from 'react-router-dom';
 
+type User = { id: string; full_name: string };
+
 const EditProject: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -94,8 +96,8 @@ const EditProject: React.FC = () => {
           skills: skills,
         });
 
-      } catch (e: any) {
-        setError(e.message || 'Failed to fetch project data.');
+      } catch (e: unknown) {
+        setError((e as Error).message || 'Failed to fetch project data.');
       } finally {
         setLoading(false);
       }
@@ -117,23 +119,13 @@ const EditProject: React.FC = () => {
         .in('id', ids as string[]);
       if (!error && data) {
         const nameMap: Record<string, string> = {};
-        data.forEach((u: { id: string; full_name: string }) => {
+        data.forEach((u: User) => {
           nameMap[u.id] = u.full_name || u.id;
         });
         setStudentNames(prev => ({ ...prev, ...nameMap }));
       }
     })();
   }, [showFeedbackModal, applications]);
-
-  const handleMarkInProgress = async () => {
-    if (!projectId) return;
-    setProjectStatus('in_progress'); // Optimistic update
-    const { error } = await supabase.from('projects').update({ status: 'in_progress' }).eq('id', projectId);
-    if (error) {
-      setProjectStatus('open'); // Revert on failure
-      alert('Failed to mark project as in progress.');
-    }
-  };
 
   const handleMarkCompleted = async () => {
     if (!projectId) return;
@@ -190,8 +182,8 @@ const EditProject: React.FC = () => {
         navigate('/founder-dashboard');
       }, 1800);
 
-    } catch (e: any) {
-      setError(e.message || 'Failed to update project.');
+    } catch (e: unknown) {
+      setError((e as Error).message || 'Failed to update project.');
     } finally {
       setIsSubmitting(false);
     }
@@ -205,15 +197,7 @@ const EditProject: React.FC = () => {
     <div className="bg-black min-h-screen flex flex-col text-white">
       <div className="container mx-auto px-4 pt-6"><BackButton to="/founder-dashboard" text="Back to Dashboard" /></div>
       {showToast && (
-        <Toast 
-          message={error ? error : "Feedback submitted successfully!"} 
-          type={error ? "error" : "success"} 
-          duration={3000} 
-          onClose={() => {
-            setShowToast(false);
-            setError(null);
-          }} 
-        />
+        <Toast message="Project updated successfully!" type="success" duration={1500} onClose={() => setShowToast(false)} />
       )}
       <main className="flex-1 px-4 py-12">
         <div className="max-w-3xl mx-auto">
@@ -238,19 +222,9 @@ const EditProject: React.FC = () => {
                 <p className="text-neutral-400 mb-4">This project is marked as completed.</p>
                 <button 
                   onClick={handleUnmarkCompleted}
-                  className="bg-yellow-500 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                  className="bg-custom-cyan text-black font-semibold px-6 py-2 rounded-lg hover:bg-custom-cyan/80 transition-colors"
                 >
                   Re-open Project
-                </button>
-              </div>
-            ) : projectStatus === 'open' ? (
-              <div className="flex flex-col items-center">
-                <p className="text-neutral-400 mb-4">This project is currently open. Mark it as in progress when students start working.</p>
-                <button 
-                  onClick={handleMarkInProgress}
-                  className="bg-green-500 text-white font-semibold px-6 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                >
-                  Mark as In Progress
                 </button>
               </div>
             ) : (
@@ -258,7 +232,7 @@ const EditProject: React.FC = () => {
                 <p className="text-neutral-400 mb-4">Once the project is finished, mark it as completed to leave feedback.</p>
                 <button 
                   onClick={handleMarkCompleted}
-                  className="bg-red-500 text-white font-semibold px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  className="bg-custom-purple text-white font-semibold px-6 py-2 rounded-lg hover:bg-custom-purple/80 transition-colors"
                 >
                   Mark as Completed
                 </button>
@@ -283,10 +257,9 @@ const EditProject: React.FC = () => {
               const errs = results.filter(r => r.error);
               setShowFeedbackModal(false);
               if (errs.length) {
-                setError(`Some reviews failed to submit: ${errs.map(e => e.error).join('; ')}`);
-                setShowToast(true);
+                alert(`Some reviews failed to submit: ${errs.map(e => e.error).join('; ')}`);
               } else {
-                setShowToast(true);
+                alert('Feedback submitted!');
               }
             }}
           >

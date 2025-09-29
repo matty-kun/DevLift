@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Quote, Star } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Quote } from 'lucide-react';
 import Avatar from '../common/Avatar';
 import VisionAndMission from './VisionAndMission';
 

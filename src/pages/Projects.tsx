@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import BackButton from '../components/common/BackButton';
 import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, Zap, X } from 'lucide-react';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -202,7 +201,7 @@ const Projects: React.FC = () => {
       </style>
       <div className="min-h-screen bg-black text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="mb-6"><BackButton to="/" text="Back to Home" /></div>
+          
           <div className="mb-12 text-center">
             <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-cyan to-custom-orange mb-4">
                 Explore Real-World Projects

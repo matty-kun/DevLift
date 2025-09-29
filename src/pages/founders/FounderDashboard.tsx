@@ -145,8 +145,8 @@ const FounderDashboard: React.FC = () => {
       setProjects(projects.filter(p => p.id !== projectToDelete));
       setShowDeleteModal(false);
       setProjectToDelete(null);
-    } catch (error: any) {
-      alert('Error deleting project: ' + error.message);
+    } catch (error: unknown) {
+      alert('Error deleting project: ' + (error as Error).message);
     }
   };
 

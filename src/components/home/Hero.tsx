@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { ArrowRight, User, Briefcase } from 'lucide-react';
 import Button from '../common/Button';
-import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate import
-import Navbar from '../layout/Navbar'; // adjust the import path as needed
+import { useNavigate } from 'react-router-dom'; // Added useNavigate import
+
 import { motion } from 'framer-motion';
 
 const textVariants = {
@@ -25,8 +25,8 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative">
-      <Navbar />
+  <section className="relative min-h-screen flex items-center justify-center">
+      
       {/* Background decorative elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
@@ -35,7 +35,7 @@ const Hero: React.FC = () => {
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-60 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto min-h-screen px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
+  <div className="container mx-auto w-full h-full px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl mx-auto flex justify-center">
           <motion.h1
             className="inline-block text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight md:whitespace-nowrap whitespace-normal text-center"
