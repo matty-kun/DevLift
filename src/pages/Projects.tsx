@@ -15,8 +15,7 @@ const mapStatus = (s: string | null): Project['status'] => {
   return 'open';
 };
 
-const defaultImage = (title: string) =>
-  `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(title)}`;
+// defaultImage no longer needed; component handles fallbacks
 
 type ProjectRow = {
   id: string;
@@ -67,17 +66,18 @@ const Projects: React.FC = () => {
         let query = supabase
           .from('projects')
           .select(
-            'id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at',
+            'id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at, mentor:mentor_id (id, full_name, avatar_url)',
             { count: 'exact' }
           );
 
         query = query.order('created_at', { ascending: sortBy !== 'newest' });
         query = query.range(start, end);
 
-  type QueryResult = { data: ProjectRow[] | null; error: { message?: string } | null; count: number | null };
+  type RowUser = { id: string; full_name?: string | null; avatar_url?: string | null };
+  type QueryResult = { data: (ProjectRow & { mentor: RowUser | RowUser[] | null })[] | null; error: { message?: string } | null; count: number | null };
   const { data, error, count } = await query as unknown as QueryResult;
         if (error) throw error;
-  const rows: ProjectRow[] = data ?? [];
+  const rows: (ProjectRow & { mentor: RowUser | RowUser[] | null })[] = (data as (ProjectRow & { mentor: RowUser | RowUser[] | null })[] | null) ?? [];
         const ids = rows.map(r => r.id);
 
         // Fetch skills per project
@@ -123,15 +123,17 @@ const Projects: React.FC = () => {
           title: r.title,
           description: r.description,
           mentorId: r.mentor_id,
+          mentor: Array.isArray(r.mentor) ? r.mentor[0] : r.mentor,
           skills: skillsMap.get(r.id) ?? [],
-          duration: `${r.duration_weeks ?? 0} weeks`,
+          duration: `${r.duration_weeks ?? 0} week${(r.duration_weeks ?? 0) === 1 ? '' : 's'}`,
           status: mapStatus(r.status),
           difficulty: r.difficulty,
           maxStudents: r.max_students ?? 0,
           assignedStudents: acceptedMap.get(r.id) ?? [],
           applicants: applicantsMap.get(r.id) ?? [],
           createdAt: new Date(r.created_at),
-          imageUrl: r.header_image_url ?? defaultImage(r.title),
+          // Leave empty to allow component-level robust fallback (unsplash, then local placeholder)
+          imageUrl: r.header_image_url ?? '',
         }));
 
         setProjects(prev => page === 1 ? mapped : [...prev, ...mapped]);

@@ -3,6 +3,7 @@ export interface Project {
   title: string;
   description: string;
   mentorId: string;
+  mentor?: { id: string; full_name?: string | null; avatar_url?: string | null } | null;
   skills: string[];
   duration: string;
   status: 'open' | 'in-progress' | 'completed';
