@@ -8,6 +8,7 @@ import Avatar from '../../components/common/Avatar';
 import { Project } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import projectPlaceholder from '../../assets/project-placeholder.svg';
 
 type ProjectRow = {
   id: string;
@@ -109,10 +110,10 @@ const ProjectDetails: React.FC = () => {
           assignedStudents: assigned,
           applicants,
           createdAt: new Date(row.created_at),
-          imageUrl: row.header_image_url ?? defaultImage(row.title),
+          imageUrl: row.header_image_url ?? '',
           founderName: profile?.full_name ?? 'Founder',
           startupLogo: profile?.avatar_url ?? undefined,
-          bannerUrl: row.header_image_url ?? defaultImage(row.title),
+          bannerUrl: row.header_image_url ?? '',
         };
 
         setProject(mapped);
@@ -214,22 +215,30 @@ const ProjectDetails: React.FC = () => {
               Mark Project as Completed
             </button>
           )}
-          {project.bannerUrl && (
-            <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
-              <img
-                src={project.bannerUrl}
-                alt="Project Banner"
-                className="w-full h-40 object-cover"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  if (target.dataset.fallbackApplied === '1') return;
-                  target.dataset.fallbackApplied = '1';
+          <div className="mb-4 -mx-6 -mt-6 rounded-t-2xl overflow-hidden relative">
+            <img
+              src={(project.bannerUrl && project.bannerUrl.trim() !== '') ? project.bannerUrl : projectPlaceholder}
+              alt="Project Banner"
+              className="w-full h-40 object-cover"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (target.dataset.fallbackStep === 'unsplash') {
+                  target.src = projectPlaceholder;
+                  target.dataset.fallbackStep = 'placeholder';
+                  return;
+                }
+                if (target.src !== projectPlaceholder) {
                   target.src = defaultImage(project.title);
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-          )}
+                  target.dataset.fallbackStep = 'unsplash';
+                } else {
+                  target.dataset.fallbackStep = 'placeholder';
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
           <div className="flex items-center gap-4 mb-4">
             <Avatar size="xxl" src={project.startupLogo || 'https://via.placeholder.com/64x64.png?text=Logo'} alt="Startup Logo" />
             <div>

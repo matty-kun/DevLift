@@ -6,6 +6,7 @@ import Badge from '../common/Badge';
 import Button from '../common/Button';
 import Card from '../common/Card';
 import { Project } from '../../types';
+import projectPlaceholder from '../../assets/project-placeholder.svg';
 
 interface ProjectCardProps {
     project: Project;
@@ -29,15 +30,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaL
             className={`group relative flex flex-col h-full overflow-hidden rounded-xl border-neutral-800 bg-neutral-900 shadow-lg transition-all duration-300 hover:border-custom-cyan hover:shadow-custom-cyan/20 hover:-translate-y-1 ${className}`}
         >
             <div className="relative h-48 w-full overflow-hidden">
-                <img 
-                    src={project.imageUrl}
+                <img
+                    src={(project.imageUrl && project.imageUrl.trim() !== '') ? project.imageUrl : projectPlaceholder}
                     alt={project.title}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                         const target = e.currentTarget as HTMLImageElement;
-                        if (target.dataset.fallbackApplied === '1') return;
-                        target.dataset.fallbackApplied = '1';
-                        target.src = `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(project.title)}`;
+                        // Two-step fallback: first try Unsplash, then local placeholder
+                        if (target.dataset.fallbackStep === 'unsplash') {
+                            target.src = projectPlaceholder;
+                            target.dataset.fallbackStep = 'placeholder';
+                            return;
+                        }
+                        if (target.src !== projectPlaceholder) {
+                            target.src = `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(project.title)}`;
+                            target.dataset.fallbackStep = 'unsplash';
+                        } else {
+                            // As a last resort, keep the placeholder
+                            target.dataset.fallbackStep = 'placeholder';
+                        }
                     }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
@@ -86,11 +99,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaL
                     <div className="flex items-center">
                         <Avatar 
                             size="md"
-                            src="https://scontent.fmnl13-2.fna.fbcdn.net/v/t1.15752-9/516161461_1274769343996911_4756708407528807557_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeG3V7FKbPOGg1_UppPr6d67M-ewHbzMA7Yz57AdvMwDtkhNaTTEp0dllYkd1A1lt3UfZL_MYqbMIfzsxwzMVoGc&_nc_ohc=oiv4YeDYYqwQ7kNvwE7mrLu&_nc_oc=AdlwWzulc9LDtp9JWDiQpgItX5xKsoPfvRjXB9vBrTMJDJFSUdmYtEUosiPx4Tun497dW4oEuuIwlyMLXYT7cHu5&_nc_zt=23&_nc_ht=scontent.fmnl13-2.fna&oh=03_Q7cD2wFGwc_Gx5gdwMkCdrmirrfpE8ZanQ5vEdjM3GDYZZofPQ&oe=689DC03B"
-                            alt="Mentor Name"
+                            src={project.mentor?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${project.mentorId}`}
+                            alt={project.mentor?.full_name || 'Mentor'}
                         />
                         <div className="ml-3">
-                            <p className="font-semibold text-white">Mentor Name</p>
+                            <p className="font-semibold text-white">{project.mentor?.full_name || 'Mentor'}</p>
                             <p className="text-xs text-neutral-500">Senior Developer</p>
                         </div>
                     </div>

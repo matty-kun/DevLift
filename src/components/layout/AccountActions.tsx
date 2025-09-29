@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, User, Settings, LogOut, Mail, Plus } from 'lucide-react';
+import { User, Settings, LogOut, Mail, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Dropdown from '../common/Dropdown';
 import Tooltip from '../common/Tooltip';
+import NotificationsBell from '../common/NotificationsBell';
 
 const AccountActions: React.FC = () => {
   const { session, profile, signOut } = useAuth();
@@ -26,10 +27,7 @@ const AccountActions: React.FC = () => {
         </Link>
       </Tooltip>
       <Tooltip text="Notifications">
-        <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors" aria-label="Notifications">
-          <Bell className="h-6 w-6 text-custom-orange" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-custom-orange rounded-full"></span>
-        </button>
+        <NotificationsBell />
       </Tooltip>
       <Tooltip text="Messages">
         <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors" aria-label="Messages">

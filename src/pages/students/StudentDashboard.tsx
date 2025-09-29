@@ -19,8 +19,7 @@ const mapStatus = (s: string | null): Project['status'] => {
   if (s === 'completed') return 'completed';
   return 'open';
 };
-const defaultImage = (title: string) =>
-  `https://source.unsplash.com/800x600/?technology,${encodeURIComponent(title)}`;
+// defaultImage no longer needed; ProjectCard handles robust fallbacks
 
 type ProjectRow = {
   id: string;
@@ -170,7 +169,7 @@ const StudentDashboard: React.FC = () => {
         assignedStudents: acceptedMap.get(r.id) ?? [],
         applicants: applicantsMap.get(r.id) ?? [],
         createdAt: new Date(r.created_at),
-        imageUrl: r.header_image_url ?? defaultImage(r.title),
+        imageUrl: r.header_image_url ?? '',
       }));
 
       setApplications(mapped);
