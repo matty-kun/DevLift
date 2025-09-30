@@ -11,6 +11,7 @@ const PostProject: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const navigate = useNavigate();
   const { session, profile } = useAuth();
 
@@ -24,6 +25,19 @@ const PostProject: React.FC = () => {
   useEffect(() => {
     if (!session) navigate('/sign-in', { replace: true });
   }, [session, navigate]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const { data, error } = await supabase.from('skills').select('name');
+        if (error) throw error;
+        setAvailableSkills(data.map((s: { name: string }) => s.name));
+      } catch (err) {
+        console.error('Error fetching skills:', err);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   const onSubmit: SubmitHandler<ProjectFormData> = async (data) => {
     setIsSubmitting(true);
@@ -41,6 +55,16 @@ const PostProject: React.FC = () => {
         return;
       }
 
+      console.log('[PostProject] Submitting project:', {
+        title: data.title,
+        description: data.description,
+        mentor_id: session.user.id,
+        difficulty: data.difficulty,
+        duration_weeks: durationWeeks,
+        max_students: data.maxStudents,
+        skills: data.skills,
+      });
+
       const { data: project, error: perr } = await supabase
         .from('projects')
         .insert({
@@ -53,38 +77,52 @@ const PostProject: React.FC = () => {
         })
         .select('id')
         .single();
-      if (perr) throw perr;
+      if (perr) {
+        console.error('[PostProject] Error inserting project:', perr);
+        throw perr;
+      }
 
       const projectId = project?.id as string;
+      console.log('[PostProject] New project ID:', projectId);
 
-      const rawSkills = data.skills.split(',').map(s => s.trim()).filter(Boolean);
-      if (rawSkills.length > 0) {
-        const uniqueSkillNames = Array.from(new Set(rawSkills.map(s => s.toLowerCase())));
-        const { data: existing } = await supabase.from('skills').select('id, name').in('name', uniqueSkillNames);
-        const existingByName = new Map((existing ?? []).map((r) => [r.name.toLowerCase(), r.id] as const));
-        const toInsert = uniqueSkillNames.filter((n) => !existingByName.has(n)).map((name) => ({ name }));
-        
-        let insertedIds: string[] = [];
-        if (toInsert.length) {
-          const { data: inserted, error: insErr } = await supabase.from('skills').insert(toInsert).select('id');
-          if (insErr) console.warn('Could not insert new skills:', insErr.message);
-          else insertedIds = (inserted ?? []).map(r => r.id);
+      // skills is always a string[]
+      const cleanedSkills = data.skills.map((s: string) => s.trim()).filter(Boolean);
+      console.log('[PostProject] Cleaned skills:', cleanedSkills);
+
+      if (cleanedSkills.length > 0) {
+        const uniqueSkillNames = Array.from(new Set(cleanedSkills.map((s: string) => s.trim().toLowerCase())));
+        console.log('[PostProject] Unique skill names (lowercase):', uniqueSkillNames);
+        // Fetch all skills and match case-insensitively
+        const { data: allSkills, error: skillFetchError } = await supabase
+          .from('skills')
+          .select('id, name');
+        if (skillFetchError) {
+          console.error('[PostProject] Error fetching skills:', skillFetchError);
         }
-
-        const allSkillIds = [...Array.from(existingByName.values()), ...insertedIds];
+        // Map skill name (lowercase) to id
+        const skillNameToId = new Map((allSkills ?? []).map((r: { id: string, name: string }) => [r.name.trim().toLowerCase(), r.id]));
+        const allSkillIds = uniqueSkillNames.map((name) => skillNameToId.get(name)).filter(Boolean);
+        console.log('[PostProject] Skill IDs to link:', allSkillIds);
         if (allSkillIds.length) {
           const linkRows = allSkillIds.map((skill_id) => ({ project_id: projectId, skill_id }));
+          console.log('[PostProject] Linking skills to project:', linkRows);
           const { error: lerr } = await supabase.from('project_skills').insert(linkRows);
-          if (lerr) throw lerr;
+          if (lerr) {
+            console.error('[PostProject] Error linking skills:', lerr);
+            throw lerr;
+          }
+        } else {
+          console.warn('[PostProject] No skill IDs found to link.');
         }
+      } else {
+        console.warn('[PostProject] No skills provided for project.');
       }
 
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
-        navigate(`/founder-dashboard`); // Navigate to dashboard after posting
+        navigate(`/founder-dashboard`);
       }, 1800);
-
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
@@ -96,19 +134,32 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
-      <div className="container mx-auto px-4 pt-6"><BackButton to="/founder-dashboard" text="Back to Dashboard" /></div>
+      <div className="container mx-auto px-4 pt-6">
+        <BackButton to="/founder-dashboard" text="Back to Dashboard" />
+      </div>
       {showToast && (
-        <Toast message="Project posted successfully!" type="success" duration={1500} onClose={() => setShowToast(false)} />
+        <Toast
+          message="Project posted successfully!"
+          type="success"
+          duration={1500}
+          onClose={() => setShowToast(false)}
+        />
       )}
       <main className="flex-1 px-4 py-12">
         <div className="max-w-3xl mx-auto">
-          {error && <p className="text-red-500 bg-red-900/50 border border-red-700 p-3 rounded-lg mb-6">{error}</p>}
-          {!isMentor && (
-             <div className="text-yellow-400 bg-yellow-900/50 border border-yellow-700 p-3 rounded-lg mb-6">
-                <p>You are not registered as a Founder/Mentor. Please update your role in your profile if you wish to post a project.</p>
-             </div>
+          {error && (
+            <p className="text-red-500 bg-red-900/50 border border-red-700 p-3 rounded-lg mb-6">{error}</p>
           )}
-          <ProjectForm onSubmit={onSubmit} isSubmitting={isSubmitting} />
+          {!isMentor ? (
+            <div className="text-yellow-400 bg-yellow-900/50 border border-yellow-700 p-3 rounded-lg mb-6">
+              <p>
+                You are not registered as a Founder/Mentor. Please update your role in your profile if you wish to
+                post a project.
+              </p>
+            </div>
+          ) : (
+            <ProjectForm onSubmit={onSubmit} isSubmitting={isSubmitting} availableSkills={availableSkills} />
+          )}
         </div>
       </main>
     </div>

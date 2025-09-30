@@ -4,12 +4,13 @@ import Card from '../common/Card';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import ImageUpload from '../common/ImageUpload';
-import { Book, Briefcase, Clock, Code, Cpu, Users, Zap } from 'lucide-react';
+import MultiSelectTagsInput from '../common/MultiSelectTagsInput';
+import { Book, Briefcase, Clock, Cpu, Users, Zap } from 'lucide-react';
 
 export interface ProjectFormData {
   title: string;
   description: string;
-  skills: string; // Comma-separated
+  skills: string[]; // Array of selected skill names
   duration: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   maxStudents: number;
@@ -22,9 +23,10 @@ interface ProjectFormProps {
   isSubmitting?: boolean;
   isEditMode?: boolean;
   disabled?: boolean;
+  availableSkills: string[]; // New prop for available skills
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, initialData, isSubmitting, isEditMode = false, disabled = false }) => {
+const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, initialData, isSubmitting, isEditMode = false, disabled = false, availableSkills }) => {
   const { control, register, handleSubmit, formState: { errors } } = useForm<ProjectFormData>({
     defaultValues: initialData || {
       projectImage: null,
@@ -53,7 +55,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, initialData, isSubm
                   <ImageUpload
                     label="Project Header Image"
                     onFileChange={(file: File | null) => field.onChange(file)}
-                    disabled={disabled}
                   />
                 )}
               />
@@ -75,14 +76,22 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, initialData, isSubm
                 />
                 {errors.description && <p className="mt-1.5 text-sm text-red-500">{errors.description.message}</p>}
               </div>
-              <Input
-                label="Required Skills"
-                placeholder="e.g., React, TypeScript, UI/UX, Supabase"
-                leftIcon={<Code className="w-4 h-4" />}
-                {...register('skills', { required: 'At least one skill is required' })}
-                error={errors.skills?.message}
-                disabled={disabled}
+              <Controller
+                name="skills"
+                control={control}
+                rules={{ required: 'At least one skill is required' }}
+                render={({ field }) => (
+                  <MultiSelectTagsInput
+                    label="Required Skills"
+                    availableOptions={availableSkills}
+                    selectedOptions={field.value || []}
+                    onChange={field.onChange}
+                    placeholder="Select skills..."
+                    disabled={disabled}
+                  />
+                )}
               />
+              {errors.skills && <p className="mt-1.5 text-sm text-red-500">{errors.skills.message}</p>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
                   label="Estimated Duration"

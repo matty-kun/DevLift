@@ -25,6 +25,7 @@ import { useAuth } from './contexts/AuthContext';
 import Onboarding from './pages/Onboarding';
 import LoadingScreen from './components/common/LoadingScreen';
 import MainLayout from './components/layout/MainLayout';
+import People from './pages/People'; // New import
 
 import AccountActions from './components/layout/AccountActions';
 
@@ -70,6 +71,7 @@ const App: React.FC = () => {
           <Route path="/people/:id" element={<PrivateRoute><StudentProfile /></PrivateRoute>} />
           <Route path="/founders/:id" element={<PrivateRoute><FounderProfile /></PrivateRoute>} />
           <Route path="/search" element={<PrivateRoute><SearchPage /></PrivateRoute>} />
+          <Route path="/people" element={<PrivateRoute><People /></PrivateRoute>} /> {/* New route */}
         </Route>
       </Routes>
       <SpeedInsights />

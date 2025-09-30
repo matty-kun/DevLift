@@ -24,6 +24,7 @@ const EditProject: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
 
   // State for project status and feedback modal
   const [projectStatus, setProjectStatus] = useState<'open' | 'in_progress' | 'completed' | null>(null);
@@ -77,15 +78,14 @@ const EditProject: React.FC = () => {
         if (skillsError) throw skillsError;
 
         // skillsData is array of { skills: { name: string }[] | null }
-        const skills = skillsData
+        const skillsArr = skillsData
           ? skillsData
               .map(s => s.skills)
               .filter(Boolean)
               .flat()
               .map(skill => skill.name)
               .filter(Boolean)
-              .join(', ')
-          : '';
+          : [];
 
         setInitialData({
           title: projectData.title,
@@ -93,7 +93,7 @@ const EditProject: React.FC = () => {
           difficulty: projectData.difficulty,
           duration: `${projectData.duration_weeks} weeks`,
           maxStudents: projectData.max_students,
-          skills: skills,
+          skills: skillsArr,
         });
 
       } catch (e: unknown) {
@@ -105,6 +105,19 @@ const EditProject: React.FC = () => {
 
     fetchProject();
   }, [projectId, session]);
+
+  useEffect(() => {
+    const fetchAllSkills = async () => {
+      try {
+        const { data, error } = await supabase.from('skills').select('name');
+        if (error) throw error;
+        setAvailableSkills(data.map(s => s.name));
+      } catch (err) {
+        console.error('Error fetching all skills:', err);
+      }
+    };
+    fetchAllSkills();
+  }, []); // Run once on mount
 
   // Fetch student names for feedback modal
   useEffect(() => {
@@ -174,7 +187,51 @@ const EditProject: React.FC = () => {
 
       if (updateError) throw updateError;
 
-      // TODO: Handle skill updates (more complex: requires deleting old, adding new)
+      // Handle skill updates
+      const currentSkills = initialData?.skills || [];
+      const newSkills = data.skills || [];
+
+      const skillsToAdd = newSkills.filter(skill => !currentSkills.includes(skill));
+      const skillsToRemove = currentSkills.filter(skill => !newSkills.includes(skill));
+
+      // Fetch IDs for skills to add
+      let skillIdsToAdd: string[] = [];
+      if (skillsToAdd.length > 0) {
+        const { data: fetchedSkills, error: fetchSkillsError } = await supabase
+          .from('skills')
+          .select('id')
+          .in('name', skillsToAdd);
+        if (fetchSkillsError) console.error('Error fetching skills to add:', fetchSkillsError);
+        skillIdsToAdd = (fetchedSkills || []).map(s => s.id);
+      }
+
+      // Delete skills no longer associated
+      if (skillsToRemove.length > 0) {
+        const { data: fetchedSkillsToRemove, error: fetchRemoveSkillsError } = await supabase
+          .from('skills')
+          .select('id')
+          .in('name', skillsToRemove);
+        if (fetchRemoveSkillsError) console.error('Error fetching skills to remove:', fetchRemoveSkillsError);
+        const skillIdsToRemove = (fetchedSkillsToRemove || []).map(s => s.id);
+
+        if (skillIdsToRemove.length > 0) {
+          const { error: deleteError } = await supabase
+            .from('project_skills')
+            .delete()
+            .eq('project_id', projectId)
+            .in('skill_id', skillIdsToRemove);
+          if (deleteError) throw deleteError;
+        }
+      }
+
+      // Add new skill associations
+      if (skillIdsToAdd.length > 0) {
+        const linkRows = skillIdsToAdd.map(skill_id => ({ project_id: projectId, skill_id }));
+        const { error: insertError } = await supabase
+          .from('project_skills')
+          .insert(linkRows);
+        if (insertError) throw insertError;
+      }
 
       setShowToast(true);
       setTimeout(() => {
@@ -209,6 +266,7 @@ const EditProject: React.FC = () => {
               isSubmitting={isSubmitting} 
               isEditMode={true} 
               disabled={projectStatus === 'completed'}
+              availableSkills={availableSkills}
             />
           ) : (
             !error && <p>Loading form...</p>

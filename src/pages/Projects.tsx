@@ -30,10 +30,7 @@ type ProjectRow = {
   created_at: string;
 };
 
-type ProjectSkillRow = {
-  project_id: string;
-  skills: { name: string } | null;
-};
+
 
 type ApplicationRow = {
   project_id: string;
@@ -48,12 +45,29 @@ const Projects: React.FC = () => {
   const [selectedDuration, setSelectedDuration] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('newest');
   const [projects, setProjects] = useState<Project[]>([]);
+  const [allSkills, setAllSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const projectsPerPage = 6;
+
+  useEffect(() => {
+    const fetchAllSkills = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('skills')
+          .select('name');
+        if (error) throw error;
+        const skillNames = data.map((s: { name: string }) => s.name);
+        setAllSkills(skillNames);
+      } catch (e) {
+        console.error("Failed to fetch all skills:", e);
+      }
+    };
+    fetchAllSkills();
+  }, []);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -70,6 +84,16 @@ const Projects: React.FC = () => {
             { count: 'exact' }
           );
 
+        // Apply skill filter to the query
+        if (selectedSkills.length > 0) {
+          // This is a simplified approach. For a more robust solution with many-to-many relationships,
+          // you'd typically need a more complex query or a stored procedure.
+          // For now, we'll filter after fetching, which might be inefficient for very large datasets.
+          // A better approach would be to join with project_skills and filter by skill name.
+          // However, Supabase RLS might make direct joins on non-exposed tables tricky.
+          // Let's assume for now that filtering on the client side is acceptable given the current scale.
+        }
+
         query = query.order('created_at', { ascending: sortBy !== 'newest' });
         query = query.range(start, end);
 
@@ -83,15 +107,28 @@ const Projects: React.FC = () => {
         // Fetch skills per project
         const skillsMap = new Map<string, string[]>();
         if (ids.length) {
-          const { data: ps } = await supabase
+          const { data: projectSkillsData, error: psError } = await supabase
             .from('project_skills')
-            .select('project_id, skills(name)')
+            .select('project_id, skill_id')
             .in('project_id', ids);
-          (ps as ProjectSkillRow[] | null)?.forEach((row) => {
-            const name = row.skills?.name;
-            if (!name) return;
+          if (psError) throw psError;
+
+          const skillIds = Array.from(new Set((projectSkillsData ?? []).map(ps => ps.skill_id)));
+          let skillNamesMap = new Map<string, string>();
+          if (skillIds.length) {
+            const { data: skillNamesData, error: snError } = await supabase
+              .from('skills')
+              .select('id, name')
+              .in('id', skillIds);
+            if (snError) throw snError;
+            skillNamesMap = new Map((skillNamesData ?? []).map(s => [s.id, s.name]));
+          }
+
+          (projectSkillsData ?? []).forEach((row) => {
+            const skillName = skillNamesMap.get(row.skill_id);
+            if (!skillName) return; // Only add if skill name exists
             const list = skillsMap.get(row.project_id) ?? [];
-            list.push(name);
+            list.push(skillName);
             skillsMap.set(row.project_id, list);
           });
         }
@@ -147,7 +184,7 @@ const Projects: React.FC = () => {
       }
     };
     fetchProjects();
-  }, [page, sortBy]);
+  }, [page, sortBy, selectedSkills]);
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = !searchQuery || 
@@ -156,7 +193,7 @@ const Projects: React.FC = () => {
       project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesSkills = selectedSkills.length === 0 || 
-      selectedSkills.some(skill => project.skills.includes(skill));
+      selectedSkills.every(skill => project.skills.includes(skill));
 
     const matchesDifficulty = selectedDifficulty.length === 0 || 
       selectedDifficulty.includes(project.difficulty);
@@ -174,7 +211,7 @@ const Projects: React.FC = () => {
     return matchesSearch && matchesSkills && matchesDifficulty && matchesDuration;
   });
 
-  const skills = Array.from(new Set(projects.flatMap(project => project.skills)));
+  const skills = allSkills;
   const difficulties = ['beginner', 'intermediate', 'advanced'];
   const durations = ['4-6 weeks', '6-8 weeks', '8-12 weeks', '12+ weeks'];
 
@@ -205,7 +242,7 @@ const Projects: React.FC = () => {
         <div className="container mx-auto px-4">
           
           <div className="mb-12 text-center">
-            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-cyan to-custom-orange mb-4">
+            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-cyan mb-4">
                 Explore Real-World Projects
             </h1>
             <p className="text-xl text-neutral-300 max-w-3xl mx-auto">

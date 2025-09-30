@@ -15,6 +15,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaLabel }) => {
+    // Debug: log received skills
+    console.log('[ProjectCard] Skills for project', project.title, project.skills);
     const getDifficultyVariant = () => {
         switch (project.difficulty) {
             case 'beginner': return 'success';
@@ -72,15 +74,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaL
                 </p>
 
                 <div className="mb-5 flex flex-wrap gap-2">
-                    {project.skills.slice(0, 4).map((skill: string, index: number) => (
-                        <Badge key={index} variant="secondary" size="sm" className="font-medium">
-                            {skill}
-                        </Badge>
-                    ))}
-                    {project.skills.length > 4 && (
-                        <Badge variant="neutral" size="sm">
-                            +{project.skills.length - 4} more
-                        </Badge>
+                    {project.skills.length > 0 ? (
+                        <>
+                            {project.skills.slice(0, 4).map((skill: string, index: number) => (
+                                <Badge key={index} variant="secondary" size="sm" className="font-medium">
+                                    {skill}
+                                </Badge>
+                            ))}
+                            {project.skills.length > 4 && (
+                                <Badge variant="neutral" size="sm">
+                                    +{project.skills.length - 4} more
+                                </Badge>
+                            )}
+                        </>
+                    ) : (
+                        <span className="text-xs text-neutral-500 italic">No skills listed</span>
                     )}
                 </div>
 
@@ -96,28 +104,29 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaL
                 </div>
 
                 <div className="mt-auto flex items-center justify-between border-t border-neutral-800 pt-4">
-                    <div className="flex items-center">
-                        <Avatar 
-                            size="md"
-                            src={project.mentor?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${project.mentorId}`}
-                            alt={project.mentor?.full_name || 'Mentor'}
-                        />
-                        <div className="ml-3">
-                            <p className="font-semibold text-white">{project.mentor?.full_name || 'Mentor'}</p>
-                            <p className="text-xs text-neutral-500">Senior Developer</p>
+                    <div className="flex items-center w-full justify-between">
+                        <div className="flex items-center">
+                            <Avatar 
+                                size="md"
+                                src={project.mentor?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${project.mentorId}`}
+                                alt={project.mentor?.full_name || 'Mentor'}
+                            />
+                            <div className="ml-3">
+                                <p className="font-semibold text-white">{project.mentor?.full_name || 'Mentor'}</p>
+                                <p className="text-xs text-neutral-500">Founder</p>
+                            </div>
                         </div>
+                        <Link to={`/projects/${project.id}`}>
+                            <Button 
+                                variant="outline"
+                                size="sm"
+                                className="border-custom-cyan text-custom-cyan group-hover:bg-custom-cyan group-hover:text-black transition-colors duration-300 ml-4"
+                            >
+                                <Zap className="mr-1 h-4 w-4" />
+                                {ctaLabel ?? 'Apply'}
+                            </Button>
+                        </Link>
                     </div>
-
-                    <Link to={`/projects/${project.id}`}>
-                        <Button 
-                            variant="outline"
-                            size="sm"
-                            className="border-custom-cyan text-custom-cyan group-hover:bg-custom-cyan group-hover:text-black transition-colors duration-300"
-                        >
-                            <Zap className="mr-2 h-4 w-4" />
-                            {ctaLabel ?? 'Apply Now'}
-                        </Button>
-                    </Link>
                 </div>
             </div>
         </Card>

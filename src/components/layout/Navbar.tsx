@@ -14,7 +14,7 @@ interface NavbarProps {
 const navLinks = [
   { href: '/founder-dashboard', text: 'Dashboard', icon: LayoutDashboard },
   { href: '/projects', text: 'Projects', icon: Briefcase },
-  { href: '/people-dashboard', text: 'People', icon: Users },
+  { href: '/people', text: 'People', icon: Users },
   { href: '/startups', text: 'Startups', icon: Building },
   { href: '/resources', text: 'Resources', icon: Book },
 ];
