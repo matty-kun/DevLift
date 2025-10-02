@@ -16,9 +16,9 @@ const PostProject: React.FC = () => {
 
   const isMentor = useMemo(() => {
     const meta = (session?.user?.user_metadata as { role?: string } | undefined)?.role;
-    const metaIsMentor = meta === 'mentor' || meta === 'founder';
-    const profileIsMentor = profile?.role === 'mentor' || profile?.role === 'founder';
-    return metaIsMentor || profileIsMentor;
+    const metaIsFounder = meta === 'founder';
+    const profileIsFounder = profile?.role === 'founder';
+    return metaIsFounder || profileIsFounder;
   }, [profile?.role, session?.user?.user_metadata]);
 
   useEffect(() => {

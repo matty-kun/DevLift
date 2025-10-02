@@ -7,7 +7,7 @@ type Session = SupabaseSession | null;
 
 type Profile = {
 	id: string;
-	role?: string; // 'student' | 'mentor' | 'founder' | 'admin' | ... (db enum may vary per migration)
+	role?: 'student' | 'founder' | 'admin'; // Removed 'mentor'
 	full_name?: string;
 	avatar_url?: string | null;
 };
@@ -21,7 +21,7 @@ type AuthContextType = {
 	signIn: (email: string, password: string) => Promise<void>;
 	signInWithProvider: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
 	signOut: () => Promise<void>;
-	setUserRole: (role: 'student' | 'mentor' | 'founder') => Promise<void>;
+	setUserRole: (role: 'student' | 'founder') => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				const metaRole = (session.user.user_metadata as { role?: string } | undefined)?.role;
 				if (metaRole) {
 					try {
-						const mappedRole = metaRole === 'founder' ? 'mentor' : (metaRole === 'mentor' ? 'mentor' : 'student');
+						const mappedRole = metaRole === 'founder' ? 'founder' : 'student';
 						const fallbackName = (session.user.user_metadata as { full_name?: string } | undefined)?.full_name
 							|| (session.user.email?.split('@')[0] ?? 'User');
 						await supabase.from('users').insert({ id: session.user.id, role: mappedRole, full_name: fallbackName });
@@ -130,8 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const safeName = (fullName && fullName.trim().length > 0)
 				? fullName.trim()
 				: (email.includes('@') ? email.split('@')[0] : email);
-			// Map founder -> mentor before persisting
-			const mappedRole = role === 'founder' ? 'mentor' : (role || 'student');
+			// Map founder -> founder (no longer mapping to mentor)
+			const mappedRole = role === 'founder' ? 'founder' : (role || 'student');
 			const { data: signUpData, error } = await supabase.auth.signUp({
 				email,
 				password,
@@ -180,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const setUserRole = React.useCallback(async (role: 'student' | 'mentor' | 'founder') => {
 		if (!session?.user) return;
-		const mapped = role === 'founder' ? 'mentor' : role;
+		const mapped = role; // No longer mapping founder to mentor
 		await supabase.from('users').upsert({ id: session.user.id, role: mapped }, { onConflict: 'id' });
 		try { await supabase.auth.updateUser({ data: { role: mapped } }); } catch { /* ignore */ }
 		setProfile(p => p ? { ...p, role: mapped } : { id: session.user!.id, role: mapped });

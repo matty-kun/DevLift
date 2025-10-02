@@ -1,14 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react'; // Added useEffect
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, X } from 'lucide-react';
 
 interface ImageUploadProps {
   onFileChange: (file: File | null) => void;
   label?: string;
+  currentImageUrl?: string; // Added currentImageUrl prop
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label, currentImageUrl }) => { // Added currentImageUrl
   const [preview, setPreview] = useState<string | null>(null);
+
+  // Set initial preview from currentImageUrl
+  useEffect(() => {
+    if (currentImageUrl) {
+      setPreview(currentImageUrl);
+    }
+  }, [currentImageUrl]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -45,7 +53,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label }) => {
         <input {...getInputProps()} />
         {preview ? (
           <div className="relative w-full h-full">
-            <img src={preview} alt="Project preview" className="w-full h-full object-cover rounded-lg" />
+            <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
             <button
               onClick={removeImage}
               className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1.5 text-white hover:bg-opacity-75 transition-colors"
