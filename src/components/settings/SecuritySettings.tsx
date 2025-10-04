@@ -5,6 +5,17 @@ import Button from '../common/Button';
 import Toast from '../common/Toast';
 import Modal from '../common/Modal';
 import Input from '../common/Input';
+import { formatDistanceToNow } from 'date-fns';
+
+interface AuditEvent {
+  id: string;
+  event_type: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  device: string | null;
+  location: string | null;
+  created_at: string;
+}
 
 const SecuritySettings: React.FC = () => {
   const { session } = useAuth();
@@ -20,6 +31,40 @@ const SecuritySettings: React.FC = () => {
   const [factorId, setFactorId] = useState<string | null>(null);
   const [challengeId, setChallengeId] = useState<string | null>(null);
 
+  // State for recent login activity
+  const [recentLogins, setRecentLogins] = useState<AuditEvent[]>([]);
+  const [loadingLogins, setLoadingLogins] = useState(true);
+
+  // Helper function to parse user agent
+  const parseUserAgent = (userAgent: string | null) => {
+    if (!userAgent) return { browser: 'Unknown Browser', os: 'Unknown OS' };
+
+    // Extract browser
+    let browser = 'Unknown Browser';
+    if (userAgent.includes('Firefox')) browser = 'Firefox';
+    else if (userAgent.includes('Edg')) browser = 'Edge';
+    else if (userAgent.includes('Chrome')) browser = 'Chrome';
+    else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) browser = 'Safari';
+    else if (userAgent.includes('Opera') || userAgent.includes('OPR')) browser = 'Opera';
+
+    // Extract OS
+    let os = 'Unknown OS';
+    if (userAgent.includes('Windows NT 10.0')) os = 'Windows 10/11';
+    else if (userAgent.includes('Windows NT 6.3')) os = 'Windows 8.1';
+    else if (userAgent.includes('Windows NT 6.2')) os = 'Windows 8';
+    else if (userAgent.includes('Windows NT 6.1')) os = 'Windows 7';
+    else if (userAgent.includes('Windows')) os = 'Windows';
+    else if (userAgent.includes('Mac OS X')) {
+      const match = userAgent.match(/Mac OS X ([0-9_]+)/);
+      os = match ? `macOS ${match[1].replace(/_/g, '.')}` : 'macOS';
+    }
+    else if (userAgent.includes('Android')) os = 'Android';
+    else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) os = 'iOS';
+    else if (userAgent.includes('Linux')) os = 'Linux';
+
+    return { browser, os };
+  };
+
   useEffect(() => {
     const check2FAStatus = async () => {
       if (session?.user) {
@@ -32,11 +77,31 @@ const SecuritySettings: React.FC = () => {
     check2FAStatus();
   }, [session]);
 
-  // Placeholder for recent login activity
-  const recentLogins = [
-    { id: 1, device: 'Chrome on Windows', location: 'New York, USA', time: '2025-09-30 10:30 AM' },
-    { id: 2, device: 'Firefox on Mac', location: 'London, UK', time: '2025-09-29 03:15 PM' },
-  ];
+  useEffect(() => {
+    const fetchRecentLogins = async () => {
+      if (!session?.user?.id) return;
+
+      setLoadingLogins(true);
+      try {
+        const { data, error } = await supabase
+          .from('audit_events')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('event_type', 'login')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (error) throw error;
+        setRecentLogins(data || []);
+      } catch (error: any) {
+        console.error('Error fetching login history:', error);
+      } finally {
+        setLoadingLogins(false);
+      }
+    };
+
+    fetchRecentLogins();
+  }, [session?.user?.id]);
 
   const handleEnable2FA = async () => {
     setLoading(true);
@@ -165,20 +230,50 @@ const SecuritySettings: React.FC = () => {
       <div className="bg-neutral-900 p-8 rounded-lg">
         <h3 className="text-xl font-semibold text-white mb-4">Recent Login Activity</h3>
         <p className="text-neutral-400 mb-4">Review your recent login sessions.</p>
-        <div className="space-y-4">
-          {recentLogins.map((login) => (
-            <div key={login.id} className="flex justify-between items-center bg-neutral-800 p-4 rounded-md">
-              <div>
-                <p className="text-white font-medium">{login.device}</p>
-                <p className="text-neutral-400 text-sm">{login.location}</p>
-              </div>
-              <p className="text-neutral-400 text-sm">{login.time}</p>
-            </div>
-          ))}
-          {recentLogins.length === 0 && (
-            <p className="text-neutral-400">No recent login activity found.</p>
-          )}
-        </div>
+        {loadingLogins ? (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-custom-cyan"></div>
+            <p className="text-neutral-400 mt-2">Loading login history...</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {recentLogins.map((login) => {
+              const { browser, os } = parseUserAgent(login.user_agent);
+              const displayText = `${browser} on ${os}`;
+
+              return (
+                <div key={login.id} className="flex justify-between items-start bg-neutral-800 p-4 rounded-md">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-white font-medium">
+                        {displayText}
+                      </p>
+                      {login.ip_address && (
+                        <span className="text-xs text-neutral-500 font-mono">
+                          {login.ip_address}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-neutral-500 text-xs mb-1">
+                      {login.device || 'Desktop'} Device
+                    </p>
+                    {login.location && (
+                      <p className="text-neutral-400 text-sm">{login.location}</p>
+                    )}
+                  </div>
+                  <p className="text-neutral-400 text-sm whitespace-nowrap ml-4">
+                    {formatDistanceToNow(new Date(login.created_at), { addSuffix: true })}
+                  </p>
+                </div>
+              );
+            })}
+            {recentLogins.length === 0 && (
+              <p className="text-neutral-400 text-center py-4">
+                No recent login activity found. Login events will appear here after your next sign-in.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ const Dropdown: React.FC<DropdownProps> = ({ trigger, children, isOpen: controll
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isOpen, onToggle, isControlled]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -46,7 +46,13 @@ const Dropdown: React.FC<DropdownProps> = ({ trigger, children, isOpen: controll
       </div>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-neutral-800 rounded-md shadow-lg z-10">
-          <div className="py-1">
+          <div className="py-1" onClick={() => {
+            if (onToggle) {
+              onToggle();
+            } else {
+              setInternalIsOpen(false);
+            }
+          }}>
             {children}
           </div>
         </div>

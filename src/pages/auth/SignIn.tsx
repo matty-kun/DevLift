@@ -18,12 +18,15 @@ const SignInForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already authenticated, redirect away from sign-in automatically.
+  // If already authenticated when component mounts, redirect away from sign-in automatically.
   // Wait for profile.role if available; otherwise fetch it before deciding.
   useEffect(() => {
     let cancelled = false;
     const go = async () => {
-      if (authLoading || !session) return;
+      // Only run this effect if auth is loaded AND user is authenticated
+      if (authLoading) return;
+      if (!session) return; // User not authenticated, stay on sign-in page
+
       let role = profile?.role;
       if (!role) {
         const { data: userRes } = await supabase.auth.getUser();
@@ -49,7 +52,7 @@ const SignInForm: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, session, profile?.role, navigate]);
+  }, [authLoading, session?.user?.id, profile?.role, navigate]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();

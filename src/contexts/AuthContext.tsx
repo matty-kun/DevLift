@@ -45,11 +45,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				setSession(data.session ?? null);
 			setLoading(false);
 		})();
-			const { data: sub } = supabase.auth.onAuthStateChange((
-				_event: AuthChangeEvent,
+			const { data: sub } = supabase.auth.onAuthStateChange(async (
+				event: AuthChangeEvent,
 				newSession: SupabaseSession | null
 			) => {
 				setSession(newSession);
+
+				// Log login event when user signs in (non-blocking)
+				if (event === 'SIGNED_IN' && newSession?.user) {
+					// Run login tracking in background without blocking sign-in
+					(async () => {
+						try {
+							// Get user agent from browser
+							const userAgent = navigator.userAgent;
+
+							// Fetch IP and location from ipapi.co (free, no API key needed)
+							let ipAddress = null;
+							let location = null;
+
+							try {
+								const ipResponse = await fetch('https://ipapi.co/json/');
+								if (ipResponse.ok) {
+									const ipData = await ipResponse.json();
+									ipAddress = ipData.ip || null;
+
+									// Format location as "City, Region, Country"
+									const parts = [];
+									if (ipData.city) parts.push(ipData.city);
+									if (ipData.region) parts.push(ipData.region);
+									if (ipData.country_name) parts.push(ipData.country_name);
+									location = parts.length > 0 ? parts.join(', ') : null;
+								}
+							} catch (ipError) {
+								console.warn('Failed to fetch IP location:', ipError);
+								// Continue without IP/location data
+							}
+
+							// Call the database function to log the login
+							const { error } = await supabase.rpc('log_login_event', {
+								p_user_id: newSession.user.id,
+								p_ip_address: ipAddress,
+								p_user_agent: userAgent,
+								p_location: location
+							});
+
+							if (error) {
+								console.error('Failed to log login event:', error);
+							}
+						} catch (error) {
+							console.error('Failed to log login event:', error);
+						}
+					})();
+				}
 		});
 		return () => {
 			mounted = false;
