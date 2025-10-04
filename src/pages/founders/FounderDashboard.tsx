@@ -25,6 +25,7 @@ type ProjectRow = {
   status: 'open' | 'in_progress' | 'completed' | null;
   mentor_id: string;
   created_at: string;
+  header_image_url?: string | null;
 };
 type ApplicationRow = {
   project_id: string;
@@ -64,7 +65,7 @@ const FounderDashboard: React.FC = () => {
         // Load founder's projects
         const { data: proj, error: perr } = await supabase
           .from('projects')
-          .select('id, title, status, mentor_id, created_at')
+          .select('id, title, status, mentor_id, created_at, header_image_url')
           .eq('mentor_id', uid)
           .order('created_at', { ascending: false });
         if (perr) throw perr;

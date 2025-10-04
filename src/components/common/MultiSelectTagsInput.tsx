@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 interface MultiSelectTagsInputProps {
-  label: string;
-  availableOptions: string[];
-  selectedOptions: string[];
+  label?: string;
+  availableOptions?: string[];
+  availableTags?: string[];
+  selectedOptions?: string[];
+  selectedTags?: string[];
   onChange: (options: string[]) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -14,32 +16,37 @@ interface MultiSelectTagsInputProps {
 const MultiSelectTagsInput: React.FC<MultiSelectTagsInputProps> = ({
   label,
   availableOptions,
+  availableTags,
   selectedOptions,
+  selectedTags,
   onChange,
   placeholder = 'Select skills...',
   disabled = false,
   error = false,
 }) => {
+  // Support both prop names for backwards compatibility
+  const available = availableOptions || availableTags || [];
+  const selected = selectedOptions || selectedTags || [];
   const [inputValue, setInputValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = availableOptions.filter(
+  const filteredOptions = available.filter(
     (option) =>
       option.toLowerCase().includes(inputValue.toLowerCase()) &&
-      !selectedOptions.includes(option)
+      !selected.includes(option)
   );
 
   const handleAddOption = (option: string) => {
-    const newSelectedOptions = [...selectedOptions, option];
+    const newSelectedOptions = [...selected, option];
     onChange(newSelectedOptions);
     setInputValue('');
     setShowDropdown(false);
   };
 
   const handleRemoveOption = (option: string) => {
-    const newSelectedOptions = selectedOptions.filter((s) => s !== option);
+    const newSelectedOptions = selected.filter((s) => s !== option);
     onChange(newSelectedOptions);
   };
 
@@ -58,11 +65,11 @@ const MultiSelectTagsInput: React.FC<MultiSelectTagsInputProps> = ({
 
   return (
     <div className="relative">
-      <label className="block text-sm font-medium text-neutral-300 mb-1.5">{label}</label>
+      {label && <label className="block text-sm font-medium text-neutral-300 mb-1.5">{label}</label>}
       <div
         className={`flex flex-wrap gap-2 p-2 rounded-lg border ${error ? 'border-red-500' : 'border-gray-700'} bg-gray-900 focus-within:ring-2 focus-within:ring-custom-cyan/50 focus-within:border-custom-cyan transition`}
       >
-        {selectedOptions.map((option) => (
+        {selected.map((option) => (
           <span
             key={option}
             className="flex items-center bg-custom-cyan text-white text-xs px-2 py-1 rounded-full"

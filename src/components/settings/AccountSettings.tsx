@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext'; // Import useAuth
+import { useNavigate } from 'react-router-dom';
+import { ArrowRightLeft } from 'lucide-react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Toast from '../common/Toast';
 import Modal from '../common/Modal';
 
 const AccountSettings: React.FC = () => {
-  const { session } = useAuth(); // Get session to access user email
+  const { session, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -99,6 +102,27 @@ const AccountSettings: React.FC = () => {
       setToast({ show: true, message: 'Backup email updated successfully!', type: 'success' });
     }
     setBackupEmailLoading(false);
+  };
+
+  const handleRoleSwitch = async () => {
+    const newRole = profile?.role === 'student' ? 'founder' : 'student';
+
+    const { error } = await supabase
+      .from('users')
+      .update({ role: newRole })
+      .eq('id', session!.user.id);
+
+    if (error) {
+      setToast({ show: true, message: `Error switching role: ${error.message}`, type: 'error' });
+    } else {
+      await refreshProfile();
+      setToast({ show: true, message: `Successfully switched to ${newRole}!`, type: 'success' });
+
+      // Navigate to the appropriate dashboard
+      setTimeout(() => {
+        navigate(newRole === 'founder' ? '/founder-dashboard' : '/student-dashboard');
+      }, 1500);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -196,6 +220,28 @@ const AccountSettings: React.FC = () => {
             {passwordLoading ? 'Changing...' : 'Change Password'}
           </Button>
         </form>
+      </div>
+
+      {/* Role Switcher Section */}
+      <div className="bg-neutral-900 p-8 rounded-lg mb-8">
+        <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          <ArrowRightLeft className="h-5 w-5" />
+          Switch Role
+        </h3>
+        <p className="text-neutral-400 mb-4">
+          Current role: <span className="font-medium text-white capitalize">{profile?.role || 'N/A'}</span>
+        </p>
+        <p className="text-neutral-400 mb-6">
+          Switch between Student and Founder roles to access different features and dashboards.
+        </p>
+        <Button
+          onClick={handleRoleSwitch}
+          variant="primary"
+          size="lg"
+          leftIcon={<ArrowRightLeft className="h-4 w-4" />}
+        >
+          Switch to {profile?.role === 'student' ? 'Founder' : 'Student'}
+        </Button>
       </div>
 
       {/* Delete Account Section */}

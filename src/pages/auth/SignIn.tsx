@@ -140,9 +140,9 @@ const SignInForm: React.FC = () => {
                   />
                   <span className="text-white">Remember me</span>
                 </label>
-                <a href="/reset" className="text-custom-cyan hover:underline">
+                <Link to="/forgot-password" className="text-custom-cyan hover:underline">
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               {error && (

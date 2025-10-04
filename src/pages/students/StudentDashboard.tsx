@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { Bell, BookOpen, ClipboardList, Star } from 'lucide-react';
+import { Bell, BookOpen, ClipboardList, Star, ArrowRightLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
 import Avatar from '../../components/common/Avatar';
@@ -209,8 +207,7 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <Navbar actionButtons={studentActionButtons} />
-      <main className="flex-1 px-4 py-8 pt-20">
+      <main className="flex-1 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
@@ -319,7 +316,6 @@ const StudentDashboard: React.FC = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

@@ -8,6 +8,7 @@ type ProjectRow = {
   title: string;
   status: 'open' | 'in_progress' | 'completed' | null;
   created_at: string;
+  header_image_url?: string | null;
 };
 
 interface FounderProjectCardProps {
@@ -38,8 +39,8 @@ const FounderProjectCard: React.FC<FounderProjectCardProps> = ({ project, applic
     <div className="group relative flex flex-col h-full overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-lg transition-all duration-300 hover:border-custom-cyan hover:shadow-custom-cyan/20 hover:-translate-y-1">
       {/* Image Section */}
       <div className="relative h-48 w-full overflow-hidden">
-        <img 
-          src={`https://source.unsplash.com/800x600/?${encodeURIComponent(project.title)}`}
+        <img
+          src={project.header_image_url || `https://source.unsplash.com/800x600/?${encodeURIComponent(project.title)}`}
           alt={project.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

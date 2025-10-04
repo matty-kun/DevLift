@@ -25,7 +25,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     const { data } = await listMyNotifications(50);
     setNotifications(data);
     setLoading(false);
-  }, [session?.user]);
+  }, [session?.user?.id]); // Only depend on user ID, not the entire user object
 
   useEffect(() => { refresh(); }, [refresh]);
 
@@ -35,7 +35,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       setNotifications(prev => [n, ...prev]);
     });
     return () => { unsub(); };
-  }, [session?.user]);
+  }, [session?.user?.id]); // Only depend on user ID, not the entire user object
 
   const markOne = React.useCallback(async (id: string) => {
     await markNotificationRead(id);
@@ -47,7 +47,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     await markAllRead();
     const ts = new Date().toISOString();
     setNotifications(prev => prev.map(n => n.read_at ? n : { ...n, read_at: ts }));
-  }, [session?.user]);
+  }, [session?.user?.id]); // Only depend on user ID, not the entire user object
 
   const unreadCount = useMemo(() => notifications.filter(n => !n.read_at).length, [notifications]);
 

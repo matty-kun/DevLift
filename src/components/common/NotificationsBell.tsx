@@ -4,14 +4,38 @@ import { useNotifications } from '../../contexts/NotificationsContext';
 import { formatNotification } from '../../lib/notifications';
 import { Link } from 'react-router-dom';
 
-const NotificationsBell: React.FC = () => {
+interface NotificationsBellProps {
+  isOpen?: boolean;
+  onToggle?: () => void;
+}
+
+const NotificationsBell: React.FC<NotificationsBellProps> = ({ isOpen: controlledIsOpen, onToggle }) => {
   const { notifications, unreadCount, markOne, markAll } = useNotifications();
-  const [open, setOpen] = React.useState(false);
+  const [internalOpen, setInternalOpen] = React.useState(false);
+
+  const isControlled = controlledIsOpen !== undefined;
+  const open = isControlled ? controlledIsOpen : internalOpen;
+
+  const handleToggle = () => {
+    if (onToggle) {
+      onToggle();
+    } else {
+      setInternalOpen(o => !o);
+    }
+  };
+
+  const handleClose = () => {
+    if (onToggle && open) {
+      onToggle();
+    } else if (!isControlled) {
+      setInternalOpen(false);
+    }
+  };
 
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={handleToggle}
         className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors"
         aria-label="Notifications"
       >
@@ -42,7 +66,7 @@ const NotificationsBell: React.FC = () => {
                     <span className={`h-2 w-2 rounded-full mt-2 ${!n.read_at ? 'bg-custom-orange' : 'bg-neutral-700'}`}></span>
                     <div className="flex-1">
                       {fm.href ? (
-                        <Link to={fm.href} className="block hover:underline" onClick={() => { markOne(n.id); setOpen(false); }}>{content}</Link>
+                        <Link to={fm.href} className="block hover:underline" onClick={() => { markOne(n.id); handleClose(); }}>{content}</Link>
                       ) : (
                         <button className="text-left w-full" onClick={() => markOne(n.id)}>{content}</button>
                       )}

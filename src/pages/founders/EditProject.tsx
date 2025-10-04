@@ -173,16 +173,44 @@ const EditProject: React.FC = () => {
         throw new Error('Please enter a valid duration, like "6 weeks".');
       }
 
+      // Upload header image if provided
+      let headerImageUrl: string | undefined;
+      if (data.projectImage) {
+        const fileExt = data.projectImage.name.split('.').pop();
+        const fileName = `${session!.user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `project-headers/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('project_images')
+          .upload(filePath, data.projectImage, { upsert: true });
+
+        if (uploadError) {
+          console.error('[EditProject] Error uploading image:', uploadError);
+          throw uploadError;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('project_images')
+          .getPublicUrl(filePath);
+        headerImageUrl = urlData.publicUrl;
+      }
+
       // Update project details
+      const updatePayload: any = {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        difficulty: data.difficulty,
+        duration_weeks: durationWeeks,
+        max_students: data.maxStudents,
+      };
+
+      if (headerImageUrl) {
+        updatePayload.header_image_url = headerImageUrl;
+      }
+
       const { error: updateError } = await supabase
         .from('projects')
-        .update({
-          title: data.title.trim(),
-          description: data.description.trim(),
-          difficulty: data.difficulty,
-          duration_weeks: durationWeeks,
-          max_students: data.maxStudents,
-        })
+        .update(updatePayload)
         .eq('id', projectId);
 
       if (updateError) throw updateError;

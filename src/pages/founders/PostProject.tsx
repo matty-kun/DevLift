@@ -65,6 +65,28 @@ const PostProject: React.FC = () => {
         skills: data.skills,
       });
 
+      // Upload header image if provided
+      let headerImageUrl: string | null = null;
+      if (data.projectImage) {
+        const fileExt = data.projectImage.name.split('.').pop();
+        const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `project-headers/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('project_images')
+          .upload(filePath, data.projectImage, { upsert: true });
+
+        if (uploadError) {
+          console.error('[PostProject] Error uploading image:', uploadError);
+          throw uploadError;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('project_images')
+          .getPublicUrl(filePath);
+        headerImageUrl = urlData.publicUrl;
+      }
+
       const { data: project, error: perr } = await supabase
         .from('projects')
         .insert({
@@ -74,6 +96,7 @@ const PostProject: React.FC = () => {
           difficulty: data.difficulty,
           duration_weeks: durationWeeks,
           max_students: data.maxStudents,
+          header_image_url: headerImageUrl,
         })
         .select('id')
         .single();

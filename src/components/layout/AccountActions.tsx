@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Settings, LogOut, Mail, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,6 +9,7 @@ import NotificationsBell from '../common/NotificationsBell';
 const AccountActions: React.FC = () => {
   const { session, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const [openDropdown, setOpenDropdown] = useState<'notifications' | 'account' | null>(null);
 
   const founderName = useMemo(() => profile?.full_name || session?.user?.email?.split('@')[0] || 'Founder', [profile?.full_name, session?.user?.email]);
   const avatarUrl = profile?.avatar_url;
@@ -27,7 +28,10 @@ const AccountActions: React.FC = () => {
         </Link>
       </Tooltip>
       <Tooltip text="Notifications">
-        <NotificationsBell />
+        <NotificationsBell
+          isOpen={openDropdown === 'notifications'}
+          onToggle={() => setOpenDropdown(openDropdown === 'notifications' ? null : 'notifications')}
+        />
       </Tooltip>
       <Tooltip text="Messages">
         <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors" aria-label="Messages">
@@ -36,6 +40,8 @@ const AccountActions: React.FC = () => {
       </Tooltip>
       <Tooltip text="Account">
         <Dropdown
+          isOpen={openDropdown === 'account'}
+          onToggle={() => setOpenDropdown(openDropdown === 'account' ? null : 'account')}
           trigger={
             <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors">
               {avatarUrl ? (

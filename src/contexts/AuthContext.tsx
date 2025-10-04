@@ -11,6 +11,8 @@ type Profile = {
 	full_name?: string;
 	bio?: string; // Added bio
 	avatar_url?: string | null;
+	onboarding_completed?: boolean;
+	onboarding_step?: number;
 };
 
 type AuthContextType = {
@@ -67,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			}
 			const { data, error } = await supabase
 				.from('users')
-				.select('id, role, full_name, avatar_url')
+				.select('id, role, full_name, avatar_url, onboarding_completed, onboarding_step')
 				.eq('id', session.user.id)
 				.maybeSingle();
 			if (!active) return;
@@ -89,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						await supabase.from('users').insert({ id: session.user.id, role: mappedRole, full_name: fallbackName });
 						const { data: reload } = await supabase
 							.from('users')
-							.select('id, role, full_name, avatar_url')
+							.select('id, role, full_name, avatar_url, onboarding_completed, onboarding_step')
 							.eq('id', session.user.id)
 							.maybeSingle();
 						setProfile((reload as Profile) ?? null);
@@ -120,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		return () => {
 			active = false;
 		};
-		}, [session?.user?.id, session?.user]);
+		}, [session?.user?.id]); // Only depend on user ID, not the entire user object
 
 		const signUp = async (
 			email: string,
@@ -193,7 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setProfileLoading(true);
 		const { data, error } = await supabase
 			.from('users')
-			.select('id, role, full_name, avatar_url')
+			.select('id, role, full_name, avatar_url, onboarding_completed, onboarding_step')
 			.eq('id', session.user.id)
 			.maybeSingle();
 		if (error) {

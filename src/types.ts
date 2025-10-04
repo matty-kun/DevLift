@@ -47,7 +47,12 @@ export interface Person {
 
 export interface Startup {
   id: string;
+  founder_id: string;
   name: string;
   description: string;
+  website?: string;
+  industry?: string;
   logo_url: string;
+  created_at: string;
+  updated_at?: string;
 }

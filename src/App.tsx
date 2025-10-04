@@ -1,10 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/founders/ProjectDetails';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import Startups from './pages/founders/Startups';
 import StartupDetails from './pages/founders/StartupDetails';
 import Resources from './pages/students/Resources';
@@ -32,8 +34,12 @@ import AccountActions from './components/layout/AccountActions';
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { session, loading, profile, profileLoading } = useAuth();
   if (loading || profileLoading) return <LoadingScreen />;
-  if (!session) return <SignIn />;
-  if (!profile?.role) return <Onboarding />;
+  if (!session) return <Navigate to="/sign-in" replace />;
+
+  // Redirect to onboarding if user has no role OR hasn't completed onboarding
+  const needsOnboarding = !profile?.role || profile?.onboarding_completed === false;
+  if (needsOnboarding) return <Navigate to="/onboarding" replace />;
+
   return children;
 }
 
@@ -52,10 +58,14 @@ const App: React.FC = () => {
         {/* Auth routes without layout */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Onboarding route without layout (to prevent remounting) */}
+        <Route path="/onboarding" element={<Onboarding />} />
 
         {/* Private routes with main layout */}
         <Route element={<MainLayout actionButtons={<AccountActions />} showNavLinks={true} showFooter={true}><Outlet /></MainLayout>}>
-          <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
           <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
           <Route path="/projects/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
           <Route path="/startups" element={<PrivateRoute><Startups /></PrivateRoute>} />

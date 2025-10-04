@@ -8,6 +8,7 @@ import { User, Bell, Shield, Mail, Building } from 'lucide-react'; // Added Buil
 import Toast from '../../components/common/Toast';
 import MultiSelectTagsInput from '../../components/common/MultiSelectTagsInput';
 import BackButton from '../../components/common/BackButton';
+import ImageUpload from '../../components/common/ImageUpload';
 
 // Import placeholder components
 import AccountSettings from '../../components/settings/AccountSettings';
@@ -35,6 +36,7 @@ const ProfileSettings = () => {
   const { session, profile, refreshProfile } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' });
 
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormData>();
@@ -94,6 +96,23 @@ const ProfileSettings = () => {
         ? `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`
         : '';
 
+      // Upload avatar if changed
+      let avatarUrl = profile?.avatar_url;
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split('.').pop();
+        const fileName = `${session!.user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(filePath, avatarFile, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+        avatarUrl = urlData.publicUrl;
+      }
+
       // Update auth.users.user_metadata first
       const { data: authUpdateData, error: authUpdateError } = await supabase.auth.updateUser({
         data: {
@@ -118,6 +137,7 @@ const ProfileSettings = () => {
           // full_name is in user_metadata now, but we can update both for consistency
           full_name: data.fullName,
           bio: data.bio,
+          avatar_url: avatarUrl,
         })
         .eq('id', session!.user!.id);
 
@@ -160,6 +180,14 @@ const ProfileSettings = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Profile Settings</h2>
       <div className="bg-neutral-900 p-8 rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-6">
+            <ImageUpload
+              label="Profile Picture"
+              onFileChange={setAvatarFile}
+              currentImageUrl={profile?.avatar_url || undefined}
+              variant="circle"
+            />
+          </div>
           <div className="mb-6">
             <Input
               label="Full Name"

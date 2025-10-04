@@ -6,9 +6,10 @@ interface ImageUploadProps {
   onFileChange: (file: File | null) => void;
   label?: string;
   currentImageUrl?: string; // Added currentImageUrl prop
+  variant?: 'default' | 'circle'; // Added variant prop
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label, currentImageUrl }) => { // Added currentImageUrl
+const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label, currentImageUrl, variant = 'default' }) => {
   const [preview, setPreview] = useState<string | null>(null);
 
   // Set initial preview from currentImageUrl
@@ -42,31 +43,38 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange, label, currentI
     onFileChange(null);
   };
 
+  const isCircle = variant === 'circle';
+
   return (
     <div>
-      {label && <label className="block text-sm font-medium text-neutral-300 mb-1.5">{label}</label>}
+      {label && <label className={`block text-sm font-medium ${isCircle ? 'text-white' : 'text-neutral-300'} mb-2`}>{label}</label>}
       <div
         {...getRootProps()}
-        className={`relative w-full h-48 border-2 border-dashed rounded-lg flex items-center justify-center text-center cursor-pointer transition-colors
+        className={`relative ${isCircle ? 'w-40 h-40 mx-auto' : 'w-full h-48'} border-2 border-dashed ${isCircle ? 'rounded-full' : 'rounded-lg'} flex items-center justify-center text-center cursor-pointer transition-colors
           ${isDragActive ? 'border-custom-cyan bg-custom-cyan/10' : 'border-gray-700 hover:border-custom-cyan'}`}
       >
         <input {...getInputProps()} />
         {preview ? (
-          <div className="relative w-full h-full">
-            <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+          <div className={`relative w-full h-full ${isCircle ? 'overflow-hidden rounded-full' : ''}`}>
+            <img src={preview} alt="Preview" className={`w-full h-full object-cover ${isCircle ? 'rounded-full' : 'rounded-lg'}`} />
             <button
               onClick={removeImage}
-              className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1.5 text-white hover:bg-opacity-75 transition-colors"
+              className={`absolute ${isCircle ? 'top-0 right-0' : 'top-2 right-2'} bg-black bg-opacity-50 rounded-full p-1.5 text-white hover:bg-opacity-75 transition-colors`}
               aria-label="Remove image"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-neutral-400">
-            <UploadCloud className="w-8 h-8" />
-            <p className="font-semibold">Click to upload or drag and drop</p>
-            <p className="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+          <div className={`flex flex-col items-center ${isCircle ? 'gap-1' : 'gap-2'} text-neutral-400`}>
+            <UploadCloud className={isCircle ? 'w-6 h-6' : 'w-8 h-8'} />
+            {!isCircle && (
+              <>
+                <p className="font-semibold">Click to upload or drag and drop</p>
+                <p className="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+              </>
+            )}
+            {isCircle && <p className="text-xs mt-1">Upload</p>}
           </div>
         )}
       </div>

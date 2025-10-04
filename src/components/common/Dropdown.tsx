@@ -3,19 +3,32 @@ import React, { useState, useRef, useEffect } from 'react';
 interface DropdownProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Dropdown: React.FC<DropdownProps> = ({ trigger, children, isOpen: controlledIsOpen, onToggle }) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const isControlled = controlledIsOpen !== undefined;
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    if (onToggle) {
+      onToggle();
+    } else {
+      setInternalIsOpen(!internalIsOpen);
+    }
   };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
+      if (onToggle && isOpen) {
+        onToggle();
+      } else if (!isControlled) {
+        setInternalIsOpen(false);
+      }
     }
   };
 

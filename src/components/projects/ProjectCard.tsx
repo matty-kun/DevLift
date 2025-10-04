@@ -31,11 +31,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className = '', ctaL
             variant="border"
             className={`group relative flex flex-col h-full overflow-hidden rounded-xl border-neutral-800 bg-neutral-900 shadow-lg transition-all duration-300 hover:border-custom-cyan hover:shadow-custom-cyan/20 hover:-translate-y-1 ${className}`}
         >
-            <div className="relative h-48 w-full overflow-hidden">
+            <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
                 <img
                     src={(project.imageUrl && project.imageUrl.trim() !== '') ? project.imageUrl : projectPlaceholder}
                     alt={project.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
