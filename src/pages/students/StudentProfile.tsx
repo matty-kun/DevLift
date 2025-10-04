@@ -5,6 +5,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import BackButton from '../../components/common/BackButton';
+import Button from '../../components/common/Button'; // Import Button
+import { Briefcase, Building, GraduationCap, Globe, Link as LinkIcon, MapPin } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 type ReviewItem = {
@@ -20,7 +22,8 @@ type ReviewItem = {
 const StudentProfile: React.FC = () => {
   const { id: paramId } = useParams();
   const { session } = useAuth();
-  const userId = paramId || session?.user?.id || '';
+  const userId = paramId || session?.user.id || '';
+  const isOwnProfile = userId && session?.user?.id === userId;
 
   const [profile, setProfile] = React.useState({
     name: 'Student',
@@ -31,17 +34,26 @@ const StudentProfile: React.FC = () => {
     reviews: [] as ReviewItem[],
     avg: null as number | null,
     count: 0,
+    position: '',
+    industry: '',
+    school: '',
+    location: '',
+    website: '',
+    role: '',
   });
 
   React.useEffect(() => {
     let active = true;
     if (!userId) return;
     (async () => {
-      // Load reviews, summary, and user profile concurrently
-      const [reviewsRes, summaryRes, userRes] = await Promise.all([
+      // Load reviews, summary, user profile, skills and projects concurrently
+      const [reviewsRes, summaryRes, publicUserRes, userRes, skillsRes, projectsRes] = await Promise.all([
         getUserReviewsReceived(userId),
         getUserRatingSummary(userId),
-        supabase.from('users').select('full_name, avatar_url').eq('id', userId).maybeSingle(),
+        supabase.from('users').select('full_name, bio').eq('id', userId).maybeSingle(),
+        session?.user ? session.user : null, // Use existing session user data
+        supabase.from('user_skills').select('skill').eq('user_id', userId),
+        supabase.from('project_applications').select('project:projects(id, title)').eq('user_id', userId).eq('status', 'completed'),
       ]);
       const { data: reviews } = reviewsRes;
       const mapped: ReviewItem[] = (reviews || []).map(r => ({
@@ -55,18 +67,35 @@ const StudentProfile: React.FC = () => {
       }));
       const { data: summary } = summaryRes;
       if (!active) return;
-      const user = userRes.data as { full_name?: string | null; avatar_url?: string | null } | null;
+
+      type CompletedProject = { project: { id: string; title: string } | null };
+      const completedProjectsData = projectsRes.data as CompletedProject[] | null;
+
+      const publicUser = publicUserRes.data;
+      const user = userRes;
+      const skills = skillsRes.data?.map(s => s.skill) || [];
+      const completedProjects = completedProjectsData?.map(app => app.project).filter(Boolean) as { id: string; title: string }[] || [];
+      const location = [user?.user_metadata?.city, user?.user_metadata?.country].filter(Boolean).join(', ');
+
       setProfile(p => ({
-        ...p,
-        name: user?.full_name || p.name,
-        avatar_url: user?.avatar_url || p.avatar_url,
+        name: publicUser?.full_name || user?.user_metadata?.full_name || 'Student',
+        avatar_url: user?.user_metadata?.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
+        bio: publicUser?.bio || user?.user_metadata?.bio || p.bio,
+        role: user?.user_metadata?.role || p.role,
+        position: user?.user_metadata?.position || '',
+        industry: user?.user_metadata?.industry || '',
+        school: user?.user_metadata?.school || '',
+        location: location,
+        website: user?.user_metadata?.website || '', // This was missing the skills update
+        skills,
+        completedProjects,
         reviews: mapped,
         avg: summary?.avg_rating ?? null,
         count: summary?.reviews_count ?? 0,
       }));
-    })();
+    })(); // Removed supabase dependency from useEffect
     return () => { active = false; };
-  }, [userId]);
+  }, [userId, session]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -74,14 +103,14 @@ const StudentProfile: React.FC = () => {
       <main className="pt-24 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="mb-4">
-            {paramId && session?.user?.id && session.user.id !== paramId ? (
+            {paramId && session?.user && session.user.id !== paramId ? (
               <BackButton to={`/students/${session.user.id}`} text="Back to My Profile" className="px-2 py-1" />
             ) : (
               <BackButton to="/student-dashboard" text="Back to Dashboard" className="px-2 py-1" />
             )}
           </div>
           <div className="bg-neutral-900 rounded-lg p-8">
-            <div className="flex items-center gap-6 mb-6">
+            <div className="flex items-start gap-6 mb-6">
               <img
                 src={profile.avatar_url}
                 alt={profile.name}
@@ -96,7 +125,46 @@ const StudentProfile: React.FC = () => {
                   </div>
                 )}
               </div>
+              <div className="ml-auto">
+                {isOwnProfile && (
+                  <Button as="link" to="/settings" variant="outline" size="sm">Edit Profile</Button>
+                )}
+              </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-6 text-neutral-300">
+              {profile.position && (
+                <div className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-custom-cyan" />
+                  <span>{profile.position}</span>
+                </div>
+              )}
+              {profile.industry && (
+                <div className="flex items-center gap-2">
+                  <Building className="h-5 w-5 text-custom-cyan" />
+                  <span>{profile.industry}</span>
+                </div>
+              )}
+              {profile.school && (
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-custom-cyan" />
+                  <span>{profile.school}</span>
+                </div>
+              )}
+              {profile.location && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-custom-cyan" />
+                  <span>{profile.location}</span>
+                </div>
+              )}
+              {profile.website && (
+                <div className="flex items-center gap-2 md:col-span-2">
+                  <LinkIcon className="h-5 w-5 text-custom-cyan" />
+                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-custom-cyan hover:underline truncate">{profile.website}</a>
+                </div>
+              )}
+            </div>
+
             <div className="mb-4">
               <h2 className="text-xl font-semibold text-custom-cyan mb-2">Skills</h2>
               <div className="flex flex-wrap gap-2">
@@ -109,7 +177,9 @@ const StudentProfile: React.FC = () => {
               <h2 className="text-xl font-semibold text-custom-cyan mb-2">Completed Projects</h2>
               <ul className="list-disc list-inside text-neutral-300">
                 {profile.completedProjects.map(p => (
-                  <li key={p.id}>{p.title}</li>
+                  <li key={p.id}>
+                    <Link to={`/projects/${p.id}`} className="hover:underline text-custom-cyan">{p.title}</Link>
+                  </li>
                 ))}
               </ul>
             </div>

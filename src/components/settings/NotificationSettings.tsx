@@ -5,7 +5,7 @@ import Button from '../common/Button';
 import Toast from '../common/Toast';
 
 const NotificationSettings: React.FC = () => {
-  const { session } = useAuth();
+  const { session, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState({
     newApplications: false,
@@ -56,6 +56,7 @@ const NotificationSettings: React.FC = () => {
       setToast({ show: true, message: `Error saving settings: ${error.message}`, type: 'error' });
     } else {
       setToast({ show: true, message: 'Notification settings saved successfully!', type: 'success' });
+      refreshProfile(); // Refresh the auth context
     }
     setLoading(false);
   };

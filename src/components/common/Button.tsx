@@ -1,15 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost' | 'dark-blue' | 'outline-cyan';
+interface BaseButtonProps {
+    variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost' | 'dark-blue' | 'outline-cyan' | 'danger';
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
     fullWidth?: boolean;
-    to?: string;
+    children: React.ReactNode;
+    className?: string;
 }
+
+type ButtonAsButton = BaseButtonProps &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> & {
+    as?: 'button';
+    to?: undefined;
+    type?: 'submit' | 'button' | 'reset';
+  };
+
+type ButtonAsLink = BaseButtonProps & LinkProps & { as: 'link' };
+
+type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const Button: React.FC<ButtonProps> = ({
     variant = 'primary',
@@ -18,9 +30,7 @@ const Button: React.FC<ButtonProps> = ({
     leftIcon,
     rightIcon,
     className = '',
-    disabled,
     fullWidth = false,
-    to,
     children,
     ...props
 }) => {
@@ -33,6 +43,7 @@ const Button: React.FC<ButtonProps> = ({
         outline: 'border border-gray-600 bg-transparent text-white hover:border-gray-400 focus:ring-gray-500',
         ghost: 'text-white hover:bg-white/10 focus:ring-white/30',
         'dark-blue': 'bg-primary-600 text-white hover:bg-primary-500 focus:ring-primary-500',
+        danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
         'outline-cyan': 'bg-transparent text-white border border-transparent hover:text-custom-cyan hover:border-custom-cyan focus:ring-custom-cyan',
     };
 
@@ -42,7 +53,7 @@ const Button: React.FC<ButtonProps> = ({
         lg: 'px-6 py-3 text-lg',
     };
 
-    const disabledClasses = 'opacity-60 cursor-not-allowed';
+    const disabledClasses = ('disabled' in props && props.disabled && !isLoading) ? 'opacity-60 cursor-not-allowed' : '';
     const loadingClasses = 'cursor-wait';
 
     const fullWidthClass = fullWidth ? 'w-full' : '';
@@ -51,7 +62,7 @@ const Button: React.FC<ButtonProps> = ({
         baseClasses,
         variantClasses[variant],
         sizeClasses[size],
-        isLoading || disabled ? disabledClasses : '',
+        disabledClasses,
         isLoading ? loadingClasses : '',
         fullWidthClass,
         className,
@@ -73,19 +84,21 @@ const Button: React.FC<ButtonProps> = ({
         </>
     );
 
-    if (to) {
+    if (props.as === 'link') {
+        const { as, ...rest } = props;
         return (
-            <Link to={to} className={buttonClasses} {...props}>
+            <Link className={buttonClasses} {...rest}>
                 {buttonContent}
             </Link>
         );
     }
 
+    const { as, disabled, ...rest } = props as ButtonAsButton;
     return (
         <button
             className={buttonClasses}
-            disabled={isLoading || disabled }
-            {...props}
+            disabled={isLoading || disabled}
+            {...rest}
         >
             {buttonContent}
         </button>

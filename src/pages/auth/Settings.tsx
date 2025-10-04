@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext'; // Added refreshProfile
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import { User, Bell, Shield, Mail, Building } from 'lucide-react'; // Added Building
 import Toast from '../../components/common/Toast';
+import MultiSelectTagsInput from '../../components/common/MultiSelectTagsInput';
 import BackButton from '../../components/common/BackButton';
 
 // Import placeholder components
@@ -13,112 +15,138 @@ import NotificationSettings from '../../components/settings/NotificationSettings
 import SecuritySettings from '../../components/settings/SecuritySettings';
 import StartupSettings from '../../components/settings/StartupSettings'; // Added StartupSettings
 
+interface ProfileFormData {
+  fullName: string;
+  bio: string;
+  skills: string[];
+  position: string;
+  industry: string;
+  school: string;
+  country: string;
+  city: string;
+  phoneNumber: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
+  website: string;
+}
+
 const ProfileSettings = () => {
-  const { session, profile } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [fullName, setFullName] = useState('');
-  const [bio, setBio] = useState('');
-  const [position, setPosition] = useState(''); // Renamed from currentPosition
-  const [industry, setIndustry] = useState('');
-  const [school, setSchool] = useState(''); // Renamed from education
-  const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [birthDay, setBirthDay] = useState('');
-  const [birthMonth, setBirthMonth] = useState('');
-  const [birthYear, setBirthYear] = useState('');
-  const [website, setWebsite] = useState('');
+  const { session, profile, refreshProfile } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' });
 
+  const { control, register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormData>();
+
   useEffect(() => {
-    console.log('ProfileSettings useEffect - profile:', profile);
-    if (profile) {
-      setFullName(profile.full_name || '');
-      setBio(session?.user?.user_metadata?.bio || '');
-      setPosition(session?.user?.user_metadata?.position || ''); // Renamed from current_position
-      setIndustry(session?.user?.user_metadata?.industry || '');
-      setSchool(session?.user?.user_metadata?.school || ''); // Renamed from education
-      setCountry(session?.user?.user_metadata?.country || '');
-      setCity(session?.user?.user_metadata?.city || '');
-      setPhoneNumber(session?.user?.user_metadata?.phone_number || '');
-
+    if (profile && session) {
       const userBirthday = session?.user?.user_metadata?.birthday;
+      let year = '', month = '', day = '';
       if (userBirthday) {
-        const [year, month, day] = userBirthday.split('-');
-        setBirthDay(day || '');
-        setBirthMonth(month || '');
-        setBirthYear(year || '');
+        [year, month, day] = userBirthday.split('-');
       }
-      setWebsite(session?.user?.user_metadata?.website || '');
-    }
-    setLoading(false);
-  }, [profile, session]);
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    console.log('handleUpdateProfile - Submitting data:', {
-      full_name: fullName,
-      bio,
-      position,
-      industry,
-      school,
-      country,
-      city,
-      phone_number: phoneNumber,
-      birthday: birthYear && birthMonth && birthDay ? `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}` : '',
-      website,
-    });
+      const fetchUserSkills = async () => {
+        if (!session?.user?.id) return [];
+        const { data, error } = await supabase.from('user_skills').select('skill').eq('user_id', session.user.id);
+        if (error) {
+          console.error('Error fetching user skills:', error);
+          return [];
+        }
+        return data ? data.map(s => s.skill) : [];
+      };
+
+      const populateForm = async () => {
+        const userSkills = await fetchUserSkills();
+        reset({
+          fullName: session?.user?.user_metadata?.full_name || profile.full_name || '',
+          bio: profile.bio || '',
+          skills: userSkills,
+          position: session?.user?.user_metadata?.position || '',
+          industry: session?.user?.user_metadata?.industry || '',
+          school: session?.user?.user_metadata?.school || '',
+          country: session?.user?.user_metadata?.country || '',
+          city: session?.user?.user_metadata?.city || '',
+          phoneNumber: session?.user?.user_metadata?.phone_number || '',
+          website: session?.user?.user_metadata?.website || '',
+          birthDay: day,
+          birthMonth: month,
+          birthYear: year,
+        });
+      };
+
+      const fetchAllSkills = async () => {
+        const { data } = await supabase.from('skills').select('name');
+        if (data) setAvailableSkills(data.map(s => s.name));
+      };
+
+      populateForm();
+      fetchAllSkills();
+    }
+  }, [profile, session, reset]);
+
+  const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
+    setIsSubmitting(true);
 
     try {
-      const birthdayString = birthYear && birthMonth && birthDay
-        ? `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`
+      const birthdayString = data.birthYear && data.birthMonth && data.birthDay
+        ? `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`
         : '';
 
-      // Update public.users table
+      // Update auth.users.user_metadata first
+      const { data: authUpdateData, error: authUpdateError } = await supabase.auth.updateUser({
+        data: {
+          full_name: data.fullName, // Also update full_name in metadata
+          position: data.position,
+          industry: data.industry,
+          school: data.school,
+          country: data.country,
+          city: data.city,
+          phone_number: data.phoneNumber,
+          birthday: birthdayString,
+          website: data.website,
+        },
+      });
+
+      if (authUpdateError) throw authUpdateError;
+
+      // Then, update public.users table
       const { error: profileUpdateError } = await supabase
         .from('users')
-        .update({
-          full_name: fullName,
+        .update({ // This table should contain bio
+          // full_name is in user_metadata now, but we can update both for consistency
+          full_name: data.fullName,
+          bio: data.bio,
         })
-        .eq('id', session?.user?.id);
+        .eq('id', session!.user!.id);
 
       if (profileUpdateError) {
         throw profileUpdateError;
       }
 
-      // Update auth.users.user_metadata
-      const { data, error: authUpdateError } = await supabase.auth.updateUser({
-        data: {
-          bio,
-          position,
-          industry,
-          school,
-          country,
-          city,
-          phone_number: phoneNumber,
-          birthday: birthdayString,
-          website,
-        },
-      });
+      // Then, update user_skills table
+      // 1. Delete existing skills for the user
+      const { error: deleteSkillsError } = await supabase.from('user_skills').delete().eq('user_id', session!.user!.id);
+      if (deleteSkillsError) throw deleteSkillsError;
 
-      if (authUpdateError) {
-        console.error('Supabase auth update error:', authUpdateError);
-        setToast({ show: true, message: `Error: ${authUpdateError.message}`, type: 'error' });
-      } else if (data.user) {
-        console.log('Supabase update successful. New user data:', data.user);
-        setToast({ show: true, message: 'Profile updated successfully!', type: 'success' });
+      // 2. Insert new skills
+      if (data.skills.length > 0) {
+        const skillsToInsert = data.skills.map(skill => ({ user_id: session!.user!.id, skill }));
+        const { error: insertSkillsError } = await supabase.from('user_skills').insert(skillsToInsert);
+        if (insertSkillsError) throw insertSkillsError;
       }
-    } catch (error: any) {
-      console.error('Profile update caught error:', error);
-      setToast({ show: true, message: `Error updating profile: ${error.message}`, type: 'error' });
-    }
-    setLoading(false);
-  };
 
-  if (loading) {
-      return <div>Loading...</div>
-  }
+      // If both are successful, show success and refresh
+      setToast({ show: true, message: 'Profile updated successfully!', type: 'success' });
+      await refreshProfile(); // Refresh the profile in the auth context
+      
+    } catch (error: any) {
+      setToast({ show: true, message: `Error updating profile: ${error.message}`, type: 'error' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div>
@@ -131,22 +159,38 @@ const ProfileSettings = () => {
       )}
       <h2 className="text-2xl font-bold text-white mb-6">Profile Settings</h2>
       <div className="bg-neutral-900 p-8 rounded-lg">
-        <form onSubmit={handleUpdateProfile}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-6">
             <Input
               label="Full Name"
               type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              {...register('fullName', { required: 'Full name is required' })}
+              error={errors.fullName?.message}
             />
           </div>
           <div className="mb-6">
             <label className="block text-sm font-medium text-neutral-400 mb-2">Bio</label>
             <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              {...register('bio')}
               className="w-full p-3 border border-neutral-700 rounded-md bg-neutral-800 text-white focus:ring-2 focus:ring-custom-cyan transition"
               rows={4}
+            />
+          </div>
+
+          <div className="mb-6">
+            <Controller
+              name="skills"
+              control={control}
+              defaultValue={[]}
+              render={({ field }) => (
+                <MultiSelectTagsInput
+                  label="Skills"
+                  availableOptions={availableSkills}
+                  selectedOptions={field.value}
+                  onChange={field.onChange}
+                  placeholder="Add your skills..."
+                />
+              )}
             />
           </div>
 
@@ -155,16 +199,14 @@ const ProfileSettings = () => {
             <Input
               label="Position"
               type="text"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
+              {...register('position')}
             />
           </div>
           <div className="mb-6">
             <Input
               label="Industry"
               type="text"
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
+              {...register('industry')}
             />
           </div>
 
@@ -173,8 +215,7 @@ const ProfileSettings = () => {
             <Input
               label="School"
               type="text"
-              value={school}
-              onChange={(e) => setSchool(e.target.value)}
+              {...register('school')}
             />
           </div>
 
@@ -183,16 +224,14 @@ const ProfileSettings = () => {
             <Input
               label="Country/Region"
               type="text"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              {...register('country')}
             />
           </div>
           <div className="mb-6">
             <Input
               label="City"
               type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+              {...register('city')}
             />
           </div>
 
@@ -201,8 +240,7 @@ const ProfileSettings = () => {
             <Input
               label="Phone Number"
               type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              {...register('phoneNumber')}
             />
           </div>
 
@@ -212,8 +250,7 @@ const ProfileSettings = () => {
               label="Day"
               type="number"
               placeholder="DD"
-              value={birthDay}
-              onChange={(e) => setBirthDay(e.target.value)}
+              {...register('birthDay')}
               min="1"
               max="31"
             />
@@ -221,8 +258,7 @@ const ProfileSettings = () => {
               label="Month"
               type="number"
               placeholder="MM"
-              value={birthMonth}
-              onChange={(e) => setBirthMonth(e.target.value)}
+              {...register('birthMonth')}
               min="1"
               max="12"
             />
@@ -230,8 +266,7 @@ const ProfileSettings = () => {
               label="Year"
               type="number"
               placeholder="YYYY"
-              value={birthYear}
-              onChange={(e) => setBirthYear(e.target.value)}
+              {...register('birthYear')}
               min="1900"
               max={new Date().getFullYear().toString()}
             />
@@ -240,8 +275,7 @@ const ProfileSettings = () => {
             <Input
               label="Website URL"
               type="url"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
+              {...register('website')}
             />
           </div>
           <div className="mb-6">
@@ -253,8 +287,8 @@ const ProfileSettings = () => {
             />
           </div>
 
-          <Button type="submit" disabled={loading} variant="primary" size="lg">
-            {loading ? 'Saving...' : 'Save Changes'}
+          <Button type="submit" disabled={isSubmitting} variant="primary" size="lg">
+            {isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </form>
       </div>

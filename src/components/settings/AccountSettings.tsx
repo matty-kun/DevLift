@@ -30,17 +30,28 @@ const AccountSettings: React.FC = () => {
       return;
     }
 
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
+    // First, verify the current password by trying to sign in with it.
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: session!.user.email!,
+      password: currentPassword,
     });
 
-    if (error) {
-      setToast({ show: true, message: `Error changing password: ${error.message}`, type: 'error' });
+    if (signInError) {
+      setToast({ show: true, message: `Incorrect current password. Please try again.`, type: 'error' });
     } else {
-      setToast({ show: true, message: 'Password updated successfully!', type: 'success' });
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmNewPassword('');
+      // If current password is correct, update to the new password.
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        setToast({ show: true, message: `Error changing password: ${updateError.message}`, type: 'error' });
+      } else {
+        setToast({ show: true, message: 'Password updated successfully!', type: 'success' });
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+      }
     }
     setPasswordLoading(false);
   };
@@ -191,7 +202,7 @@ const AccountSettings: React.FC = () => {
       <div className="bg-red-900/20 border border-red-700 p-8 rounded-lg">
         <h3 className="text-xl font-semibold text-red-400 mb-4">Danger Zone</h3>
         <p className="text-neutral-400 mb-6">Permanently delete your account and all associated data. This action cannot be undone.</p>
-        <Button onClick={() => setShowDeleteModal(true)} variant="danger" size="lg">
+        <Button onClick={() => setShowDeleteModal(true)} variant="secondary" size="lg" className="bg-red-600 hover:bg-red-700 focus:ring-red-500">
           Delete Account
         </Button>
       </div>
@@ -204,10 +215,10 @@ const AccountSettings: React.FC = () => {
       >
         <p className="text-neutral-300 mb-6">Are you sure you want to delete your account? All your data will be permanently removed. This action cannot be undone.</p>
         <div className="flex justify-end gap-4">
-          <Button onClick={() => setShowDeleteModal(false)} variant="secondary">
+          <Button onClick={() => setShowDeleteModal(false)} variant="outline">
             Cancel
           </Button>
-          <Button onClick={handleDeleteAccount} variant="danger" disabled={deleteLoading}>
+          <Button onClick={handleDeleteAccount} variant="secondary" className="bg-red-600 hover:bg-red-700 focus:ring-red-500" disabled={deleteLoading}>
             {deleteLoading ? 'Deleting...' : 'Delete My Account'}
           </Button>
         </div>
@@ -217,4 +228,3 @@ const AccountSettings: React.FC = () => {
 };
 
 export default AccountSettings;
-

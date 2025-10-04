@@ -1,122 +1,64 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Card from '../../components/common/Card';
-import { Project } from '../../types';
 import { Link } from 'react-router-dom';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import sign from '../../assets/DevLift Sign.svg';
-
-// Define a Startup type (for now, reuse Project type for demo purposes)
-type Startup = Omit<Project, 'mentorId' | 'difficulty' | 'maxStudents' | 'assignedStudents' | 'applicants' | 'deadline'> & {
-  founder: string;
-  website: string;
+import { supabase } from '../../lib/supabase';
+import { Startup } from '../../types';
+ 
+type StartupWithDetails = Startup & {
   industry: string;
-  avatar?: string;
+  founder: {
+    full_name: string;
+  } | null;
 };
 
-const sampleStartups: Startup[] = [
-    {
-        id: 's1',
-        title: 'FinTech Innovations',
-        description: 'Building the next-gen payment platform for emerging markets.',
-        founder: 'Alice Johnson',
-        website: 'https://fintechinnov.com',
-        industry: 'FinTech',
-        skills: ['React', 'Node.js', 'Payments'],
-        duration: '12 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-      {
-        id: 's2',
-        title: 'HealthSync',
-        description: 'A platform connecting patients and doctors for seamless telemedicine.',
-        founder: 'Dr. Mark Lee',
-        website: 'https://healthsync.com',
-        industry: 'HealthTech',
-        skills: ['React Native', 'Firebase', 'UX'],
-        duration: '6 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-      {
-        id: 's3',
-        title: 'EduLift',
-        description: 'Personalized learning journeys for K-12 students using AI.',
-        founder: 'Priya Patel',
-        website: 'https://edulift.ai',
-        industry: 'EdTech',
-        skills: ['Python', 'AI', 'Data Science'],
-        duration: '9 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-      {
-        id: 's4',
-        title: 'GreenTech Solutions',
-        description: 'Developing IoT-powered solutions for sustainable agriculture and smart farming.',
-        founder: 'Lucas Green',
-        website: 'https://greentech.com',
-        industry: 'AgriTech',
-        skills: ['IoT', 'Python', 'Cloud'],
-        duration: '8 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-      {
-        id: 's5',
-        title: 'SafeNet',
-        description: 'Cybersecurity platform protecting small businesses from online threats.',
-        founder: 'Maya Lin',
-        website: 'https://safenet.io',
-        industry: 'Cybersecurity',
-        skills: ['Security', 'Node.js', 'React'],
-        duration: '10 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-      {
-        id: 's6',
-        title: 'TravelNest',
-        description: 'Personalized travel planning using AI and real-time data.',
-        founder: 'Carlos Rivera',
-        website: 'https://travelnest.ai',
-        industry: 'TravelTech',
-        skills: ['AI', 'Data Science', 'UX'],
-        duration: '7 months',
-        status: 'open',
-        createdAt: new Date(),
-        avatar: sign,
-        imageUrl: sign,
-      },
-];
-
 const Startups: React.FC = () => {
-  const [startups] = useState<Startup[]>(sampleStartups);
+  const [startups, setStartups] = useState<StartupWithDetails[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIndustry, setSelectedIndustry] = useState('All');
 
-  const industries = useMemo(() => ['All', ...new Set(startups.map(s => s.industry))], [startups]);
+  const industries = useMemo(() => ['All', ...new Set(startups.map(s => s.industry).filter(Boolean))], [startups]);
 
   const filteredStartups = useMemo(() => {
     return startups.filter(startup => {
-      const matchesIndustry = selectedIndustry === 'All' || startup.industry === selectedIndustry;
-      const matchesSearch = startup.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            startup.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            startup.founder.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesIndustry = selectedIndustry === 'All' || startup.industry?.toLowerCase() === selectedIndustry.toLowerCase();
+      const matchesSearch = startup.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            startup.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesIndustry && matchesSearch;
     });
   }, [startups, searchTerm, selectedIndustry]);
+
+  useEffect(() => {
+    const fetchStartups = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('startups')
+        .select(`
+          id,
+          name,
+          description,
+          industry,
+          website,
+          logo_url,
+          founder:founder_id ( full_name )
+        `);
+
+      if (error) {
+        console.error('Error fetching startups:', error);
+      } else if (data) {
+        const transformedData = data.map(startup => ({
+          ...startup,
+          founder: Array.isArray(startup.founder) ? startup.founder[0] : startup.founder,
+        }));
+        setStartups(transformedData as StartupWithDetails[]);
+      }
+      setLoading(false);
+    };
+
+    fetchStartups();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-neutral-50 py-12">
@@ -152,42 +94,41 @@ const Startups: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredStartups.map((startup) => (
-            <Link to={`/startups/${startup.id}`} key={startup.id} className="group block">
-              <Card className="h-full bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-lg overflow-hidden shadow-lg hover:shadow-custom-cyan/20 transition-all duration-300 transform hover:-translate-y-1">
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <img src={startup.avatar} alt={startup.title} className="h-16 w-16 object-contain bg-transparent p-0 m-0" />
-                      <div>
-                        <h3 className="text-2xl font-bold text-neutral-50 group-hover:text-custom-cyan transition-colors duration-300">{startup.title}</h3>
-                        <p className="text-sm text-custom-purple font-medium">{startup.industry}</p>
+        {loading ? (
+          <div className="text-center py-16">
+            <p className="text-lg text-neutral-400">Loading startups...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredStartups.map((startup) => (
+              <Link to={`/startups/${startup.id}`} key={startup.id} className="group block">
+                <Card className="h-full bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-lg overflow-hidden shadow-lg hover:shadow-custom-cyan/20 transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <img src={startup.logo_url} alt={startup.name} className="h-16 w-16 object-contain bg-transparent p-0 m-0 rounded-md" />
+                        <div>
+                          <h3 className="text-2xl font-bold text-neutral-50 group-hover:text-custom-cyan transition-colors duration-300">{startup.name}</h3>
+                          <p className="text-sm text-custom-purple font-medium">{startup.industry || 'N/A'}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <p className="text-neutral-300 mb-4 h-20 overflow-hidden">{startup.description}</p>
-                  <div className="mb-4">
-                    <span className="text-neutral-400 font-medium">Founder:</span> <span className="text-neutral-100">{startup.founder}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {startup.skills.map((skill, idx) => (
-                      <span key={idx} className="bg-custom-cyan/10 text-custom-cyan px-2 py-1 rounded-full text-xs font-medium">{skill}</span>
-                    ))}
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="text-neutral-400 text-sm">
-                      Duration: {startup.duration}
+                    <p className="text-neutral-300 mb-4 h-20 overflow-hidden line-clamp-3">{startup.description}</p>
+                    <div className="mb-4">
+                      <span className="text-neutral-400 font-medium">Founder:</span> <span className="text-neutral-100">{startup.founder?.full_name || 'N/A'}</span>
                     </div>
-                    <Button variant='outline' size='sm' className="border-custom-cyan text-custom-cyan group-hover:bg-custom-cyan group-hover:text-white transition-colors duration-300">
-                        View Details
-                    </Button>
+                    {/* Skills can be added here if joined from projects */}
+                    <div className="flex justify-end items-center mt-4">
+                      <Button variant='outline' size='sm' className="border-custom-cyan text-custom-cyan group-hover:bg-custom-cyan group-hover:text-black transition-colors duration-300">
+                          View Details
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
         {filteredStartups.length === 0 && (
             <div className="text-center py-16">
                 <h2 className="text-2xl font-semibold text-neutral-400">No startups found.</h2>

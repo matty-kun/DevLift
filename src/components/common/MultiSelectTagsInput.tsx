@@ -44,12 +44,7 @@ const MultiSelectTagsInput: React.FC<MultiSelectTagsInputProps> = ({
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (
-      inputRef.current &&
-      !inputRef.current.contains(event.target as Node) &&
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
+    if (inputRef.current && !inputRef.current.parentElement?.contains(event.target as Node) && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setShowDropdown(false);
     }
   };

@@ -9,6 +9,7 @@ type Profile = {
 	id: string;
 	role?: 'student' | 'founder' | 'admin'; // Removed 'mentor'
 	full_name?: string;
+	bio?: string; // Added bio
 	avatar_url?: string | null;
 };
 
@@ -22,6 +23,7 @@ type AuthContextType = {
 	signInWithProvider: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
 	signOut: () => Promise<void>;
 	setUserRole: (role: 'student' | 'founder') => Promise<void>;
+	refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -178,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		if (error) throw error;
 	};
 
-	const setUserRole = React.useCallback(async (role: 'student' | 'mentor' | 'founder') => {
+	const setUserRole = React.useCallback(async (role: 'student' | 'founder') => {
 		if (!session?.user) return;
 		const mapped = role; // No longer mapping founder to mentor
 		await supabase.from('users').upsert({ id: session.user.id, role: mapped }, { onConflict: 'id' });
@@ -186,7 +188,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setProfile(p => p ? { ...p, role: mapped } : { id: session.user!.id, role: mapped });
 	}, [session?.user]);
 
-		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole }), [session, profile, loading, profileLoading, setUserRole]);
+	const refreshProfile = React.useCallback(async () => {
+		if (!session?.user) return;
+		setProfileLoading(true);
+		const { data, error } = await supabase
+			.from('users')
+			.select('id, role, full_name, avatar_url')
+			.eq('id', session.user.id)
+			.maybeSingle();
+		if (error) {
+			console.error('Error refreshing profile:', error);
+			setProfile(null);
+		} else {
+			setProfile((data as Profile) ?? null);
+		}
+		setProfileLoading(false);
+	}, [session?.user]);
+
+		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole, refreshProfile }), [session, profile, loading, profileLoading, setUserRole, refreshProfile]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
