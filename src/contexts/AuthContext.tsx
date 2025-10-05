@@ -26,6 +26,7 @@ type AuthContextType = {
 	signOut: () => Promise<void>;
 	setUserRole: (role: 'student' | 'founder') => Promise<void>;
 	refreshProfile: () => Promise<void>;
+	checkMFAStatus: () => { currentLevel: string; nextLevel: string; needsVerification: boolean };
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -207,13 +208,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			}
 		};
 
-		const signIn = async (email: string, password: string) => {
+	const signIn = async (email: string, password: string) => {
 		const { error } = await supabase.auth.signInWithPassword({
 			email,
 			password,
 		});
 		if (error) throw error;
 	};
+
+	const checkMFAStatus = React.useCallback(() => {
+		const { currentLevel, nextLevel } = supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+		return {
+			currentLevel,
+			nextLevel,
+			needsVerification: currentLevel === 'aal1' && nextLevel === 'aal2',
+		};
+	}, []);
 
 	const signOut = async () => {
 		await supabase.auth.signOut();
@@ -254,7 +264,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setProfileLoading(false);
 	}, [session?.user]);
 
-		const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole, refreshProfile }), [session, profile, loading, profileLoading, setUserRole, refreshProfile]);
+	const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole, refreshProfile, checkMFAStatus }), [session, profile, loading, profileLoading, setUserRole, refreshProfile, checkMFAStatus]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

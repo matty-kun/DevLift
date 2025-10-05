@@ -3,9 +3,11 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../common/Button';
 import Toast from '../common/Toast';
-import Modal from '../common/Modal';
-import Input from '../common/Input';
 import { formatDistanceToNow } from 'date-fns';
+import { Shield, ShieldCheck } from 'lucide-react';
+import type { Factor } from '@supabase/supabase-js';
+import MFAEnrollDialog from '../mfa/MFAEnrollDialog';
+import MFAFactorsList from '../mfa/MFAFactorsList';
 
 interface AuditEvent {
   id: string;
@@ -18,18 +20,13 @@ interface AuditEvent {
 }
 
 const SecuritySettings: React.FC = () => {
-  const { session } = useAuth();
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const { session, signOut } = useAuth();
+  const [mfaFactors, setMfaFactors] = useState<Factor[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' | 'info' });
 
   // State for 2FA enrollment modal
-  const [show2FAModal, setShow2FAModal] = useState(false);
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [mfaSecret, setMfaSecret] = useState<string | null>(null);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [factorId, setFactorId] = useState<string | null>(null);
-  const [challengeId, setChallengeId] = useState<string | null>(null);
+  const [showEnrollDialog, setShowEnrollDialog] = useState(false);
 
   // State for recent login activity
   const [recentLogins, setRecentLogins] = useState<AuditEvent[]>([]);
@@ -66,16 +63,19 @@ const SecuritySettings: React.FC = () => {
   };
 
   useEffect(() => {
-    const check2FAStatus = async () => {
-      if (session?.user) {
-        const { data } = await supabase.auth.mfa.listFactors();
-        if (data && data.totp.length > 0) {
-          setIs2FAEnabled(true);
-        }
-      }
-    };
-    check2FAStatus();
+    loadMfaFactors();
   }, [session]);
+
+  const loadMfaFactors = async () => {
+    if (!session?.user) return;
+
+    try {
+      const { data } = await supabase.auth.mfa.listFactors();
+      setMfaFactors(data?.all || []);
+    } catch (error) {
+      console.error('Error loading MFA factors:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchRecentLogins = async () => {
@@ -103,66 +103,49 @@ const SecuritySettings: React.FC = () => {
     fetchRecentLogins();
   }, [session?.user?.id]);
 
-  const handleEnable2FA = async () => {
-    setLoading(true);
+  const handleEnrollSuccess = () => {
+    setToast({ show: true, message: '2FA enabled successfully!', type: 'success' });
+    loadMfaFactors();
+  };
+
+  const handleUnenroll = async (factorId: string) => {
     try {
-      const { data, error } = await supabase.auth.mfa.enroll({
-        factorType: 'totp',
-      });
+      setLoading(true);
+
+      // Check if we need AAL2 (MFA verification) to unenroll - MUST be async
+      const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+      if (aalError) {
+        console.error('Error getting AAL:', aalError);
+      }
+
+      console.log('Current AAL for unenroll:', aalData);
+
+      if (aalData?.currentLevel !== 'aal2') {
+        setToast({
+          show: true,
+          message: 'For security, you must verify your 2FA code before removing it. Please sign out and sign in again with MFA verification.',
+          type: 'error',
+        });
+        setLoading(false);
+        return;
+      }
+
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
 
       if (error) throw error;
 
-      setFactorId(data.id);
-      setMfaSecret(data.totp.secret);
-      setQrCode(data.totp.qr_code);
-      setShow2FAModal(true);
+      setToast({ show: true, message: '2FA factor removed. Signing out for security...', type: 'info' });
+
+      // Sign out for security after removing MFA
+      setTimeout(async () => {
+        await signOut();
+      }, 2000);
     } catch (error: any) {
-      setToast({ show: true, message: `Error enabling 2FA: ${error.message}`, type: 'error' });
+      setToast({ show: true, message: `Error removing 2FA: ${error.message}`, type: 'error' });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleVerify2FA = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!factorId || !verificationCode) return;
-    setLoading(true);
-
-    try {
-      // First, challenge the factor
-      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
-      if (challengeError) throw challengeError;
-
-      // Then, verify the code against the challenge
-      const { error: verifyError } = await supabase.auth.mfa.verify({
-        factorId,
-        challengeId: challengeData.id,
-        code: verificationCode,
-      });
-
-      if (verifyError) throw verifyError;
-
-      setToast({ show: true, message: '2FA enabled successfully!', type: 'success' });
-      setIs2FAEnabled(true);
-      setShow2FAModal(false);
-      setQrCode(null);
-      setMfaSecret(null);
-      setVerificationCode('');
-    } catch (error: any) {
-      setToast({ show: true, message: `Error verifying code: ${error.message}`, type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDisable2FA = async () => {
-    // This would involve listing factors and unenrolling them.
-    // For now, we'll just show a placeholder message.
-    setToast({
-      show: true,
-      message: 'Disabling 2FA is not yet implemented.',
-      type: 'info',
-    });
   };
 
   return (
@@ -179,52 +162,59 @@ const SecuritySettings: React.FC = () => {
 
       {/* Two-Factor Authentication Section */}
       <div className="bg-neutral-900 p-8 rounded-lg mb-8">
-        <h3 className="text-xl font-semibold text-white mb-4">Two-Factor Authentication (2FA)</h3>
-        <p className="text-neutral-400 mb-4">
-          Add an extra layer of security to your account by enabling 2FA. This requires a verification code from your phone in addition to your password.
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            {mfaFactors.length > 0 ? (
+              <ShieldCheck className="w-6 h-6 text-green-500" />
+            ) : (
+              <Shield className="w-6 h-6 text-neutral-500" />
+            )}
+            <div>
+              <h3 className="text-xl font-semibold text-white">Two-Factor Authentication (2FA)</h3>
+              {mfaFactors.length > 0 && (
+                <span className="text-sm text-green-500">Enabled</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <p className="text-neutral-400 mb-6">
+          Add an extra layer of security to your account by enabling 2FA. This requires a verification code from your authenticator app in addition to your password.
         </p>
-        <Button
-          onClick={is2FAEnabled ? handleDisable2FA : handleEnable2FA}
-          disabled={loading}
-          variant={is2FAEnabled ? 'danger' : 'primary'}
-          size="lg"
-        >
-          {loading ? 'Processing...' : is2FAEnabled ? 'Disable 2FA' : 'Enable 2FA'}
-        </Button>
+
+        {/* MFA Factors List */}
+        <div className="mb-6">
+          <MFAFactorsList factors={mfaFactors} onUnenroll={handleUnenroll} />
+        </div>
+
+        {/* Enable Button - only show if no factors enrolled */}
+        {mfaFactors.length === 0 && (
+          <Button
+            onClick={() => setShowEnrollDialog(true)}
+            disabled={loading}
+            variant="primary"
+            size="lg"
+          >
+            Enable Two-Factor Authentication
+          </Button>
+        )}
+
+        {/* Info message if already enrolled */}
+        {mfaFactors.length > 0 && (
+          <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-3 rounded-lg">
+            <p className="text-sm">
+              ✅ Two-Factor Authentication is active. Your account is protected with an additional security layer.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* 2FA Enrollment Modal */}
-      <Modal isOpen={show2FAModal} onClose={() => setShow2FAModal(false)} title="Enable Two-Factor Authentication">
-        <div className="text-center">
-          <p className="text-neutral-300 mb-4">Scan the QR code with your authenticator app (e.g., Google Authenticator, Authy).</p>
-          {qrCode && (
-            <div className="bg-white p-4 rounded-lg inline-block mb-4" dangerouslySetInnerHTML={{ __html: qrCode }} />
-          )}
-          <p className="text-neutral-400 text-sm mb-4">
-            Or manually enter this secret key:
-            <code className="block bg-neutral-800 p-2 rounded-md mt-2 text-custom-cyan font-mono">{mfaSecret}</code>
-          </p>
-          <form onSubmit={handleVerify2FA}>
-            <Input
-              label="Verification Code"
-              type="text"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="Enter the 6-digit code"
-              required
-              className="text-center"
-            />
-            <div className="flex justify-end gap-4 mt-6">
-              <Button type="button" onClick={() => setShow2FAModal(false)} variant="outline">
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={loading}>
-                {loading ? 'Verifying...' : 'Verify & Enable'}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+      {/* MFA Enrollment Dialog */}
+      <MFAEnrollDialog
+        isOpen={showEnrollDialog}
+        onClose={() => setShowEnrollDialog(false)}
+        onSuccess={handleEnrollSuccess}
+      />
 
       {/* Recent Login Activity Section */}
       <div className="bg-neutral-900 p-8 rounded-lg">

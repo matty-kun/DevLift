@@ -19,40 +19,13 @@ const SignInForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // If already authenticated when component mounts, redirect away from sign-in automatically.
-  // Wait for profile.role if available; otherwise fetch it before deciding.
+  // BUT: Check for MFA requirement first!
+  // DISABLED: This conflicts with the onSubmit MFA check, causing race conditions
+  // The onSubmit handler will handle all redirects after sign-in
   useEffect(() => {
-    let cancelled = false;
-    const go = async () => {
-      // Only run this effect if auth is loaded AND user is authenticated
-      if (authLoading) return;
-      if (!session) return; // User not authenticated, stay on sign-in page
-
-      let role = profile?.role;
-      if (!role) {
-        const { data: userRes } = await supabase.auth.getUser();
-        const userId = userRes.user?.id;
-        if (userId) {
-          const { data: prof } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', userId)
-            .maybeSingle();
-          role = (prof as { role?: string } | null)?.role;
-        }
-      }
-      if (cancelled) return;
-      if (!role) {
-        navigate('/onboarding', { replace: true });
-        return;
-      }
-      const dest = role === 'mentor' || role === 'founder' ? '/founder-dashboard' : '/student-dashboard';
-      navigate(dest, { replace: true });
-    };
-    go();
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoading, session?.user?.id, profile?.role, navigate]);
+    // Do nothing - let onSubmit handle redirects
+    // This prevents race conditions between useEffect and onSubmit
+  }, []);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -60,6 +33,35 @@ const SignInForm: React.FC = () => {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
+
+      // CRITICAL: Wait for session to be fully established
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Check if user has MFA factors and needs verification
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      console.log('MFA Factors:', factors);
+
+      const hasVerifiedFactor = factors?.totp?.some((f) => f.status === 'verified');
+      console.log('Has verified factor:', hasVerifiedFactor);
+
+      if (hasVerifiedFactor) {
+        // Check AAL using the proper async method
+        const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+        if (aalError) {
+          console.error('Error getting AAL:', aalError);
+        }
+
+        console.log('SignIn - AAL data:', aalData);
+
+        // User has MFA enrolled but hasn't verified this session
+        if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+          console.log('Redirecting to MFA verify - needs aal2');
+          navigate('/mfa-verify', { replace: true });
+          return;
+        }
+      }
+
       // Optional role-based redirect
       const { data: userRes } = await supabase.auth.getUser();
       const userId = userRes.user?.id;

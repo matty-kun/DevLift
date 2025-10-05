@@ -5,6 +5,7 @@ import Projects from './pages/Projects';
 import ProjectDetails from './pages/founders/ProjectDetails';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
+import MFAVerify from './pages/auth/MFAVerify';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import Startups from './pages/founders/Startups';
@@ -28,9 +29,12 @@ import Onboarding from './pages/Onboarding';
 import LoadingScreen from './components/common/LoadingScreen';
 import MainLayout from './components/layout/MainLayout';
 import People from './pages/People'; // New import
+import MFAProtectedRoute from './components/auth/MFAProtectedRoute';
 
 import AccountActions from './components/layout/AccountActions';
 
+// Legacy PrivateRoute - kept for backwards compatibility but not used
+// Use MFAProtectedRoute instead
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { session, loading, profile, profileLoading } = useAuth();
   if (loading || profileLoading) return <LoadingScreen />;
@@ -58,30 +62,31 @@ const App: React.FC = () => {
         {/* Auth routes without layout */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/mfa-verify" element={<MFAVerify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Onboarding route without layout (to prevent remounting) */}
         <Route path="/onboarding" element={<Onboarding />} />
 
-        {/* Private routes with main layout */}
+        {/* Private routes with main layout - NOW MFA PROTECTED */}
         <Route element={<MainLayout actionButtons={<AccountActions />} showNavLinks={true} showFooter={true}><Outlet /></MainLayout>}>
-          <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
-          <Route path="/projects/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
-          <Route path="/startups" element={<PrivateRoute><Startups /></PrivateRoute>} />
-          <Route path="/startups/:id" element={<PrivateRoute><StartupDetails /></PrivateRoute>} />
-          <Route path="/resources" element={<PrivateRoute><Resources /></PrivateRoute>} />
-          <Route path="/community" element={<PrivateRoute><UnderConstruction /></PrivateRoute>} />
-          <Route path="/projects/:id/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
-          <Route path="/founder-dashboard" element={<PrivateRoute><FounderDashboard /></PrivateRoute>} />
-          <Route path="/founders/post-project" element={<PrivateRoute><PostProject /></PrivateRoute>} />
-          <Route path="/founders/projects/:projectId/edit" element={<PrivateRoute><EditProject /></PrivateRoute>} />
-          <Route path="/student-dashboard" element={<PrivateRoute><StudentDashboard /></PrivateRoute>} />
-          <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
-          <Route path="/people/:id" element={<PrivateRoute><StudentProfile /></PrivateRoute>} />
-          <Route path="/founders/:id" element={<PrivateRoute><FounderProfile /></PrivateRoute>} />
-          <Route path="/search" element={<PrivateRoute><SearchPage /></PrivateRoute>} />
-          <Route path="/people" element={<PrivateRoute><People /></PrivateRoute>} /> {/* New route */}
+          <Route path="/projects" element={<MFAProtectedRoute><Projects /></MFAProtectedRoute>} />
+          <Route path="/projects/:id" element={<MFAProtectedRoute><ProjectDetails /></MFAProtectedRoute>} />
+          <Route path="/startups" element={<MFAProtectedRoute><Startups /></MFAProtectedRoute>} />
+          <Route path="/startups/:id" element={<MFAProtectedRoute><StartupDetails /></MFAProtectedRoute>} />
+          <Route path="/resources" element={<MFAProtectedRoute><Resources /></MFAProtectedRoute>} />
+          <Route path="/community" element={<MFAProtectedRoute><UnderConstruction /></MFAProtectedRoute>} />
+          <Route path="/projects/:id/applications" element={<MFAProtectedRoute><Applications /></MFAProtectedRoute>} />
+          <Route path="/founder-dashboard" element={<MFAProtectedRoute><FounderDashboard /></MFAProtectedRoute>} />
+          <Route path="/founders/post-project" element={<MFAProtectedRoute><PostProject /></MFAProtectedRoute>} />
+          <Route path="/founders/projects/:projectId/edit" element={<MFAProtectedRoute><EditProject /></MFAProtectedRoute>} />
+          <Route path="/student-dashboard" element={<MFAProtectedRoute><StudentDashboard /></MFAProtectedRoute>} />
+          <Route path="/settings" element={<MFAProtectedRoute><Settings /></MFAProtectedRoute>} />
+          <Route path="/people/:id" element={<MFAProtectedRoute><StudentProfile /></MFAProtectedRoute>} />
+          <Route path="/founders/:id" element={<MFAProtectedRoute><FounderProfile /></MFAProtectedRoute>} />
+          <Route path="/search" element={<MFAProtectedRoute><SearchPage /></MFAProtectedRoute>} />
+          <Route path="/people" element={<MFAProtectedRoute><People /></MFAProtectedRoute>} />
         </Route>
       </Routes>
       <SpeedInsights />
