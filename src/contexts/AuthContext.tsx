@@ -26,7 +26,7 @@ type AuthContextType = {
 	signOut: () => Promise<void>;
 	setUserRole: (role: 'student' | 'founder') => Promise<void>;
 	refreshProfile: () => Promise<void>;
-	checkMFAStatus: () => { currentLevel: string; nextLevel: string; needsVerification: boolean };
+	checkMFAStatus: () => Promise<{ currentLevel: string; nextLevel: string; needsVerification: boolean }>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,6 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				setSession(newSession);
 
 				// Log login event when user signs in (non-blocking)
+				// DISABLED due to ipapi.co rate limiting
+				/*
 				if (event === 'SIGNED_IN' && newSession?.user) {
 					// Run login tracking in background without blocking sign-in
 					(async () => {
@@ -98,6 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						}
 					})();
 				}
+				*/
 		});
 		return () => {
 			mounted = false;
@@ -216,12 +219,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		if (error) throw error;
 	};
 
-	const checkMFAStatus = React.useCallback(() => {
-		const { currentLevel, nextLevel } = supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+	const checkMFAStatus = React.useCallback(async () => {
+		const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+		if (error) {
+			// Handle cases where AAL isn't available (e.g., user not logged in)
+			return { currentLevel: 'aal1', nextLevel: 'aal1', needsVerification: false };
+		}
 		return {
-			currentLevel,
-			nextLevel,
-			needsVerification: currentLevel === 'aal1' && nextLevel === 'aal2',
+			currentLevel: data.currentLevel,
+			nextLevel: data.nextLevel,
+			needsVerification: data.currentLevel === 'aal1' && data.nextLevel === 'aal2',
 		};
 	}, []);
 

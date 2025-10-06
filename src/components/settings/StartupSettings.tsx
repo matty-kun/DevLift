@@ -23,18 +23,18 @@ const StartupSettings: React.FC = () => {
         const { data, error } = await supabase
           .from('startups')
           .select('name, website, industry, description, logo_url')
-          .eq('founder_id', session.user.id)
-          .single();
+          .eq('founder_id', session.user.id);
 
-        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+        if (error) {
           console.error('Error fetching startup data:', error);
           setToast({ show: true, message: `Error fetching startup data: ${error.message}`, type: 'error' });
-        } else if (data) {
-          setStartupName(data.name || '');
-          setWebsite(data.website || '');
-          setIndustry(data.industry || '');
-          setDescription(data.description || '');
-          setLogoUrl(data.logo_url || '');
+        } else if (data && data.length > 0) {
+          const startup = data[0]; // Take the first startup
+          setStartupName(startup.name || '');
+          setWebsite(startup.website || '');
+          setIndustry(startup.industry || '');
+          setDescription(startup.description || '');
+          setLogoUrl(startup.logo_url || '');
         }
       }
       setLoading(false);

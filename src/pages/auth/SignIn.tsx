@@ -1,5 +1,5 @@
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -10,7 +10,7 @@ import Logo from "../../assets/DevLift Logo.svg";
 
 const SignInForm: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn, signInWithProvider, session, profile, loading: authLoading } = useAuth();
+  const { signIn, signInWithProvider, checkMFAStatus, session } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,14 +18,35 @@ const SignInForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already authenticated when component mounts, redirect away from sign-in automatically.
-  // BUT: Check for MFA requirement first!
-  // DISABLED: This conflicts with the onSubmit MFA check, causing race conditions
-  // The onSubmit handler will handle all redirects after sign-in
+  const handleRedirect = async () => {
+    const { needsVerification } = await checkMFAStatus();
+    if (needsVerification) {
+      navigate('/mfa-verify', { replace: true });
+      return;
+    }
+
+    const { data: userRes } = await supabase.auth.getUser();
+    const userId = userRes.user?.id;
+    let dest = "/projects";
+    if (userId) {
+      const { data: prof } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", userId)
+        .maybeSingle();
+      const role = (prof as { role?: string } | null)?.role;
+      if (!role) dest = '/onboarding';
+      else if (role === "mentor" || role === "founder") dest = "/founder-dashboard"; else dest = "/student-dashboard";
+    }
+    navigate(dest, { replace: true });
+  };
+
   useEffect(() => {
-    // Do nothing - let onSubmit handle redirects
-    // This prevents race conditions between useEffect and onSubmit
-  }, []);
+    if (session) {
+      handleRedirect();
+    }
+  }, [session, navigate, checkMFAStatus]);
+
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -33,50 +54,6 @@ const SignInForm: React.FC = () => {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-
-      // CRITICAL: Wait for session to be fully established
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      // Check if user has MFA factors and needs verification
-      const { data: factors } = await supabase.auth.mfa.listFactors();
-      console.log('MFA Factors:', factors);
-
-      const hasVerifiedFactor = factors?.totp?.some((f) => f.status === 'verified');
-      console.log('Has verified factor:', hasVerifiedFactor);
-
-      if (hasVerifiedFactor) {
-        // Check AAL using the proper async method
-        const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-
-        if (aalError) {
-          console.error('Error getting AAL:', aalError);
-        }
-
-        console.log('SignIn - AAL data:', aalData);
-
-        // User has MFA enrolled but hasn't verified this session
-        if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
-          console.log('Redirecting to MFA verify - needs aal2');
-          navigate('/mfa-verify', { replace: true });
-          return;
-        }
-      }
-
-      // Optional role-based redirect
-      const { data: userRes } = await supabase.auth.getUser();
-      const userId = userRes.user?.id;
-      let dest = "/projects";
-      if (userId) {
-        const { data: prof } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", userId)
-          .maybeSingle();
-        const role = (prof as { role?: string } | null)?.role;
-        if (!role) dest = '/onboarding';
-        else if (role === "mentor" || role === "founder") dest = "/founder-dashboard"; else dest = "/student-dashboard";
-      }
-      navigate(dest, { replace: true });
     } catch (err: unknown) {
       const hasMessage = (e: unknown): e is { message: string } =>
         typeof e === "object" && e !== null && "message" in e && typeof (e as { message: unknown }).message === "string";

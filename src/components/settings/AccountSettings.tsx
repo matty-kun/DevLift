@@ -127,11 +127,21 @@ const AccountSettings: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
-    setTimeout(() => {
-      setToast({ show: true, message: 'Account deletion initiated. Please check your email for further instructions.', type: 'success' });
+
+    const { error } = await supabase.functions.invoke('delete-user', {
+      method: 'POST',
+    });
+
+    if (error) {
+      setToast({ show: true, message: `Error deleting account: ${error.message}`, type: 'error' });
       setDeleteLoading(false);
-      setShowDeleteModal(false);
-    }, 2000);
+    } else {
+      setToast({ show: true, message: 'Account deleted successfully.', type: 'success' });
+      // Sign out the user
+      await supabase.auth.signOut();
+      // Redirect to home page
+      navigate('/');
+    }
   };
 
   return (

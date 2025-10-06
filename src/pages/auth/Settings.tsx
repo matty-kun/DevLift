@@ -51,12 +51,15 @@ const ProfileSettings = () => {
 
       const fetchUserSkills = async () => {
         if (!session?.user?.id) return [];
-        const { data, error } = await supabase.from('user_skills').select('skill').eq('user_id', session.user.id);
+        const { data, error } = await supabase
+          .from('user_skills')
+          .select('skills(name)')
+          .eq('user_id', session.user.id);
         if (error) {
           console.error('Error fetching user skills:', error);
           return [];
         }
-        return data ? data.map(s => s.skill) : [];
+        return data ? data.map((s: any) => s.skills.name) : [];
       };
 
       const populateForm = async () => {
@@ -152,7 +155,14 @@ const ProfileSettings = () => {
 
       // 2. Insert new skills
       if (data.skills.length > 0) {
-        const skillsToInsert = data.skills.map(skill => ({ user_id: session!.user!.id, skill }));
+        const { data: skillsData, error: skillsError } = await supabase
+          .from('skills')
+          .select('id, name')
+          .in('name', data.skills);
+
+        if (skillsError) throw skillsError;
+
+        const skillsToInsert = skillsData.map(skill => ({ user_id: session!.user!.id, skill_id: skill.id }));
         const { error: insertSkillsError } = await supabase.from('user_skills').insert(skillsToInsert);
         if (insertSkillsError) throw insertSkillsError;
       }
