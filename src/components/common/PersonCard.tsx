@@ -10,8 +10,8 @@ interface Person {
   skills: string[];
   position?: string;
   school?: string;
-  avg_rating?: number;
-  reviews_count?: number;
+  avg_rating?: number | null;
+  reviews_count?: number | null;
 }
 
 interface PersonCardProps {
@@ -24,7 +24,7 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, onClick, className = ''
   return (
     <div 
       onClick={onClick}
-      className={`bg-neutral-900 border border-transparent rounded-lg p-6 ${className}`}
+      className={`bg-neutral-900 border border-transparent rounded-lg p-6 hover:border-custom-cyan transition-colors ${className}`}
     >
       <div className="flex items-start gap-4 mb-4">
         <img 
@@ -59,16 +59,11 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, onClick, className = ''
       <p className="text-sm text-neutral-300 line-clamp-2 mb-4">{person.bio}</p>
       {person.skills?.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {person.skills.slice(0, 3).map((skill, i) => (
+          {person.skills.map((skill, i) => (
             <span key={i} className="px-2 py-1 text-xs rounded-full bg-neutral-800 text-neutral-300">
               {skill}
             </span>
           ))}
-          {person.skills.length > 3 && (
-            <span className="px-2 py-1 text-xs rounded-full bg-neutral-800 text-neutral-300">
-              +{person.skills.length - 3}
-            </span>
-          )}
         </div>
       )}
     </div>

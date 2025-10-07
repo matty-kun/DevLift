@@ -22,6 +22,7 @@ const People: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [sortOption, setSortOption] = useState<string>('name-asc'); // Default sort by name A-Z
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -43,18 +44,14 @@ const People: React.FC = () => {
               id,
               full_name,
               avatar_url
-            ),
-            (
-              SELECT 
-                COALESCE(AVG(rating)::numeric(10,2), 0) as avg_rating,
-                COUNT(*) as reviews_count
-              FROM reviews
-              WHERE reviews.reviewee_id = profiles.user_id
             )
           `)
           .order('role');
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching users from Supabase:', error.message || error);
+          throw error;
+        }
 
         const formattedUsers = data.map(profile => ({
           id: profile.user_id,
@@ -65,13 +62,12 @@ const People: React.FC = () => {
           skills: profile.skills || [],
           position: profile.position,
           school: profile.school,
-          avg_rating: profile.avg_rating,
-          reviews_count: profile.reviews_count
+          // avg_rating and reviews_count are no longer fetched directly via this query
         }));
 
         setUsers(formattedUsers);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error in fetchUsers:', error);
       } finally {
         setIsLoading(false);
       }
@@ -80,12 +76,21 @@ const People: React.FC = () => {
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(user => {
+  const filteredAndSortedUsers = users.filter(user => {
     const matchesSearch = user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          user.bio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          user.skills?.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
+  }).sort((a, b) => {
+    switch (sortOption) {
+      case 'name-asc':
+        return a.full_name.localeCompare(b.full_name);
+      case 'name-desc':
+        return b.full_name.localeCompare(a.full_name);
+      default:
+        return 0;
+    }
   });
 
   const roleStats = {
@@ -152,6 +157,19 @@ const People: React.FC = () => {
                 <span>Students ({roleStats.student})</span>
               </button>
             </div>
+            <div className="relative">
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="block w-full sm:w-auto px-4 py-2 pr-8 rounded-lg bg-neutral-900 border border-neutral-700 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-custom-cyan"
+              >
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -177,7 +195,7 @@ const People: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredUsers.map((user) => (
+              {filteredAndSortedUsers.map((user) => (
                 <PersonCard
                   key={user.id}
                   person={user}
@@ -186,7 +204,7 @@ const People: React.FC = () => {
                 />
               ))}
             </div>
-            {filteredUsers.length === 0 && (
+            {filteredAndSortedUsers.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-neutral-400">No users found matching your search criteria.</p>
               </div>
