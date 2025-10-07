@@ -370,7 +370,6 @@ const Settings = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-4 text-white">
-      <BackButton to="/founder-dashboard" text="Back to Dashboard" />
       <div className="flex flex-col md:flex-row gap-12 mt-4">
         <aside className="w-full md:w-1/4">
           <h1 className="text-3xl font-bold mb-8">Settings</h1>
