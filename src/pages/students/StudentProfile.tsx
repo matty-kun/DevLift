@@ -25,6 +25,7 @@ const StudentProfile: React.FC = () => {
   const userId = paramId || session?.user.id || '';
   const isOwnProfile = userId && session?.user?.id === userId;
 
+  const [isLoading, setIsLoading] = React.useState(true);
   const [profile, setProfile] = React.useState({
     name: 'Student',
     avatar_url: 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
@@ -46,12 +47,12 @@ const StudentProfile: React.FC = () => {
     let active = true;
     if (!userId) return;
     (async () => {
+      setIsLoading(true);
       // Load reviews, summary, user profile, skills and projects concurrently
-      const [reviewsRes, summaryRes, publicUserRes, userRes, skillsRes, projectsRes] = await Promise.all([
+      const [reviewsRes, summaryRes, publicUserRes, skillsRes, projectsRes] = await Promise.all([
         getUserReviewsReceived(userId),
         getUserRatingSummary(userId),
-        supabase.from('users').select('full_name, bio').eq('id', userId).maybeSingle(),
-        session?.user ? session.user : null, // Use existing session user data
+        supabase.from('users').select('full_name, bio, avatar_url, role, position, company, location, website').eq('id', userId).maybeSingle(),
         supabase.from('user_skills').select('skills(name)').eq('user_id', userId),
         supabase.from('project_applications').select('project:projects(id, title)').eq('user_id', userId).eq('status', 'completed'),
       ]);
@@ -72,30 +73,55 @@ const StudentProfile: React.FC = () => {
       const completedProjectsData = projectsRes.data as CompletedProject[] | null;
 
       const publicUser = publicUserRes.data;
-      const user = userRes;
       const skills = skillsRes.data?.map(s => s.skill) || [];
       const completedProjects = completedProjectsData?.map(app => app.project).filter(Boolean) as { id: string; title: string }[] || [];
-      const location = [user?.user_metadata?.city, user?.user_metadata?.country].filter(Boolean).join(', ');
 
       setProfile(p => ({
-        name: publicUser?.full_name || user?.user_metadata?.full_name || 'Student',
-        avatar_url: user?.user_metadata?.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
-        bio: publicUser?.bio || user?.user_metadata?.bio || p.bio,
-        role: user?.user_metadata?.role || p.role,
-        position: user?.user_metadata?.position || '',
-        industry: user?.user_metadata?.industry || '',
-        school: user?.user_metadata?.school || '',
-        location: location,
-        website: user?.user_metadata?.website || '', // This was missing the skills update
+        name: publicUser?.full_name || 'Student',
+        avatar_url: publicUser?.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=student',
+        bio: publicUser?.bio || p.bio,
+        role: publicUser?.role || p.role,
+        position: publicUser?.position || '',
+        industry: '', // Not stored in users table
+        school: publicUser?.company || '', // Using company field as school
+        location: publicUser?.location || '',
+        website: publicUser?.website || '',
         skills,
         completedProjects,
         reviews: mapped,
         avg: summary?.avg_rating ?? null,
         count: summary?.reviews_count ?? 0,
       }));
+      setIsLoading(false);
     })(); // Removed supabase dependency from useEffect
     return () => { active = false; };
   }, [userId, session]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <main className="pt-8 px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-neutral-900 rounded-lg p-8 animate-pulse">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="h-20 w-20 rounded-full bg-neutral-800" />
+                <div className="flex-1">
+                  <div className="h-8 bg-neutral-800 rounded w-1/2 mb-2" />
+                  <div className="h-4 bg-neutral-800 rounded w-3/4" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-4 bg-neutral-800 rounded w-full" />
+                <div className="h-4 bg-neutral-800 rounded w-5/6" />
+                <div className="h-4 bg-neutral-800 rounded w-4/6" />
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

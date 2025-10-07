@@ -32,19 +32,15 @@ const People: React.FC = () => {
       try {
         // Get user profiles with ratings
         const { data, error } = await supabase
-          .from('profiles')
+          .from('users')
           .select(`
-            user_id,
+            id,
+            full_name,
+            avatar_url,
             role,
             bio,
-            skills,
             position,
-            school,
-            users!inner (
-              id,
-              full_name,
-              avatar_url
-            )
+            company
           `)
           .order('role');
 
@@ -53,15 +49,15 @@ const People: React.FC = () => {
           throw error;
         }
 
-        const formattedUsers = data.map(profile => ({
-          id: profile.user_id,
-          full_name: profile.users.full_name,
-          avatar_url: profile.users.avatar_url,
-          role: profile.role,
-          bio: profile.bio,
-          skills: profile.skills || [],
-          position: profile.position,
-          school: profile.school,
+        const formattedUsers = data.map(user => ({
+          id: user.id,
+          full_name: user.full_name,
+          avatar_url: user.avatar_url,
+          role: user.role,
+          bio: user.bio,
+          skills: [], // Skills will be fetched separately from user_skills table if needed
+          position: user.position,
+          school: user.company, // Using company field as school equivalent
           // avg_rating and reviews_count are no longer fetched directly via this query
         }));
 
@@ -199,7 +195,7 @@ const People: React.FC = () => {
                 <PersonCard
                   key={user.id}
                   person={user}
-                  onClick={() => navigate(`/${user.role}s/${user.id}`)}
+                  onClick={() => navigate(user.role === 'founder' ? `/founders/${user.id}` : `/people/${user.id}`)}
                   className="cursor-pointer hover:border-neutral-700 transition-colors"
                 />
               ))}
