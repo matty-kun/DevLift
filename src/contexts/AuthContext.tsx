@@ -1,6 +1,7 @@
 /* eslint react-refresh/only-export-components: "off" */
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Session as SupabaseSession, AuthChangeEvent } from '@supabase/supabase-js';
 
 type Session = SupabaseSession | null;
@@ -32,6 +33,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+	const queryClient = useQueryClient();
 	const [session, setSession] = useState<Session | null>(null);
 	const [profile, setProfile] = useState<Profile | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -267,9 +269,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setProfile(null);
 		} else {
 			setProfile((data as Profile) ?? null);
+			queryClient.invalidateQueries({ queryKey: ['founderProfile'] });
 		}
 		setProfileLoading(false);
-	}, [session?.user]);
+	}, [session?.user, queryClient]);
 
 	const value = useMemo<AuthContextType>(() => ({ session, profile, loading, profileLoading, signUp, signIn, signInWithProvider, signOut, setUserRole, refreshProfile, checkMFAStatus }), [session, profile, loading, profileLoading, setUserRole, refreshProfile, checkMFAStatus]);
 

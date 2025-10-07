@@ -43,11 +43,11 @@ const AccountActions: React.FC = () => {
           isOpen={openDropdown === 'account'}
           onToggle={() => setOpenDropdown(openDropdown === 'account' ? null : 'account')}
           trigger={
-            <button className="relative bg-neutral-900 p-2 rounded-full hover:bg-neutral-800 transition-colors">
+            <button className="relative p-1 rounded-full transition-colors mt-1">
               {avatarUrl ? (
-                <img src={avatarUrl} alt={founderName} className="h-6 w-6 rounded-full object-cover" />
+                <img src={avatarUrl} alt={founderName} className="h-8 w-8 rounded-full object-cover" />
               ) : (
-                <User className="h-6 w-6 text-custom-cyan" />
+                <User className="h-8 w-8 text-custom-cyan" />
               )}
             </button>
           }

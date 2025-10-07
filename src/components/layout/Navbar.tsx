@@ -27,20 +27,31 @@ const Navbar: React.FC<NavbarProps> = ({ actionButtons, showNavLinks = false }) 
     <header className="fixed top-0 left-0 w-full z-50">
       <div className="relative flex items-center justify-between mx-auto max-w-7xl px-6 py-3 mt-2 rounded-lg bg-black/80 backdrop-blur-xl border-b border-neutral-700 shadow-xl">
           <div className="flex items-center flex-1">
-            {/* Logo */}
-            <div className="flex-shrink-0">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              {/* Logo */}
               <Link to="/" className="flex items-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                 <img src={sign} alt="DevLift Sign" className="h-8 w-auto" />
-                {!session || location.pathname === '/' && <span className="font-headings text-custom-cyan text-2xl font-bold ml-2">Dev<span className="text-custom-orange">Lift</span></span>}
+                {(!session || location.pathname === '/') && 
+                  <span className="font-headings text-custom-cyan text-2xl font-bold ml-2">
+                    Dev<span className="text-custom-orange">Lift</span>
+                  </span>
+                }
               </Link>
+              
+              {/* Search */}
+              {session && location.pathname !== '/' && (
+                <>
+                  {/* Hidden on smaller screens */}
+                  <div className="hidden md:block w-48 lg:w-56">
+                    <Search />
+                  </div>
+                  {/* Shown on smaller screens */}
+                  <div className="md:hidden">
+                    <Search collapsed />
+                  </div>
+                </>
+              )}
             </div>
-
-            {/* Search */}
-            {session && location.pathname !== '/' && (
-              <div className="ml-2 w-full max-w-xs">
-                <Search />
-              </div>
-            )}
           </div>
 
           {/* Centered Navigation */}

@@ -52,7 +52,7 @@ const StudentProfile: React.FC = () => {
         getUserRatingSummary(userId),
         supabase.from('users').select('full_name, bio').eq('id', userId).maybeSingle(),
         session?.user ? session.user : null, // Use existing session user data
-        supabase.from('user_skills').select('skill').eq('user_id', userId),
+        supabase.from('user_skills').select('skills(name)').eq('user_id', userId),
         supabase.from('project_applications').select('project:projects(id, title)').eq('user_id', userId).eq('status', 'completed'),
       ]);
       const { data: reviews } = reviewsRes;
@@ -99,16 +99,8 @@ const StudentProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
-      <main className="pt-24 px-4">
+      <main className="pt-8 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="mb-4">
-            {paramId && session?.user && session.user.id !== paramId ? (
-              <BackButton to={`/students/${session.user.id}`} text="Back to My Profile" className="px-2 py-1" />
-            ) : (
-              <BackButton to="/student-dashboard" text="Back to Dashboard" className="px-2 py-1" />
-            )}
-          </div>
           <div className="bg-neutral-900 rounded-lg p-8">
             <div className="flex items-start gap-6 mb-6">
               <img
