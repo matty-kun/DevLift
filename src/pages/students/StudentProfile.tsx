@@ -3,8 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { getUserReviewsReceived, getUserRatingSummary } from '../../lib/feedback';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
-import BackButton from '../../components/common/BackButton';
 import Button from '../../components/common/Button'; // Import Button
 import { Briefcase, Building, GraduationCap, Globe, Link as LinkIcon, MapPin } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -118,7 +116,6 @@ const StudentProfile: React.FC = () => {
             </div>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }

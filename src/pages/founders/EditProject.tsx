@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import BackButton from '../../components/common/BackButton';
 import Toast from '../../components/common/Toast';
 import ProjectForm, { ProjectFormData } from '../../components/founders/ProjectForm';
 import { SubmitHandler } from 'react-hook-form';
@@ -280,7 +279,7 @@ const EditProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
-      <div className="container mx-auto px-4 pt-6"><BackButton to="/founder-dashboard" text="Back to Dashboard" /></div>
+      <div className="container mx-auto px-4 pt-6"></div>
       {showToast && (
         <Toast message="Project updated successfully!" type="success" duration={1500} onClose={() => setShowToast(false)} />
       )}

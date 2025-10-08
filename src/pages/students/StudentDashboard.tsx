@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import BackButton from '../../components/common/BackButton';
 import { Bell, BookOpen, ClipboardList, Star, ArrowRightLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Card from '../../components/common/Card';
@@ -210,8 +209,7 @@ const StudentDashboard: React.FC = () => {
       <main className="flex-1 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="flex items-start justify-between mb-8">
-            <BackButton to={studentId ? `/students/${studentId}` : '/profile'} text="Back to Profile" />
+          <div className="flex items-start justify-between mb-8">            
             <div className="flex items-center gap-4">
               <Avatar src={avatarSrc} alt={displayName} size="lg" />
               <div>

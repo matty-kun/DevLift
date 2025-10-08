@@ -198,10 +198,6 @@ const ProjectDetails: React.FC = () => {
   return (
     <div className="min-h-screen bg-black py-12">
       <div className="container mx-auto px-4 max-w-2xl">
-        <div className="flex justify-between items-center mb-4">
-          <BackButton to="/founder-dashboard" text="Back to Dashboard" />
-          <Link to="/projects" className="text-custom-cyan hover:text-custom-purple inline-block">&larr; Back to Projects</Link>
-        </div>
         <Card className="mb-8 text-white">
           {/* Mark as Completed button for founders */}
           {isMentor && !projectCompleted && (

@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import BackButton from '../../components/common/BackButton';
 import { SubmitHandler } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -157,9 +156,7 @@ const PostProject: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col text-white">
-      <div className="container mx-auto px-4 pt-6">
-        <BackButton to="/founder-dashboard" text="Back to Dashboard" />
-      </div>
+      <div className="container mx-auto px-4 pt-6"></div>
       {showToast && (
         <Toast
           message="Project posted successfully!"

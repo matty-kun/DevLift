@@ -6,13 +6,12 @@ import ProjectDetails from './pages/founders/ProjectDetails';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import MFAVerify from './pages/auth/MFAVerify';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
 import Startups from './pages/founders/Startups';
-import StartupDetails from './pages/founders/StartupDetails';
 import Resources from './pages/students/Resources';
 import About from './pages/About';
 import FounderDashboard from './pages/founders/FounderDashboard';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import PostProject from './pages/founders/PostProject';
 import EditProject from './pages/founders/EditProject';
 import StudentDashboard from './pages/students/StudentDashboard';
@@ -28,6 +27,7 @@ import { useAuth } from './contexts/AuthContext';
 import Onboarding from './pages/Onboarding';
 import LoadingScreen from './components/common/LoadingScreen';
 import MainLayout from './components/layout/MainLayout';
+import StartupProfile from './pages/startups/StartupProfile';
 import People from './pages/People'; // New import
 import MFAProtectedRoute from './components/auth/MFAProtectedRoute';
 
@@ -74,7 +74,7 @@ const App: React.FC = () => {
           <Route path="/projects" element={<MFAProtectedRoute><Projects /></MFAProtectedRoute>} />
           <Route path="/projects/:id" element={<MFAProtectedRoute><ProjectDetails /></MFAProtectedRoute>} />
           <Route path="/startups" element={<MFAProtectedRoute><Startups /></MFAProtectedRoute>} />
-          <Route path="/startups/:id" element={<MFAProtectedRoute><StartupDetails /></MFAProtectedRoute>} />
+          <Route path="/startups/:id" element={<MFAProtectedRoute><StartupProfile /></MFAProtectedRoute>} />
           <Route path="/resources" element={<MFAProtectedRoute><Resources /></MFAProtectedRoute>} />
           <Route path="/community" element={<MFAProtectedRoute><UnderConstruction /></MFAProtectedRoute>} />
           <Route path="/projects/:id/applications" element={<MFAProtectedRoute><Applications /></MFAProtectedRoute>} />
@@ -96,4 +96,3 @@ const App: React.FC = () => {
 }
 
 export default App;
-

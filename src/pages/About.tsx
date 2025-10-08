@@ -1,11 +1,10 @@
 import React from 'react';
-import BackButton from '../components/common/BackButton';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import VisionAndMission from '../components/home/VisionAndMission';
 
 const About: React.FC = () => (
   <div className="min-h-screen bg-black py-12">
-    <div className="container mx-auto px-4 mb-4"><BackButton to="/" text="Back to Home" /></div>
+    <div className="container mx-auto px-4 mb-4"></div>
     <div className="container mx-auto px-4 max-w-3xl">
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-bold text-white mb-2">About <span className="text-custom-cyan">Dev</span><span className="text-custom-orange">Lift</span></h1>

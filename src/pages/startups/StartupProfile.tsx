@@ -151,7 +151,13 @@ const StartupProfile: React.FC = () => {
                     rel="noopener noreferrer"
                     className="hover:text-custom-cyan"
                   >
-                    {new URL(profile.website).hostname}
+                    {(() => {
+                      try {
+                        return new URL(profile.website.startsWith('http') ? profile.website : `https://${profile.website}`).hostname;
+                      } catch {
+                        return profile.website;
+                      }
+                    })()}
                   </a>
                 </div>
               </div>
