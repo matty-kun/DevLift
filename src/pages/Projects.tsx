@@ -1,104 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, ChevronDown, ChevronUp, Zap, X } from 'lucide-react';
+import { Search, Filter, Briefcase, Clock, Users, Code, ArrowUpDown, Zap, X } from 'lucide-react';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import ProjectCard from '../components/projects/ProjectCard';
+import { supabase } from '../lib/supabase';
 import { Project } from '../types';
 
-// Sample project data (will be replaced with Supabase data)
-const sampleProjects: Project[] = [
-  {
-    id: '1',
-    title: 'E-Commerce Mobile App Development',
-    description: 'Build a fully functional e-commerce app using React Native with payment integration, product catalog, and user authentication.',
-    mentorId: 'mentor1',
-    skills: ['React Native', 'JavaScript', 'Firebase', 'Redux'],
-    duration: '8 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 3,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  {
-    id: '2',
-    title: 'Data Visualization Dashboard',
-    description: 'Design and develop an interactive dashboard to visualize complex datasets for a healthcare organization using modern web technologies.',
-    mentorId: 'mentor2',
-    skills: ['React', 'D3.js', 'TypeScript', 'Tailwind CSS'],
-    duration: '6 weeks',
-    status: 'open',
-    difficulty: 'advanced',
-    maxStudents: 2,
-    assignedStudents: ['student1'],
-    applicants: ['student1', 'student2', 'student3'],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  {
-    id: '3',
-    title: 'AI Chatbot Integration',
-    description: 'Implement a conversational AI chatbot into an existing platform to improve customer service and automate repetitive tasks.',
-    mentorId: 'mentor3',
-    skills: ['Python', 'NLP', 'Machine Learning', 'API Integration'],
-    duration: '10 weeks',
-    status: 'in-progress',
-    difficulty: 'advanced',
-    maxStudents: 4,
-    assignedStudents: ['student4', 'student5'],
-    applicants: ['student4', 'student5', 'student6', 'student7'],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1555952494-efd681c5e36f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  {
-    id: '4',
-    title: 'Social Media Analytics Tool',
-    description: 'Create a web application that analyzes social media data and provides insights using data visualization and machine learning.',
-    mentorId: 'mentor4',
-    skills: ['React', 'Python', 'Data Analysis', 'Machine Learning'],
-    duration: '12 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 3,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1611162617213-6d22e525b39e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  {
-    id: '5',
-    title: 'Blockchain Wallet Integration',
-    description: 'Integrate cryptocurrency wallet functionality into an existing web application using Web3 technologies.',
-    mentorId: 'mentor5',
-    skills: ['Web3.js', 'Solidity', 'React', 'TypeScript'],
-    duration: '8 weeks',
-    status: 'open',
-    difficulty: 'advanced',
-    maxStudents: 2,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  {
-    id: '6',
-    title: 'Mobile Game Development',
-    description: 'Build a casual mobile game using Unity and implement core gameplay mechanics, UI, and monetization features.',
-    mentorId: 'mentor6',
-    skills: ['Unity', 'C#', 'Game Design', 'UI/UX'],
-    duration: '10 weeks',
-    status: 'open',
-    difficulty: 'intermediate',
-    maxStudents: 4,
-    assignedStudents: [],
-    applicants: [],
-    createdAt: new Date(),
-    imageUrl: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-];
+// Helper to map DB status to UI status
+const mapStatus = (s: string | null): Project['status'] => {
+  if (!s) return 'open';
+  if (s === 'in_progress') return 'in-progress';
+  if (s === 'completed') return 'completed';
+  return 'open';
+};
+
+// defaultImage no longer needed; component handles fallbacks
+
+type ProjectRow = {
+  id: string;
+  title: string;
+  description: string;
+  mentor_id: string;
+  status: 'open' | 'in_progress' | 'completed' | null;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  duration_weeks: number | null;
+  max_students: number | null;
+  header_image_url?: string | null;
+  created_at: string;
+};
+
+
+
+type ApplicationRow = {
+  project_id: string;
+  student_id: string | null;
+  status: 'pending' | 'accepted' | 'rejected';
+};
 
 const Projects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -107,6 +45,7 @@ const Projects: React.FC = () => {
   const [selectedDuration, setSelectedDuration] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('newest');
   const [projects, setProjects] = useState<Project[]>([]);
+  const [allSkills, setAllSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -115,49 +54,164 @@ const Projects: React.FC = () => {
   const projectsPerPage = 6;
 
   useEffect(() => {
+    const fetchAllSkills = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('skills')
+          .select('name');
+        if (error) throw error;
+        const skillNames = data.map((s: { name: string }) => s.name);
+        setAllSkills(skillNames);
+      } catch (e) {
+        console.error("Failed to fetch all skills:", e);
+      }
+    };
+    fetchAllSkills();
+  }, []);
+
+  useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
         setError(null);
-        await new Promise(resolve => setTimeout(resolve, 500));
         const start = (page - 1) * projectsPerPage;
-        const end = start + projectsPerPage;
-        const paginatedProjects = sampleProjects.slice(start, end);
-        if (sortBy === 'newest') {
-          paginatedProjects.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        } else if (sortBy === 'oldest') {
-          paginatedProjects.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+        const end = start + projectsPerPage - 1;
+
+        let query = supabase
+          .from('projects')
+          .select(
+            'id, title, description, mentor_id, status, difficulty, duration_weeks, max_students, header_image_url, created_at, mentor:mentor_id (id, full_name, avatar_url)',
+            { count: 'exact' }
+          );
+
+        // Apply skill filter to the query
+        if (selectedSkills.length > 0) {
+          // This is a simplified approach. For a more robust solution with many-to-many relationships,
+          // you'd typically need a more complex query or a stored procedure.
+          // For now, we'll filter after fetching, which might be inefficient for very large datasets.
+          // A better approach would be to join with project_skills and filter by skill name.
+          // However, Supabase RLS might make direct joins on non-exposed tables tricky.
+          // Let's assume for now that filtering on the client side is acceptable given the current scale.
         }
-        setProjects(prev => page === 1 ? paginatedProjects : [...prev, ...paginatedProjects]);
-        setHasMore(end < sampleProjects.length);
+
+        query = query.order('created_at', { ascending: sortBy !== 'newest' });
+        query = query.range(start, end);
+
+  type RowUser = { id: string; full_name?: string | null; avatar_url?: string | null };
+  type QueryResult = { data: (ProjectRow & { mentor: RowUser | RowUser[] | null })[] | null; error: { message?: string } | null; count: number | null };
+  const { data, error, count } = await query as unknown as QueryResult;
+        if (error) throw error;
+  const rows: (ProjectRow & { mentor: RowUser | RowUser[] | null })[] = (data as (ProjectRow & { mentor: RowUser | RowUser[] | null })[] | null) ?? [];
+        const ids = rows.map(r => r.id);
+
+        // Fetch skills per project
+        const skillsMap = new Map<string, string[]>();
+        if (ids.length) {
+          const { data: projectSkillsData, error: psError } = await supabase
+            .from('project_skills')
+            .select('project_id, skill_id')
+            .in('project_id', ids);
+          if (psError) throw psError;
+
+          const skillIds = Array.from(new Set((projectSkillsData ?? []).map(ps => ps.skill_id)));
+          let skillNamesMap = new Map<string, string>();
+          if (skillIds.length) {
+            const { data: skillNamesData, error: snError } = await supabase
+              .from('skills')
+              .select('id, name')
+              .in('id', skillIds);
+            if (snError) throw snError;
+            skillNamesMap = new Map((skillNamesData ?? []).map(s => [s.id, s.name]));
+          }
+
+          (projectSkillsData ?? []).forEach((row) => {
+            const skillName = skillNamesMap.get(row.skill_id);
+            if (!skillName) return; // Only add if skill name exists
+            const list = skillsMap.get(row.project_id) ?? [];
+            list.push(skillName);
+            skillsMap.set(row.project_id, list);
+          });
+        }
+
+        // Fetch application counts (total and accepted)
+        const acceptedMap = new Map<string, string[]>();
+        const applicantsMap = new Map<string, string[]>();
+        if (ids.length) {
+          const { data: apps } = await supabase
+            .from('applications')
+            .select('project_id, student_id, status')
+            .in('project_id', ids);
+          (apps as ApplicationRow[] | null)?.forEach((a) => {
+            const pid = a.project_id;
+            const sid = a.student_id;
+            const applicants = applicantsMap.get(pid) ?? [];
+            applicants.push(sid ?? '');
+            applicantsMap.set(pid, applicants);
+            if (a.status === 'accepted') {
+              const acc = acceptedMap.get(pid) ?? [];
+              acc.push(sid ?? '');
+              acceptedMap.set(pid, acc);
+            }
+          });
+        }
+
+        const mapped: Project[] = rows.map((r) => ({
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          mentorId: r.mentor_id,
+          mentor: Array.isArray(r.mentor) ? r.mentor[0] : r.mentor,
+          skills: skillsMap.get(r.id) ?? [],
+          duration: `${r.duration_weeks ?? 0} week${(r.duration_weeks ?? 0) === 1 ? '' : 's'}`,
+          status: mapStatus(r.status),
+          difficulty: r.difficulty,
+          maxStudents: r.max_students ?? 0,
+          assignedStudents: acceptedMap.get(r.id) ?? [],
+          applicants: applicantsMap.get(r.id) ?? [],
+          createdAt: new Date(r.created_at),
+          // Leave empty to allow component-level robust fallback (unsplash, then local placeholder)
+          imageUrl: r.header_image_url ?? '',
+        }));
+
+        setProjects(prev => page === 1 ? mapped : [...prev, ...mapped]);
+        const total = count ?? 0;
+        setHasMore(end + 1 < total);
         setLoading(false);
-      } catch {
+      } catch (e) {
+        console.error(e);
         setError('Failed to fetch projects.');
-        setLoading(true);
+        setLoading(false);
       }
     };
     fetchProjects();
-  }, [page, sortBy]);
+  }, [page, sortBy, selectedSkills]);
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = !searchQuery || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      project.skills.some((skill: string, index: number) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+      project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesSkills = selectedSkills.length === 0 || 
-      selectedSkills.some(skill => project.skills.includes(skill));
+      selectedSkills.every(skill => project.skills.includes(skill));
 
     const matchesDifficulty = selectedDifficulty.length === 0 || 
       selectedDifficulty.includes(project.difficulty);
 
-    const matchesDuration = selectedDuration.length === 0 || 
-      selectedDuration.some(duration => project.duration.includes(duration));
+    const weeks = parseInt(project.duration, 10) || 0;
+    const matchesDuration = selectedDuration.length === 0 || selectedDuration.some((range) => {
+      if (range.includes('12+')) return weeks >= 12;
+      const m = range.match(/(\d+)-(\d+)/);
+      if (!m) return true;
+      const min = parseInt(m[1], 10);
+      const max = parseInt(m[2], 10);
+      return weeks >= min && weeks <= max;
+    });
 
     return matchesSearch && matchesSkills && matchesDifficulty && matchesDuration;
   });
 
-  const skills = Array.from(new Set(sampleProjects.flatMap(project => project.skills)));
+  const skills = allSkills;
   const difficulties = ['beginner', 'intermediate', 'advanced'];
   const durations = ['4-6 weeks', '6-8 weeks', '8-12 weeks', '12+ weeks'];
 
@@ -186,8 +240,9 @@ const Projects: React.FC = () => {
       </style>
       <div className="min-h-screen bg-black text-white py-12">
         <div className="container mx-auto px-4">
+          
           <div className="mb-12 text-center">
-            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-cyan to-custom-orange mb-4">
+            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-cyan mb-4">
                 Explore Real-World Projects
             </h1>
             <p className="text-xl text-neutral-300 max-w-3xl mx-auto">

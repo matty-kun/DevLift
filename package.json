@@ -13,15 +13,18 @@
     "test:supabase": "ts-node --transpile-only test-auth.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.54.0",
+    "@tanstack/react-query": "^5.90.2",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "date-fns": "^3.3.1",
-    "framer-motion": "^12.23.5",
+    "framer-motion": "^12.23.22",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.51.0",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^6.22.3",
     "zod": "^3.22.4"
   },
@@ -30,6 +33,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/react-dropzone": "^4.2.2",
+    "@types/react-icons": "^2.2.7",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^9.9.1",
@@ -37,10 +41,11 @@
     "eslint-plugin-react-refresh": "^0.4.11",
     "globals": "^15.9.0",
     "postcss": "^8.4.35",
+    "supabase": "^2.48.3",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^5.4.2"
+    "vite": "^7.1.1"
   }
 }

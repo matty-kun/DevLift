@@ -56,11 +56,11 @@ const Avatar: React.FC<AvatarProps> = ({
                 <img 
                     src={src}
                     alt={alt}
-                    className={`${sizeClasses[size]} rounded-full object-cover border border-neutral-200`}
+                    className={`${sizeClasses[size]} rounded-full object-cover`}
                 />
             ) : (
                 <div
-                    className={`${sizeClasses[size]} rounded-full flex items-center justify-center bg-primary-100 text-primary-800 font-medium border border-neutral-200`}
+                    className={`${sizeClasses[size]} rounded-full flex items-center justify-center bg-primary-100 text-primary-800 font-medium`}
                     >
                         {getInitials()}
                     </div>

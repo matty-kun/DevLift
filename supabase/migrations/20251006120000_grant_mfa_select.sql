@@ -1,0 +1,1 @@
+GRANT SELECT ON TABLE auth.mfa_factors TO authenticated;

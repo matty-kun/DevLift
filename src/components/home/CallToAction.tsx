@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '../common/Button';
-import { Link } from 'react-router-dom';
 import { ArrowRight, User, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 

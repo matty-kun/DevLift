@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Mail, Lock, User, Briefcase } from 'lucide-react';
-import Card from '../components/common/Card';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
+import { useAuth } from '../../contexts/AuthContext';
+import Card from '../../components/common/Card';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+
 
 interface SignUpFormData {
     email: string;
@@ -16,23 +18,46 @@ interface SignUpFormData {
 }
 
 const SignUp: React.FC = () => {
+    const navigate = useNavigate();
+    const { signUp } = useAuth();
     const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<'student' | 'founder' | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const password = watch('password');
 
-    const onSubmit = async () => {
+    // Import handled in AuthContext via signUp helper
+
+
+    const onSubmit = async (data: SignUpFormData) => {
+        setError(null);
+        setSuccess(null);
+        if (!userType) { setError('Please choose your role.'); return; }
+        const mappedRole = userType === 'founder' ? 'mentor' : 'student';
+        const fullName = data.email.split('@')[0];
         try {
-            setError(null);
-            console.log('Form submitted, but no action taken');
-        } catch {
-            console.log('Form submitted, but no action taken');
+            await signUp(data.email, data.password, mappedRole, fullName);
+            // We rely on DB trigger to create the public.users row after email confirmation.
+            setSuccess('Check your email to confirm your account before signing in.');
+            navigate('/sign-in');
+        } catch (e: unknown) {
+            const hasMessage = (x: unknown): x is { message: string } =>
+                typeof x === 'object' && x !== null && 'message' in x && typeof (x as { message?: unknown }).message === 'string';
+            setError(hasMessage(e) ? e.message : 'Sign up failed. Please try again.');
+            console.error('Sign up error:', e);
         }
     };
 
     return (
-        <div className="min-h-screen bg-black py-12">
-            <div className="container mx-auto px-4">
+        <div className="h-screen bg-black relative overflow-y-hidden flex items-center justify-center">
+            {/* Background decorative elements */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
+                <div className="absolute left-1/4 top-32 h-48 w-48 rounded-full bg-custom-purple opacity-60 blur-3xl"></div>
+                <div className="absolute left-1/20 bottom-1 h-48 w-48 rounded-full bg-white opacity-60 blur-3xl"></div>
+                <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-60 blur-3xl"></div>
+            </div>
+            <div className="container mx-auto px-4 relative z-10 py-12">
                 <div className="max-w-md mx-auto">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-white">Join <span className="text-custom-cyan">Dev</span><span className="text-custom-orange">Lift</span></h1>
@@ -40,7 +65,7 @@ const SignUp: React.FC = () => {
                     </div>
 
                     <Card>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div>
                                 <Input
                                     label="Email"
@@ -86,13 +111,13 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                                 <label className="block text-sm font-medium text-white">I am joining as</label>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-2">
                                     <button
                                         type="button"
-                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all 
-                                            ${userType === 'student' ? 'border-custom-cyan text-custom-cyan bg-custom-cyan/10 shadow-lg' : 'border-gray-600 text-gray-400 hover:border-gray-400'}`}
+                                        className={`flex items-center justify-center p-3 rounded-lg border-2 transition-all 
+                                            ${userType === 'student' ? 'border-custom-purple text-custom-purple bg-custom-purple/10 shadow-lg' : 'border-gray-600 text-gray-400 hover:border-gray-400'}`}
                                         onClick={() => setUserType('student')}
                                     >
                                         <div className="flex flex-col items-center">
@@ -102,7 +127,7 @@ const SignUp: React.FC = () => {
                                     </button>
                                     <button
                                         type="button"
-                                        className={`flex items-center justify-center p-4 rounded-lg border-2 transition-all 
+                                        className={`flex items-center justify-center p-3 rounded-lg border-2 transition-all 
                                             ${userType === 'founder' ? 'border-custom-orange text-custom-orange bg-custom-orange/10 shadow-lg' : 'border-gray-600 text-gray-400 hover:border-gray-400'}`}
                                         onClick={() => setUserType('founder')}
                                     >
@@ -119,6 +144,13 @@ const SignUp: React.FC = () => {
                                     {error}
                                 </div>
                             )}
+                            {success && (
+                                <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-2 rounded-lg">
+                                    {success}
+                                </div>
+                            )}
+
+                            
 
                             <Button
                                 type="submit"
@@ -130,7 +162,7 @@ const SignUp: React.FC = () => {
                             </Button>
                         </form>
 
-                        <div className="mt-6 text-center">
+                        <div className="mt-4 text-center">
                             <p className="text-sm text-white">
                                 Already have an account?{' '}
                                 <Link to="/sign-in" className="font-medium text-custom-cyan hover:text-custom-purple">

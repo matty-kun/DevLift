@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Rocket, Undo2, ArrowLeft } from 'lucide-react';
+import { Rocket, Undo2 } from 'lucide-react';
 
 const UnderConstruction: React.FC = () => {
   const navigate = useNavigate();

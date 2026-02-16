@@ -1,7 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Linkedin, Github } from 'lucide-react';
-import sign from '../../assets/DevLift Sign.svg';
 
 const Footer: React.FC = () => {
   return (

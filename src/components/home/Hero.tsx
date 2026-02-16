@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { ArrowRight, User, Briefcase } from 'lucide-react';
 import Button from '../common/Button';
-import { Link } from 'react-router-dom';
-import Navbar from '../layout/Navbar'; // adjust the import path as needed
+import { useNavigate } from 'react-router-dom'; // Added useNavigate import
+
 import { motion } from 'framer-motion';
 
 const textVariants = {
@@ -11,6 +11,7 @@ const textVariants = {
 };
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate(); // Added this hook
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -24,8 +25,8 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative">
-      <Navbar />
+  <section className="relative min-h-screen flex items-center justify-center">
+      
       {/* Background decorative elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-custom-cyan opacity-60 blur-3xl"></div>
@@ -34,7 +35,7 @@ const Hero: React.FC = () => {
         <div className="absolute right-1/3 bottom-0 h-64 w-64 rounded-full bg-custom-orange opacity-60 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto min-h-screen px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
+  <div className="container mx-auto w-full h-full px-4 py-20 md:py-32 relative z-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl mx-auto flex justify-center">
           <motion.h1
             className="inline-block text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight md:whitespace-nowrap whitespace-normal text-center"
@@ -43,9 +44,9 @@ const Hero: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
           >
-            <span className="text-custom-cyan">Knowledge </span>
+            <span className="text-custom-cyan">Education </span>
             <span className="text-white">meets </span>
-            <span className="text-custom-orange"> Action</span>
+            <span className="text-custom-orange"> Innovation</span>
           </motion.h1>
         </div>
           <motion.p
@@ -56,7 +57,7 @@ const Hero: React.FC = () => {
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.2 }}
           >
-            Because education shines brighter when you put it to use.
+            Where curiosity becomes creation
           </motion.p>
           <motion.div
             className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
@@ -72,7 +73,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-cyan shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<User className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              onClick={() => window.open("https://tally.so/r/3X6BNe", "_blank", "noopener,noreferrer")}
+              onClick={() => navigate('/sign-in?type=student')}
             >
               Join as Student
             </Button>
@@ -83,7 +84,7 @@ const Hero: React.FC = () => {
               className="border-2 border-custom-orange text-custom-orange hover:bg-custom-orange hover:text-white shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
               leftIcon={<Briefcase className="h-5 w-5" />}
               rightIcon={<ArrowRight className="ml-1 h-5 w-5" />}
-              onClick={() => window.open("https://tally.so/r/3q8YD8", "_blank", "noopener,noreferrer")}
+              onClick={() => navigate('/sign-in?type=founder')}
             >
               I'm a Founder
             </Button>
@@ -98,15 +99,15 @@ const Hero: React.FC = () => {
             transition={{ delay: 0.6 }}
           >
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-cyan">100+</p>
+              <p className="text-3xl font-bold text-custom-cyan">120</p>
               <p className="mt-1 text-sm text-white/70">Interested Students</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-purple">4+</p>
+              <p className="text-3xl font-bold text-custom-purple">5</p>
               <p className="mt-1 text-sm text-white/70">Interested Founders</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-custom-orange">4+</p>
+              <p className="text-3xl font-bold text-custom-orange">5</p>
               <p className="mt-1 text-sm text-white/70">Startups</p>
             </div>
           </motion.div>
